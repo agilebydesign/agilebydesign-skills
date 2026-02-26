@@ -11,7 +11,7 @@ Converts documents (PDF, PPTX, DOCX, XLSX, etc.) to markdown and chunks them for
 **Install:**
 
 ```bash
-npx skills add agilebydesign/agent-skills --skill content-memory
+npx skills add agilebydesign/agilebydesign-skills --skill content-memory
 ```
 
 **Usage:** See [skills/content-memory/SKILL.md](skills/content-memory/SKILL.md) for full instructions.
@@ -19,14 +19,14 @@ npx skills add agilebydesign/agent-skills --skill content-memory
 ## Install All Skills
 
 ```bash
-npx skills add agilebydesign/agent-skills
+npx skills add agilebydesign/agilebydesign-skills
 ```
 
 ## Publish to skills.sh
 
-1. Create the repository on GitHub: [github.com/agilebydesign/agent-skills](https://github.com/agilebydesign/agent-skills)
+1. Create the repository on GitHub: [github.com/agilebydesign/agilebydesign-skills](https://github.com/agilebydesign/agilebydesign-skills)
 2. Push this content
-3. Submit at [agentskill.sh/submit](https://agentskill.sh/submit) with the repo URL
+3. Submit at [agentskill.sh/submit](https://agentskill.sh/submit) with `https://github.com/agilebydesign/agilebydesign-skills`
 4. Skills appear on the leaderboard as users install them via `npx skills add`
 
 ## License
