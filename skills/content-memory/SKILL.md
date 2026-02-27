@@ -1,102 +1,100 @@
 ---
 name: content-memory
 description: >-
-  Converts documents (PDF, PPTX, DOCX, XLSX, etc.) to markdown and chunks them
-  for agent memory. Use when the user wants to "add to memory", "convert and
-  chunk", "ingest content for agent", "refresh memory", or process a folder of
-  documents for AI agent context.
+  Converts documents (PDF, PPTX, DOCX, etc.) to markdown and chunks them for
+  agent memory. Use when the user wants to "add to memory", "convert and chunk",
+  "ingest for agent", or "refresh memory".
 ---
 
 # Content Memory Pipeline
 
-This skill teaches how to convert source documents to markdown and chunk them for agent memory. The pipeline has two steps: **convert** (documents → markdown + images) and **chunk** (markdown → smaller files for retrieval).
+Convert source documents to markdown (in place) and chunk them for agent memory. Content lives in `memory/` or `workspace/`. Chunks go directly into `memory/<domain>/<topic>/`.
+
+## Architecture
+
+- **memory/** (project root): Content and chunks. No `converted/` or `chunked/` subfolders—chunks go directly in topic folders. Markdown in `<folder>/markdown/`.
+- **workspace/** (optional): Source content for sync_and_chunk; copied to memory.
+- **Convert to markdown/**: PDF/DOCX → .md written in `<folder>/markdown/` for each folder.
+- **Chunk**: Reads from `source/<domain>/` or `memory/<domain>/`, writes to `memory/<domain>/<topic>/`.
 
 ## When to Activate
 
-Activate when the user:
-- Asks to "add content to memory" or "refresh memory"
-- Wants to convert a folder of documents (PPTX, PDF, DOCX, XLSX) for agent context
-- Mentions "convert and chunk", "ingest for agent", or "memory pipeline"
-- Has added new files to a content folder and wants them processed
-
-## Pipeline Overview
-
-1. **Convert**: Use `markitdown` to convert supported files to markdown. Images are extracted and referenced.
-2. **Chunk**: Split large markdown files by slides (for decks) or headings (for docs). Small files stay as single chunks.
+- "Add content to memory", "refresh memory", "ingest for agent"
+- "Sync workspace to memory", "convert and chunk"
 
 ## Step 1: Convert to Markdown
 
-**Dependencies**: `pip install "markitdown[all]"`
-
-**Memory mode** (preserves folder structure under `memory/<name>/`):
+Convert non-.md files to markdown in a `markdown/` subfolder per folder:
 
 ```bash
-python scripts/convert_to_markdown.py --memory <source_path>
+python scripts/convert_to_markdown.py --source <path> [--memory <domain>]
+python scripts/convert_to_markdown.py --from source/CBE/domain_journeys_approach
 ```
 
-- `<source_path>`: Path to folder containing documents (e.g. `Assets/06 Client Engagements/Active/Scotiabank/CBE`)
-- Creates: `memory/<name>/<rel>/converted/` (markdown + images)
-- Creates: `memory/<name>/<rel>/chunked/` (empty, for step 2)
+- Writes `.md` in `<folder>/markdown/` (e.g. `CB Domain/foo.pdf` → `CB Domain/markdown/foo.md`)
+- `.md` files are skipped
 
-**Single-folder mode** (pipeline/intake → pipeline/converted):
+## Step 2: Chunk to Memory
+
+Chunk markdown and write directly into memory topic folders:
 
 ```bash
-python scripts/convert_to_markdown.py
+python scripts/chunk_markdown.py --memory <domain> [--incremental]
 ```
 
-Place source files in `pipeline/intake/`. Output goes to `pipeline/converted/`.
+- Reads from: `source/<domain>/**/*.md` or `memory/<domain>/**/*.md`.
+- Writes to: `memory/<domain>/<topic>/` (no `chunked/` subfolder)
+- `--incremental`: Only chunk new or modified files
 
-**Supported formats**: `.pdf`, `.pptx`, `.docx`, `.xlsx`, `.xls`, `.html`, `.htm`, `.txt`, `.csv`, `.json`, `.xml`
+## Step 3: Sync Workspace (Convert + Copy + Chunk)
 
-## Step 2: Chunk Markdown
-
-**Memory mode**:
+One command for workspace content:
 
 ```bash
-python scripts/chunk_markdown.py --memory <memory_name>
+python scripts/sync_and_chunk.py --workspace <topic> --memory <domain> [--incremental]
 ```
 
-- `<memory_name>`: Name of the memory folder (e.g. `CBE` from `memory/CBE/`)
-- Reads from: `memory/<name>/*/converted/`
-- Writes to: `memory/<name>/*/chunked/`
-
-**Pipeline mode**:
-
-```bash
-python scripts/chunk_markdown.py
-```
-
-- Reads from: `pipeline/converted/`
-- Writes to: `pipeline/chunked/`
+1. Converts non-.md to `<folder>/markdown/` (in workspace)
+2. Copies `workspace/<topic>` → `memory/<domain>/<topic>`
+3. Chunks to `memory/<domain>/<topic>/`
 
 ## Chunking Strategy
 
-- **Slide decks** (markers `<!-- Slide number: N -->`): One chunk per slide
+- **Slide decks** (`<!-- Slide number: N -->`): One chunk per slide
 - **Other docs** (>200 lines): Split at `#` or `##` boundaries
-- **Small files** (<200 lines): Kept as single chunk
+- **Small files** (<200 lines): Single chunk
 
-Each chunk includes a source reference for navigation: `<!-- Source: path | file://url -->`
+Each chunk includes: `<!-- Source: path | file://url -->`
 
 ## Key Behaviors
 
-1. **Run convert before chunk** – Chunk reads from converted output.
-2. **Handle errors gracefully** – Some files may fail (permissions, format). Log and continue.
-3. **Long-running** – Large folders (100+ files) take time. Run in background if needed.
-4. **Memory location** – Chunked output lives in `memory/<name>/*/chunked/` or `pipeline/chunked/`.
+1. **Content in memory** – Put content in `memory/<domain>/<topic>/` or sync from workspace.
+2. **Convert to markdown/** – Markdown written in `<folder>/markdown/` for each folder.
+3. **Chunks in memory** – No `chunked/` subfolder; chunks go directly in `memory/<domain>/<topic>/`.
+4. **Incremental** – Use `--incremental` to skip unchanged files.
 
-## Scripts Location
+## Project-Specific Transformers
 
-Scripts are in this skill's `scripts/` folder. When installed:
-- Project: `.agents/skills/content-memory/scripts/`
-- Global: `~/.cursor/skills/content-memory/scripts/` (or agent-specific path)
+| Location | Scope |
+|----------|-------|
+| `memory/<name>/transformers/` | Memory-specific |
+| `.content-memory/transformers/` | Workspace-level |
 
-**Run from the workspace root** (where `memory/` will be created). Set `CONTENT_MEMORY_ROOT` if the workspace root differs from the current directory.
+Each `.py` exports `EXTENSIONS` and `convert(path: Path) -> str`.
+
+## Scripts
+
+| Script | Purpose |
+|--------|---------|
+| `convert_to_markdown.py` | Convert to markdown/ |
+| `chunk_markdown.py` | Chunk to memory |
+| `sync_and_chunk.py` | Convert + copy + chunk (workspace) |
+
+**Run from workspace root.** Set `CONTENT_MEMORY_ROOT` if needed.
 
 ## Troubleshooting
 
 | Issue | Fix |
 |-------|-----|
-| `PermissionError` / `FileConversionException` | File may be locked. Close the document and retry. Script should log and continue. |
-| `No markdown in memory/.../converted/` | Run convert step first. |
-| `Missing dependency: markitdown` | `pip install "markitdown[all]"` |
-| PPTX images not rendering | Optional: `pip install python-pptx`; Windows may need PowerPoint for slide export. |
+| No markdown | Run convert; then chunk. Or sync workspace to memory first. |
+| Missing markitdown | `pip install "markitdown[all]"` |

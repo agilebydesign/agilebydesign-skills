@@ -1,20 +1,24 @@
 """
-Chunk converted markdown into smaller pieces for agent memory.
+Chunk markdown into smaller pieces for agent memory.
 
 Usage:
-  python chunk_markdown.py --memory <memory_name>
+  python chunk_markdown.py --memory <domain> [--incremental]
 
-Run from workspace root. Reads memory/<name>/*/converted/, writes memory/<name>/*/chunked/.
-Run convert_to_markdown.py first.
+Run from workspace root.
+- Reads from: source/<domain>/**/*.md or memory/<domain>/**/*.md.
+- Writes to: memory/<domain>/<topic>/ directly (no chunked/ subfolder)
+- Excludes: paths containing "images", and chunk output files (stem__slide_*, stem__section_*)
+
+--incremental: Only chunk files that are new or have been modified since last chunk.
 """
 
+import os
 import re
 import sys
 from pathlib import Path
 
-import os
-ROOT = Path(os.environ["CONTENT_MEMORY_ROOT"]) if "CONTENT_MEMORY_ROOT" in os.environ else Path.cwd()
-
+ROOT = Path(os.environ.get("CONTENT_MEMORY_ROOT", os.getcwd()))
+SOURCE = ROOT / "source"
 MEMORY = ROOT / "memory"
 MIN_CHUNK_LINES = 5
 
@@ -86,11 +90,28 @@ def _add_chunk_source_ref(content: str, source_path: str | None, source_url: str
     return f"<!-- Source: {source_path}{loc}{url} -->\n\n" + content
 
 
-def chunk_file(md_path: Path, conv_root: Path, chunk_root: Path) -> int:
+def _needs_chunking(md_path: Path, chunk_root: Path) -> bool:
+    md_mtime = md_path.stat().st_mtime
+    stem = md_path.stem
+    chunks = list(chunk_root.glob(f"{stem}*.md"))
+    if not chunks:
+        return True
+    latest = max(c.stat().st_mtime for c in chunks)
+    return md_mtime > latest
+
+
+def _is_chunk_output(name: str) -> bool:
+    return "__slide_" in name or "__section_" in name
+
+
+def chunk_file(md_path: Path, conv_root: Path, chunk_root: Path, clear_existing: bool = False) -> int:
     text = md_path.read_text(encoding="utf-8")
     stem, source_path, source_url = md_path.stem, *_extract_source_ref(text)
-    out_dir = chunk_root
-    out_dir.mkdir(parents=True, exist_ok=True)
+    chunk_root.mkdir(parents=True, exist_ok=True)
+
+    if clear_existing:
+        for old in chunk_root.glob(f"{stem}*.md"):
+            old.unlink()
 
     if _is_slide_deck(text):
         chunks = _chunk_by_slides(text)
@@ -111,7 +132,7 @@ def chunk_file(md_path: Path, conv_root: Path, chunk_root: Path) -> int:
         if not content.strip():
             continue
         content = _add_chunk_source_ref(content, source_path, source_url, _loc(label))
-        out = out_dir / (f"{stem}__{label}.md" if len(chunks) > 1 else f"{stem}.md")
+        out = chunk_root / (f"{stem}__{label}.md" if len(chunks) > 1 else f"{stem}.md")
         out.write_text(content, encoding="utf-8")
         for ref in _find_image_refs(content):
             _copy_images([ref], conv_root, chunk_root)
@@ -119,45 +140,91 @@ def chunk_file(md_path: Path, conv_root: Path, chunk_root: Path) -> int:
     return written
 
 
-def _run_memory_mode(memory_name: str) -> None:
-    memory_root = MEMORY / memory_name
-    if not memory_root.exists():
-        print(f"Memory not found: {memory_root}")
+def _chunk_root_for_topic(mem_root: Path, topic_rel: Path) -> Path:
+    """Chunks go in the topic folder, not inside converted/, workspace/, or markdown/."""
+    parts = list(topic_rel.parts)
+    for sub in ("converted", "workspace", "markdown"):
+        if sub in parts:
+            idx = parts.index(sub)
+            return mem_root / Path(*parts[:idx])
+    return mem_root / topic_rel
+
+
+def _collect_md_files(root: Path, exclude_parts: set[str]) -> list[Path]:
+    out = []
+    for f in root.rglob("*.md"):
+        if any(p in f.parts for p in exclude_parts):
+            continue
+        if _is_chunk_output(f.name):
+            continue
+        out.append(f)
+    return sorted(out)
+
+
+def _run_memory_mode(domain: str, incremental: bool) -> None:
+    src_root = SOURCE / domain
+    mem_root = MEMORY / domain
+
+    # Prefer source (symlinks to content); fall back to memory
+    if src_root.exists():
+        read_root = src_root.resolve()  # follow symlinks
+        read_label = f"source/{domain}"
+    elif mem_root.exists():
+        read_root = mem_root
+        read_label = f"memory/{domain}"
+    else:
+        print(f"Neither source/{domain} nor memory/{domain} found.")
         return
 
-    md_files = sorted(
-        f for f in memory_root.rglob("converted/*.md")
-        if f.parent.name == "converted" and "images" not in f.parts
-    )
+    exclude = {"chunked", "images"}
+    md_files = _collect_md_files(read_root, exclude)
     if not md_files:
-        print(f"No markdown in {memory_root}/*/converted/")
-        print("Run convert_to_markdown.py --memory <path> first.")
+        print(f"No markdown in {read_label}/")
         return
 
-    print(f"Memory: {memory_name}  ({len(md_files)} files) -> chunked/\n")
+    mode = " (incremental)" if incremental else ""
+    print(f"Chunk: {read_label}{mode}  ({len(md_files)} files) -> memory/{domain}/\n")
     total = 0
+    skipped = 0
+
     for i, f in enumerate(md_files, 1):
-        rel = f.parent.parent.relative_to(memory_root)
-        conv_root, chunk_root = f.parent, memory_root / rel / "chunked"
-        label = str(rel / f.name) if rel != Path(".") else f.name
-        print(f"  [{i}/{len(md_files)}] {label} ... ", end="", flush=True)
         try:
-            n = chunk_file(f, conv_root, chunk_root)
+            rel_to_read = f.parent.relative_to(read_root)
+        except ValueError:
+            rel_to_read = Path(".")
+        topic_rel = rel_to_read
+        conv_root = f.parent
+        chunk_root = _chunk_root_for_topic(mem_root, topic_rel)
+        label = str(topic_rel / f.name) if topic_rel != Path(".") else f.name
+
+        print(f"  [{i}/{len(md_files)}] {label} ... ", end="", flush=True)
+        if incremental and not _needs_chunking(f, chunk_root):
+            print("SKIP (up to date)")
+            skipped += 1
+            continue
+        try:
+            clear_existing = incremental and chunk_root.exists()
+            n = chunk_file(f, conv_root, chunk_root, clear_existing=clear_existing)
             total += n
             print(f"OK  ({n} chunks)")
         except Exception as e:
             print(f"FAIL  {e}")
-    print(f"\nDone: {total} chunks.")
+
+    print(f"\nDone: {total} chunks." + (f" ({skipped} skipped)" if skipped else ""))
 
 
 def main():
-    if "--memory" in sys.argv:
-        idx = sys.argv.index("--memory")
-        if idx + 1 < len(sys.argv):
-            _run_memory_mode(sys.argv[idx + 1])
-            return
-    print("Usage: python chunk_markdown.py --memory <memory_name>")
-    print("  memory_name: name of folder under memory/ (e.g. CBE)")
+    if "--memory" not in sys.argv:
+        print("Usage: python chunk_markdown.py --memory <domain> [--incremental]")
+        print("  domain: e.g. CBE, GTB")
+        print("  Reads from source/<domain>/ (or memory/ if no source), writes to memory/<domain>/")
+        return
+    idx = sys.argv.index("--memory")
+    if idx + 1 >= len(sys.argv):
+        print("Usage: python chunk_markdown.py --memory <domain> [--incremental]")
+        return
+    incremental = "--incremental" in sys.argv
+    _run_memory_mode(sys.argv[idx + 1], incremental)
 
 
 if __name__ == "__main__":
