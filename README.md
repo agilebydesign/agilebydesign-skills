@@ -16,6 +16,18 @@ npx skills add agilebydesign/agilebydesign-skills --skill content-memory
 
 **Usage:** See [skills/content-memory/SKILL.md](skills/content-memory/SKILL.md) for full instructions.
 
+### solution-shaping
+
+Shape source material into an Interaction Tree and State Model (story map and domain model). Use when shaping requirements, deriving epics and stories from source documents, or building a hierarchical structure of actor exchanges and domain concepts.
+
+**Install:**
+
+```bash
+npx skills add agilebydesign/agilebydesign-skills --skill solution-shaping
+```
+
+**Usage:** See [skills/solution-shaping/SKILL.md](skills/solution-shaping/SKILL.md) for full instructions.
+
 ## Install All Skills
 
 ```bash

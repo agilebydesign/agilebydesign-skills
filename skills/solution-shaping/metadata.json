@@ -1,0 +1,10 @@
+{
+  "version": "1.0.0",
+  "organization": "Agile by Design",
+  "date": "February 2026",
+  "abstract": "Shape source material into an Interaction Tree and State Model (story map and domain model). Contains 11 rules across 4 categories: Source & Scope, Hierarchy, State & Structure, and Interaction. Guides AI agents when shaping requirements into epics, sub-epics, and stories with associated domain concepts. Each rule includes DO/DO NOT guidance with examples.",
+  "references": [
+    "https://agilebydesign.com",
+    "https://www.jpattonassociates.com/user-story-mapping/"
+  ]
+}

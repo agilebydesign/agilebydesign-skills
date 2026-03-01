@@ -73,6 +73,40 @@ def _chunk_by_headings(text: str) -> list[tuple[str, str]]:
     return chunks
 
 
+# Fallback for PDF-converted docs that lack markdown headers
+_STRUCTURE_PATTERN = re.compile(
+    r"^(CHAPTER\s+\d+|CHAPTER\s+[IVXLCDM]+|PART\s+\d+|TABLE OF CONTENTS|SECTION\s+\d+)(?:\s|:|\.|$)",
+    re.IGNORECASE,
+)
+
+
+def _chunk_by_structure(text: str) -> list[tuple[str, str]]:
+    """Split on book-style headers (CHAPTER, PART, TABLE OF CONTENTS) when no # headers exist."""
+    lines = text.split("\n")
+    chunks, current_lines, chunk_idx = [], [], 0
+
+    for line in lines:
+        if _STRUCTURE_PATTERN.match(line.strip()) and len(current_lines) >= MIN_CHUNK_LINES:
+            chunks.append((f"section_{chunk_idx:02d}", "\n".join(current_lines)))
+            current_lines, chunk_idx = [], chunk_idx + 1
+        current_lines.append(line)
+
+    if current_lines:
+        chunks.append((f"section_{chunk_idx:02d}", "\n".join(current_lines)))
+    return chunks
+
+
+def _chunk_by_line_count(text: str, max_lines: int = 500) -> list[tuple[str, str]]:
+    """Last resort: split by fixed line count when no structure found."""
+    lines = text.split("\n")
+    chunks = []
+    for i in range(0, len(lines), max_lines):
+        block = "\n".join(lines[i : i + max_lines])
+        if block.strip():
+            chunks.append((f"section_{i // max_lines:02d}", block))
+    return chunks
+
+
 def _is_slide_deck(text: str) -> bool:
     return bool(re.search(r"<!-- Slide number: \d+ -->", text))
 
@@ -117,6 +151,12 @@ def chunk_file(md_path: Path, conv_root: Path, chunk_root: Path, clear_existing:
         chunks = _chunk_by_slides(text)
     elif text.count("\n") > 200:
         chunks = _chunk_by_headings(text)
+        # Fallback: PDF-converted docs often lack # headers; try book-style structure
+        if len(chunks) <= 1:
+            chunks = _chunk_by_structure(text)
+        # Last resort: split by fixed line count
+        if len(chunks) <= 1:
+            chunks = _chunk_by_line_count(text)
     else:
         chunks = [(stem, text)]
 
