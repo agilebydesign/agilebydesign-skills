@@ -4,6 +4,26 @@ Your task is to **shape** source material into an **Interaction Tree** and **Sta
 
 Each rule has a DO with example and a DO NOT with example.
 
+## Process Overview
+
+**You MUST follow this process before producing any output.**
+
+1. **Strategy Phase first** — Analyze the source, propose Epic/Story breakdown and slice order, save the strategy. Do not produce an interaction tree until the strategy is approved.
+2. **Work in slices** — Produce 4–7 stories per slice. Get user approval before moving to the next slice.
+3. **No full output in one go** — Do not produce a complete interaction tree in a single pass. Iterate slice by slice.
+
+### When the user says
+
+When the user says "create the story map," "proceed," "build it," "generate the output," or similar, you **MUST still begin with the Strategy Phase**. Do not skip to producing the full output.
+
+### Before You Produce Output
+
+**STOP.** Before producing any Interaction Tree or State Model, you MUST:
+
+1. [ ] Complete the Strategy Phase (analyze source, propose breakdown, save strategy to `story/<domain>-shaping-strategy.md`)
+2. [ ] Get user approval of the strategy
+3. [ ] Run Slice 1 only (4–7 stories) and get approval before continuing
+
 ---
 
 # Core Definition
@@ -265,7 +285,18 @@ After generating interactions and concepts, verify:
 
 # Shaping Process
 
-The shaping process follows this flow:
+The shaping process follows this flow. **Use this checklist** — do not skip steps.
+
+## Process Checklist
+
+- [ ] **Strategy Phase complete** — Source analyzed; Epic/Story breakdown proposed; strategy saved to `story/<domain>-shaping-strategy.md`
+- [ ] **Strategy approved by user** — Do not produce an interaction tree until then
+- [ ] **Slice 1 produced** — 4–7 stories for the first slice
+- [ ] **Slice 1 approved** — User reviews; corrections → add DO/DO NOT to strategy; re-run until approved
+- [ ] **Next slice** — Proceed to next slice; repeat until all slices done
+- [ ] **Post-shaping review** — Review all corrections; determine what needs to change in rules/instructions
+
+## Flow
 
 1. **Strategy** — Come up with a strategy (Epic/Story breakdown, slice order, assumptions).
 2. **Validate strategy up front** — Review and refine the strategy until it looks reasonable. Do not produce an interaction tree until the strategy is approved.

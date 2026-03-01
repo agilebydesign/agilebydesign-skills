@@ -1,6 +1,17 @@
 # Shaping Process
 
-The shaping process follows this flow:
+The shaping process follows this flow. **Use this checklist** — do not skip steps.
+
+## Process Checklist
+
+- [ ] **Strategy Phase complete** — Source analyzed; Epic/Story breakdown proposed; strategy saved to `story/<domain>-shaping-strategy.md`
+- [ ] **Strategy approved by user** — Do not produce an interaction tree until then
+- [ ] **Slice 1 produced** — 4–7 stories for the first slice
+- [ ] **Slice 1 approved** — User reviews; corrections → add DO/DO NOT to strategy; re-run until approved
+- [ ] **Next slice** — Proceed to next slice; repeat until all slices done
+- [ ] **Post-shaping review** — Review all corrections; determine what needs to change in rules/instructions
+
+## Flow
 
 1. **Strategy** — Come up with a strategy (Epic/Story breakdown, slice order, assumptions).
 2. **Validate strategy up front** — Review and refine the strategy until it looks reasonable. Do not produce an interaction tree until the strategy is approved.
@@ -14,7 +25,7 @@ When analyzing **existing content**, review and follow the strategy.
 
 ## Strategy Criteria
 
-### 1 - Shaping Granularity
+### 1 - Shaping GranularityOkay, let's run this scale again.
 
 **Stories** represent the "stopping point". Each story represents something tangible that a user can recognize while fine-grained enough to implement / deliver as independent work.
 

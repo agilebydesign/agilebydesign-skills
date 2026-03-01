@@ -1,14 +1,16 @@
 ---
 name: content-memory
 description: >-
-  Converts documents (PDF, PPTX, DOCX, etc.) to markdown and chunks them for
-  agent memory. Use when the user wants to "add to memory", "convert and chunk",
-  "ingest for agent", or "refresh memory".
+  Takes various content sources, converts them to markdown, chunks them, and
+  makes them available for future reference. Use when the user wants to "add to
+  memory", "convert and chunk", "ingest for agent", or "refresh memory".
 ---
 
 # Content Memory Pipeline
 
-Convert source documents to markdown (in place) and chunk them for agent memory. Content lives in `memory/` or `workspace/`. Chunks go directly into `memory/<domain>/<topic>/`.
+**Purpose:** Take various content sources → convert to markdown → chunk them → refer to them for future use.
+
+The pipeline is the core value. Folder layout, workspace sync, and integration with other context (e.g. Vesta 7) are secondary; those pieces will be part of context anyway.
 
 ## Architecture
 
@@ -68,10 +70,11 @@ Each chunk includes: `<!-- Source: path | file://url -->`
 
 ## Key Behaviors
 
-1. **Content in memory** – Put content in `memory/<domain>/<topic>/` or sync from workspace.
-2. **Convert to markdown/** – Markdown written in `<folder>/markdown/` for each folder.
-3. **Chunks in memory** – No `chunked/` subfolder; chunks go directly in `memory/<domain>/<topic>/`.
-4. **Incremental** – Use `--incremental` to skip unchanged files.
+1. **Take content sources** – PDF, PPTX, DOCX, etc. (or workspace content).
+2. **Convert to markdown** – Non-.md files → `.md` in place.
+3. **Chunk** – Split markdown into referable chunks (by slide, by heading, or whole file).
+4. **Refer for future use** – Chunks live where agents/context can find them; source attribution in each chunk.
+5. **Incremental** – Use `--incremental` to skip unchanged files.
 
 ## Project-Specific Transformers
 
