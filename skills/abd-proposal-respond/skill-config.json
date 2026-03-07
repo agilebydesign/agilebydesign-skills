@@ -1,0 +1,36 @@
+{
+  "name": "abd-proposal-respond",
+  "version": "0.1.0",
+  "depends_on": ["ace-context-to-memory"],
+  "operation_sections": {
+    "create_strategy": [
+      "proposal.process.intro",
+      "proposal.strategy.starting",
+      "proposal.strategy.phase",
+      "proposal.strategy.criteria",
+      "proposal.core.definitions"
+    ],
+    "answer_questions": [
+      "proposal.process.intro",
+      "proposal.strategy.slices.running",
+      "proposal.strategy.corrections",
+      "proposal.output.answer_format",
+      "proposal.validation.pre_answer",
+      "proposal.validation.rules",
+      "proposal.core.definitions"
+    ],
+    "improve_strategy": [
+      "proposal.strategy.corrections",
+      "proposal.validation.correction"
+    ],
+    "proceed_slice": [
+      "proposal.process.intro",
+      "proposal.strategy.slices.running",
+      "proposal.strategy.corrections",
+      "proposal.output.answer_format",
+      "proposal.validation.pre_answer",
+      "proposal.validation.rules",
+      "proposal.core.definitions"
+    ]
+  }
+}

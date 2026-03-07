@@ -1,0 +1,4 @@
+{
+  "description": "OneDrive path prefix -> SharePoint base URL for shareable links. When source is under OneDrive, markdown gets SharePoint URLs usable by anyone. Add mappings for your OneDrive roots.",
+  "mappings": []
+}

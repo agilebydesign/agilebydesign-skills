@@ -1,0 +1,8 @@
+# Export: markdown → Excel, Word, PDF
+openpyxl>=3.1.0
+pypandoc>=1.12
+
+# For PDF: pypandoc uses pandoc. You also need:
+# - pandoc: https://pandoc.org/installing.html
+# - A PDF engine: pdflatex (default), or weasyprint, or wkhtmltopdf
+#   pip install weasyprint  # then use --pdf-engine weasyprint
