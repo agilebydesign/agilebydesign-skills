@@ -17,7 +17,7 @@ The Agile Context Engine is the core — the engine for building and running ski
 | Decision | Choice | Rationale |
 |----------|--------|-----------|
 | **Root** | `agilebydesign-skill`  q\]=[`s/` | Skills repo root. Engine and skills live under `skills/`. Location: `c:\dev\agilebydesign-skills`. |
-| **Code location** | `skills/abd-shaping/scripts/` | Engine Python source. Other skills have their own scripts. |
+| **Code location** | `skills/abd-story-synthesizer/scripts/` | Engine Python source (self-contained). Other skills have their own scripts. |
 | **Module/class mapping** | One file per module, one class per concept | `scripts/abd_skill.py` → `class AbdSkill`; `scripts/engine.py` → `class AgileContextEngine`. |
 | **Type safety** | **Yes — pydantic** | Use pydantic for config, strategy, and DTOs. Typed function signatures. Catches config/schema errors early. |
 | **Structured data** | **JSON** | Config, strategy metadata, scanner rules, engine state. |
@@ -53,9 +53,9 @@ The Path object represents the file or directory at that path. Use Path for:
 
 | Location | Responsibility |
 |----------|----------------|
-| `skills/abd-shaping/scripts/` | Defines what an abd-skill is: directory layout, content pieces, rules structure, scripts folder, output paths. Engine owns the schema. |
-| `skills/abd-shaping/scripts/abd_skill.py` | `AbdSkill` — receives Engine; `operation_sections`, `instructions`. |
-| `skills/abd-shaping/scripts/engine.py` | `Engine.scaffold_skill(name, path)`, `Engine.build_skill(path)` — creates scaffold and assembles AGENTS.md. |
+| `skills/abd-story-synthesizer/scripts/` | Defines what an abd-skill is: directory layout, content pieces, rules structure, scripts folder, output paths. Engine owns the schema. |
+| `skills/abd-story-synthesizer/scripts/abd_skill.py` | `AbdSkill` — receives Engine; `operation_sections`, `instructions`. |
+| `skills/abd-story-synthesizer/scripts/engine.py` | `Engine.scaffold_skill(name, path)`, `Engine.build_skill(path)` — creates scaffold and assembles AGENTS.md. |
 
 The engine is the **single source of truth** for:
 - What a skill directory contains
@@ -91,7 +91,7 @@ This Markdown is part of the skill content. The AI reads it before invoking Pyth
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  Engine (skills/abd-shaping/scripts/)                         │
+│  Engine (skills/abd-story-synthesizer/scripts/)               │
 │  - Defines skill structure, paths, conventions               │
 │  - scaffold_skill(name, path)                                │
 │  - get_skill_scaffold_spec() → { dirs, files, templates }    │
@@ -113,7 +113,7 @@ This Markdown is part of the skill content. The AI reads it before invoking Pyth
 1. **Common structure for skills is centralized.** Skills do not define the basic structure of a skill, the standard files in a skill, or where the standard things go. They ask the engine. **Skill-specific logic is decentralized** — each skill owns its own domain logic. 
 2. **Engine exposes APIs.** `scaffold_skill()`, `build_skill()`, `get_skill_scaffold_spec()`, etc. Scripts call these.
 3. **Scripts are entry points.** They adapt CLI/env/params into engine calls. They can be run standalone (e.g. `python scripts/scaffold.py --name abd-foo`) or invoked by AI/tooling.
-4. **Engine via path.** Skill scripts add `skills/abd-shaping/scripts/` to `sys.path` and `from engine import build_skill` (or `scaffold_skill`). Scripts never duplicate engine logic.
+4. **Engine via path.** Skill scripts add their own `scripts/` to `sys.path` and `from engine import build_skill` (or `scaffold_skill`). Each skill with an engine is self-contained.
 
 ---
 
@@ -122,7 +122,7 @@ This Markdown is part of the skill content. The AI reads it before invoking Pyth
 ```
 agilebydesign-skills/
 ├── skills/
-│   ├── abd-shaping/        # Engine + shaping skill
+│   ├── abd-story-synthesizer/  # Engine + synthesizer skill (self-contained)
 │   │   ├── scripts/        # Engine Python code
 │   │   │   ├── engine.py   # AgileContextEngine
 │   │   │   ├── abd_skill.py
@@ -145,13 +145,12 @@ agilebydesign-skills/
 │   │   ├── AGENTS.md
 │   │   ├── SKILL.md
 │   │   └── README.md
-│   ├── abd-story-synthesizer/
 │   ├── agile-skill-build/  # Scaffold + build skill
 │   └── ...
 └── README.md
 ```
 
-**Config path:** `skills/abd-shaping/conf/abd-config.json` (or `skills/<skill>/conf/abd-config.json` when skill has its own config). Engine resolves via `engine_root` so config is always found.
+**Config path:** Project `conf/abd-config.json` (e.g. `mm3e/conf/abd-config.json`). Engine resolves via `engine_root` so config is always found.
 
 ---
 

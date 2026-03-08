@@ -164,7 +164,9 @@ def _run_path_mode(source_path: str, memory_name_override: str | None = None) ->
             return
 
     memory_name = memory_name_override or src_root.name
-    memory_root = MEMORY / memory_name
+    # When source is a "context" folder, write chunks into it (not memory/context/)
+    into_source = src_root.name == "context"
+    chunk_base = src_root if into_source else MEMORY / memory_name
 
     md_files = sorted(
         f for f in src_root.rglob("*.md")
@@ -176,12 +178,13 @@ def _run_path_mode(source_path: str, memory_name_override: str | None = None) ->
         print("Run convert_to_markdown.py --memory <path> first.")
         return
 
-    print(f"Source: {src_root}  ({len(md_files)} files) -> memory/{memory_name}/\n")
+    dest = f"context/" if into_source else f"memory/{memory_name}/"
+    print(f"Source: {src_root}  ({len(md_files)} files) -> {dest}\n")
     total = 0
     for i, f in enumerate(md_files, 1):
         conv_root = f.parent
         rel_parent = f.parent.relative_to(src_root)
-        chunk_root = memory_root / rel_parent
+        chunk_root = chunk_base / rel_parent
         rel = f.relative_to(src_root)
         label = str(rel) if rel != Path(".") else f.name
         print(f"  [{i}/{len(md_files)}] {label} ... ", end="", flush=True)

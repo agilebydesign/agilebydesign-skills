@@ -44,7 +44,9 @@ When the user refers to "OneDrive", "OneDrive folder", "slash OneDrive", or simi
 
 - `source/<link_name>` — Junction/symlink to your content folder
 
-Use `link_workspace_source.py` to create links before converting. Set `CONTENT_MEMORY_ROOT` if workspace root differs from cwd.
+Use `link_workspace_source.py` to create links before converting.
+
+**Memory root:** When running the full pipeline, ROOT is derived from the source path (parent of source folder). Memory and index are stored alongside the source project — no hardcoded path. Set `CONTENT_MEMORY_ROOT` only when running `--memory` without a source (chunk+embed only).
 
 ## Pipeline Overview
 
@@ -71,6 +73,7 @@ Run from workspace root. Scripts in `skills/abd-context-to-memory/scripts/`.
 
 **RAG (vector search):**
 - `index_memory.py --path <source_folder>` — full pipeline: convert → chunk → sync SharePoint → embed (or chunk + embed if convert already ran)
+- `index_memory.py` — when `skill_space_path` is set and no folder specified, runs on `{skill_space_path}/context` automatically
 - `index_memory.py --replace` — rebuild entire vector index from all memory
 - `search_memory.py "<query>" [--k 5] [--format text|json]` — semantic search; returns top-k chunks
 

@@ -4,6 +4,17 @@ import os
 import sys
 from pathlib import Path
 
+# Load .env from cwd (memory root when run via index_memory) or skill folder
+try:
+    from dotenv import load_dotenv
+    for p in [Path.cwd(), Path(__file__).resolve().parent.parent]:
+        env_file = p / ".env"
+        if env_file.exists():
+            load_dotenv(env_file)
+            break
+except ImportError:
+    pass
+
 _SCRIPTS = Path(__file__).resolve().parent
 _SKILL_ROOT = _SCRIPTS.parent
 
@@ -38,39 +49,67 @@ def _get_root() -> Path:
     return Path.cwd()
 
 
-def _discover_onedrive_folders() -> list[Path]:
-    """Find OneDrive* folders under user home (personal, work, etc.)."""
-    home = Path.home()
-    if not home.exists():
-        return []
-    found = []
-    for p in home.iterdir():
-        if p.is_dir() and p.name.startswith("OneDrive"):
-            found.append(p)
-    return sorted(found, key=lambda x: x.name)
+def _get_skill_space_path() -> Path | None:
+    """Skill space path (e.g. project root). Priority:
+    1. SKILL_SPACE_PATH env
+    2. Project conf/abd-config.json (cwd or parents) — when running from project root
+    3. skill-config.json
+    4. abd-story-synthesizer conf/abd-config.json (skills repo fallback)
+    """
+    if "SKILL_SPACE_PATH" in os.environ:
+        return _expand_path(os.environ["SKILL_SPACE_PATH"])
+    # Check project config: conf/abd-config.json in cwd or parent dirs (when running from project)
+    for check in [Path.cwd(), Path.cwd().parent]:
+        abd_config = check / "conf" / "abd-config.json"
+        if abd_config.exists():
+            try:
+                with open(abd_config, encoding="utf-8") as f:
+                    cfg = json.load(f)
+                if cfg.get("skill_space_path"):
+                    return _expand_path(str(cfg["skill_space_path"]))
+            except (json.JSONDecodeError, OSError):
+                pass
+    config_path = _SKILL_ROOT / "skill-config.json"
+    if config_path.exists():
+        try:
+            with open(config_path, encoding="utf-8") as f:
+                cfg = json.load(f)
+            if "skill_space_path" in cfg:
+                return _expand_path(str(cfg["skill_space_path"]))
+        except (json.JSONDecodeError, OSError):
+            pass
+    # Fallback: sibling abd-story-synthesizer conf (skills repo)
+    abd_config = _SKILL_ROOT.parent / "abd-story-synthesizer" / "conf" / "abd-config.json"
+    if abd_config.exists():
+        try:
+            with open(abd_config, encoding="utf-8") as f:
+                cfg = json.load(f)
+            if "skill_space_path" in cfg:
+                return _expand_path(str(cfg["skill_space_path"]))
+        except (json.JSONDecodeError, OSError):
+            pass
+    return None
+
+
+def get_default_context_folder() -> Path | None:
+    """When skill_space_path is set and no folder specified, use {skill_space_path}/context.
+
+    Returns None if skill_space_path is not set."""
+    base = _get_skill_space_path()
+    if base is None:
+        return None
+    return base / "context"
 
 
 def ensure_root() -> None:
-    """If ROOT does not exist, discover OneDrive folders and prompt user to choose. Exit if unclear."""
+    """If ROOT does not exist, prompt user to set CONTENT_MEMORY_ROOT. Exit if unclear."""
     if ROOT.exists():
         return
-    # Path not found — help user pick the right OneDrive folder
-    onedrives = _discover_onedrive_folders()
     print("Memory path not found:", ROOT, file=sys.stderr)
-    if onedrives:
-        print("\nMultiple OneDrive folders found. Which one contains your Assets/memory?", file=sys.stderr)
-        for i, p in enumerate(onedrives, 1):
-            assets = p / "Shared Documents" / "Assets"
-            hint = " (has Shared Documents/Assets)" if assets.exists() else ""
-            print(f"  {i}. {p}{hint}", file=sys.stderr)
-        print("\nSet CONTENT_MEMORY_ROOT to your choice, e.g.:", file=sys.stderr)
-        if onedrives:
-            example = onedrives[0] / "Shared Documents" / "Assets"
-            print(f"  set CONTENT_MEMORY_ROOT={example}", file=sys.stderr)
-        print("\nOr edit skill-config.json content_memory_root.", file=sys.stderr)
-    else:
-        print("\nNo OneDrive folders found under", Path.home(), file=sys.stderr)
-        print("Set CONTENT_MEMORY_ROOT to your Assets folder, or edit skill-config.json.", file=sys.stderr)
+    print("\nSet CONTENT_MEMORY_ROOT to the folder where memory should be stored.", file=sys.stderr)
+    print("  Typically: the parent of your context/source folder (e.g. project root).", file=sys.stderr)
+    print("  Example: set CONTENT_MEMORY_ROOT=C:\\dev\\my-project", file=sys.stderr)
+    print("\nWhen running the full pipeline with --path, ROOT is derived from the source path.", file=sys.stderr)
     sys.exit(1)
 
 

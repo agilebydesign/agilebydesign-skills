@@ -34,6 +34,13 @@ python scripts/build.py get_instructions create_strategy
 python scripts/build.py get_instructions run_slice [--strategy path/to/strategy.md]
 ```
 
+**With custom skill space (e.g. mm3e):**
+```bash
+python scripts/build.py get_instructions create_strategy --engine-root C:\dev\agile_bot_demos\mm3e
+python scripts/build.py get_instructions run_slice --engine-root C:\dev\agile_bot_demos\mm3e [--strategy path/to/strategy.md]
+```
+Output goes to `<engine-root>/story-synthesizer/` (strategy.md, runs/, interaction-tree.md, state-model.md). Ensure `conf/abd-config.json` exists at engine-root with `skill_space_path` and `skills` configured.
+
 **Output:** The assembled prompt (sections + strategy doc + context). Rules are filtered by the strategy's in-scope components. **Inject this output into your response and follow it.** Do not skip this step — the Engine assembles the correct sections, strategy, and paths.
 
 ## build.py validate
@@ -49,6 +56,7 @@ Runs rule-based scanners on the interaction tree and state model. Scanners are d
 cd skills/abd-story-synthesizer
 python scripts/build.py validate
 python scripts/build.py validate path/to/interaction-tree.md
+python scripts/build.py validate --engine-root C:\dev\agile_bot_demos\mm3e
 ```
 
 **Output:** Prints violations (rule_id, message, location, snippet). Exit code 0 always — violations are reported so the AI can create a violation report or fix them during a build phase.

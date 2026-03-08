@@ -108,7 +108,11 @@ def main():
         if idx + 1 < len(sys.argv):
             memory_name = sys.argv[idx + 1]
 
-    base = MEMORY / memory_name if memory_name else MEMORY
+    # When memory_name is "context", chunks may be in ROOT/context (written into source)
+    if memory_name == "context" and (ROOT / "context").exists():
+        base = ROOT / "context"
+    else:
+        base = MEMORY / memory_name if memory_name else MEMORY
     if not base.exists():
         print(f"Memory path not found: {base}")
         sys.exit(1)

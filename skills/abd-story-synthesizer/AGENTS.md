@@ -26,6 +26,7 @@ An interaction is a single meaningful exchange between two actors that results i
 
 **Name and statement (all nodes):** Use active verb language. Short name first, longer statement in brackets. Format: `Node: Short Name (Longer statement.)` — e.g. `Step 1: Browse Country for Payment (When **User** browses countries; Then **System** displays...)`. Name is always verb-noun or subject-qualifier; statement is always the longer sentence. **Epic statement:** Describe the scope of the epic (broad flows), not a single interaction. **Story/Step statement:** One initiation and response.
 - **Impacts** — zero or more (see Impact below)
+- **Constraints** — zero or more. Qualitative instructions on how this interaction is shaped. A constraint may be a sentence, a reference to a collection of files, or (most commonly) a reference to a markdown file. Constraints are inherited from high to low (parent → child).
 - **Pre-Condition** — label only. What must be true before. State qualifies through the label. Use `**Concept**` to reference domain concepts; each must exist in the State Model.
 - **Initiation** — Initiating-Actor, Behavior (label), Initiating-State. Initiating-State is any state that qualifies the interaction (e.g. selecting an option of a certain type). Labels reference domain concepts; examples live on the interaction.
 - **Response** — Responding-Actor, Behavior (label), Resulting-State. Resulting-State is the state that results from the interaction. Labels reference domain concepts; examples live on the interaction.
@@ -50,13 +51,13 @@ Any node level can use any field. Exceptions are always possible. The table belo
 
 | Node | Commonly generated | Case By Case Generated |
 |------|--------------------|------------------------|
-| Epic | Initiating-Actor, Responding-Actor, Name (Verb Noun), Impact | Pre-Condition, Initiating-State, Resulting-State, Examples, Failure-Modes|
-| Story | Initiation , Response ; Name (Verb Noun), Examples, Pre-Condition (eg BDD backgroun, Given, And); Failure-Modes, |
+| Epic | Initiating-Actor, Responding-Actor, Name (Verb Noun), Impact, Constraints | Pre-Condition, Initiating-State, Resulting-State, Examples, Failure-Modes|
+| Story | Initiation , Response ; Name (Verb Noun), Examples, Pre-Condition (eg BDD backgroun, Given, And); Failure-Modes, Constraints |
 | Scenario | Initiation, Response, Pre-Condition (eg BDD Given, And); Examples |
-| Step | Initiation, Response,(When, And, Then, And); Examples |
+| Step | Initiation, Response,(When, And, Then, And); Examples; Constraints (when step-specific) |
 
 **Nodes inherit attributes from their parents.** 
-Child nodes inherit state, examples, pre-conditions, actors, and domain concepts. You can show inherited attributes explicitly in square brackets (e.g. `Initiating-Actor: [User]`, `Examples: [Logged In User, Active Session]`) so readers see which values came from the parent. When you use brackets, update them if the parent changes. **Inheritance applies either way** — even when you don't show brackets, the inherited values still apply to the child. See Hierarchy Inheritance for conventions.
+Child nodes inherit state, examples, pre-conditions, actors, domain concepts, and constraints. You can show inherited attributes explicitly in square brackets (e.g. `Initiating-Actor: [User]`, `Examples: [Logged In User, Active Session]`) so readers see which values came from the parent. When you use brackets, update them if the parent changes. **Inheritance applies either way** — even when you don't show brackets, the inherited values still apply to the child. See Hierarchy Inheritance for conventions.
 
 **Inheritance that we often want to call out explicitly through the [inherited thing] notation**
 - **Epic from Epic:** Domain concepts. Lower-level epics (sub-epics) often use the inherited domain concepts from their parent epic.
@@ -100,7 +101,14 @@ Applies to Epic, Story. An interaction may have an impact; a known result can pr
 - **Description**
 - **Evidence-Ref** — optional; links to another impact that is a result
 
+### Constraints
 
+Any node at any level can have one or more **constraints** — qualitative instructions on how this interaction is shaped. A constraint may be:
+- A sentence (inline text)
+- A reference to a collection of files that describe the constraint
+- Most commonly: a reference to a markdown file
+
+Constraints are inherited from high to low (parent → child). Typically appear at epic or story level; may appear at step level when step-specific.
 
 ## State Model
 
@@ -417,17 +425,6 @@ The synthesizer skill helps you take context and synthesize it into **stories** 
 3. **Validate until reasonable** — User reviews; refine until approved. Do not produce an interaction tree until then.
 4. **Save the strategy** to `<skill-space>/story-synthesizer/strategy.md`.
 
-## Slices and Runs
-
-- **Slice** — A collection of context we want to further refine, ranging from no structure to a set of example stories. Each slice defines *what* we are synthesizing. A slice can be scoped to epics only (not down to stories), or it can go all the way to stories, steps, or examples — the slice defines the scope.
-- **Run** — A purposeful loop to perform the next increment of our strategy. Each run defines in how much detail we will be synthesizing, where we stop (e.g., at epics or at stories), tracks the output of the step in the process, is used to track progress, and produces a slice of output. A run can stop at epics and not stories — we have explicit control over the stopping point.
-
-### Run Log
-
-Each run writes a **run log** to its own file. The log records Before, After, and Corrections. See `run-output.md` for structure and format.
-
-This gives better granularity for improving things over time — run logs can be fed into an agent, analyzed for patterns, or used to refine the strategy.
-
 ## Interaction Hierarchy
 
 Interactions exist at **all levels** of the hierarchy. **Hierarchy:** Epic → Story → Scenario → Step. Epics can nest (an epic whose parent is an epic is sometimes called a sub-epic). The hierarchy goes from high-level epic (coarse interaction) down through nested epics to stories, and below stories to scenarios and steps. Domain concepts are often inherited: sub-epics use inherited concepts from their parent epic; stories very rarely define domain concepts — they inherit from the epic. See `core.md` for inheritance patterns and Initiating-State / Resulting-State.
@@ -454,31 +451,76 @@ An interaction may have an **impact**. Impacts apply at any level of the hierarc
 <!-- section: story_synthesizer.strategy.criteria -->
 ### 1 - Comprehensiveness Criteria
 
-**What are we synthesizing context into?** Be specific about the typical criteria for each mode:
+**What are we synthesizing context into?** Be specific about the typical criteria for each mode. Criteria must match the node types at each level — see `core.md` and `output/interaction-tree-output.md` for field definitions.
 
-| Mode | What we produce |
-|------|-----------------|
-| **Shaping** | Epics (can nest), Stories. Short names and actor. |
-| **Discovery** | Shaping (or take what was shaped) + domain concepts (`**Concept**`), Pre-Condition, Initiating-State, Resulting-State, Initiation (Behavior, Initiating-Actor), Response (Behavior, Responding-Actor). |
-| **Exploration** | Steps, not grouped into scenarios. No error conditions or edge cases. Straight and linear. |
-| **Walkthrough** | Domain walkthrough on stories. |
-| **Specification** | Examples. Steps grouped into scenarios. Failure conditions. |
+| Mode | Node levels | Fields per node |
+|------|-------------|-----------------|
+| **Shaping** | Epics (can nest), Stories. Stopping point: story. | Epic: Name (verb-noun), Initiating-Actor, Responding-Actor, Constraints. Story: Name (verb-noun), Initiating-Actor, Responding-Actor, Constraints. Short names and actor only. |
+| **Discovery** | Epics, Stories. Same levels as Shaping; stopping point: story. | Epic: Shaping fields + domain concepts (`**Concept**`), Pre-Condition, Initiating-State, Resulting-State, Initiation (Behavior, Initiating-Actor), Response (Behavior, Responding-Actor), Constraints. Story: same. State Model with concepts. |
+| **Exploration** | Steps (below story). | Step: Initiation, Response, Constraints (when step-specific). Steps not grouped into scenarios. No error conditions or edge cases. Straight and linear. |
+| **Walkthrough** | Stories. | Domain walkthrough on stories — no new node fields. |
+| **Specification** | Steps, Scenarios (below story). | Step: Initiation, Response, Examples, Constraints (when step-specific). Steps grouped into scenarios. Failure-Modes (failure conditions). |
+
+**Constraints:** Any node can have one or more constraints (sentence, file reference, or markdown reference). Inherited high to low. Typically at epic or story level; may appear in steps.
+
+**Step format:** When steps are in scope, specify the format for step text:
+- **When/Then** — strict BDD: Initiation as When, Response as Then (e.g. `When **User** browses countries; Then **System** displays list of **Country** options`).
+- **Vanilla steps** — verb-noun: short labels (e.g. `User submits form`, `System validates payment`).
 
 These are artificial distinctions — we can say any of these elements. The strategy must state which mode(s) apply and what is in scope.
 
 ### 2 - Identification Criteria
 
-**How do we identify anything in the model?** Come up with criteria ahead of time for what parts of the context map to what we want to build.
+**How do we identify anything in the model?** Come up with criteria ahead of time for what parts of the context map to what we want to build. State your identification criteria and reasoning so the user can adjust. Include examples of wrong vs right identification.
 
-- **Stories:** How do we find epics vs stories? What distinguishes an epic (including nested epics) from a story?
-- **Steps:** What constitutes a good step? Too many vs too few?
-- **Examples:** How do we identify examples from the steps and the state?
-- **Domain objects and relationships:** How do we identify concepts, their properties, and their relationships?
+#### Epics vs Stories
 
-State your identification criteria and reasoning so the user can adjust. Include examples of wrong vs right identification.
+An **epic** groups related stories; a **story** is the smallest independently deliverable unit of value. Identify separate stories when any of these differ:
 
-**Example (wrong):** Treating "User logs in" and "User logs out" as one story because they share the same actor.
-**Example (correct):** Separate stories — different initiation, different resulting state, different failure modes.
+| Discriminator | Meaning | Example |
+|---------------|---------|---------|
+| **Data structure of the concept** | The domain concept has different attributes, lifecycle, or relationships. | "Configure Physical Product" vs "Configure Digital Product" — different attributes (shipping, weight vs download, license). "Drive Car" vs "Drive Bicycle" vs "Ride Motorcycle" — different operational structure (engine, gears, fuel vs pedals, chain vs throttle, balance). |
+| **Different business rules** | The logic, validation, or constraints differ. | "Validate payment legality in U.S." vs "Validate payment legality in Canada" — same outcome (legal payment) but rules, regulations, and laws differ so much by jurisdiction that separate stories are needed. |
+| **Different underlying workflow** | The sequence of actions, approvals, or state transitions differs. | "Submit for approval" vs "Auto-approve under threshold" — different workflow paths. |
+| **Different channels** | The touchpoint or interface differs (web, mobile, API, batch, etc.). Identify when channel affects behavior or constraints, or when built at different times or by different teams. | "Checkout via web" vs "Checkout via mobile app" — identify if channel affects behavior or constraints, or if web and mobile are delivered in different increments or by separate teams. |
+| **Different systems / crossing boundaries** | The interaction crosses a system boundary or involves a different backend. | "Sync inventory from warehouse" vs "Update local stock" — one crosses systems, one is local. |
+| **Different resulting state** | The outcome or state change is distinct. | "Successfully process payment" vs "Forward payment to manual intervention" — same initiation (process payment) but the logic differs so much by outcome that separate stories are needed. |
+| **Different user roles** | Different actors or authorization levels change the interaction. | "Manager performs transaction" vs "Executive performs transaction" — same transaction type, but Manager requires approval while Executive does not; the role changes the flow. |
+| **Different failure modes** | The ways the interaction can fail are distinct. | "Submit claim — rejected for missing docs" vs "Submit claim — rejected for policy exclusion" — same initiation, but failure handling differs so much (upload flow vs no remediation) that separate stories are needed. |
+| **Expand distinct outcomes** | Same initiation, but resulting state and logic differ so much that one story would be too coarse. | "Successfully process payment" and "Forward payment to manual intervention" from "process payment." |
+
+#### Steps
+
+A **step** is one atomic initiation and response. Identify separate steps when:
+
+| Discriminator | Meaning | Example |
+|---------------|---------|---------|
+| **Explicit action-reaction** | One discrete event — a single initiation and its response. | One step = one user action + one system response. Not "User enters details and submits" when validation and submission are separate events. |
+| **Actor or response changes** | The initiating or responding actor changes, or a different user action or system response occurs. | **Wrong:** One step "User enters details and submits" when validation and submission are separate system responses. **Correct:** Step 1: "User enters details" (Then system validates). Step 2: "User submits" (Then system confirms). |
+| **Enumerate all permutations** | List all validation paths, calculation branches, and edge cases. Cover happy path, error path, and boundary conditions. | **Right:** When valid rank → calculates modifier; When invalid rank → shows error; When boundary rank → handles edge case. **Wrong:** Only "When user enters rank → system saves" (missing validation error, boundary). |
+
+
+#### Scenarios
+
+A **scenario** groups steps that share a path through the story. Split scenarios when:
+- Pre-conditions differ (e.g. new user vs returning user)
+- Success vs failure paths
+- Different branches of the same workflow
+
+#### Domain Concepts
+
+Concepts are the things that hold state and get operated on. Identify concepts when:
+- Different lifecycle (e.g. Draft vs Submitted Order)
+- Different ownership or responsibility
+- Different persistence or scope
+- Different properties or operations
+
+#### Examples
+
+Examples are concrete state tables that illustrate a concept. Identify from:
+- Boundary values (min, max, empty)
+- Distinct scenarios (success, invalid, not-available)
+- Representative combinations from the steps and state
 
 ### 3 - Traversal Order (Slices)
 
@@ -495,18 +537,6 @@ The order in which you work through slices is **not** necessarily epic-by-epic. 
 Favour slicing vertically, often by a common theme or category of complexity. Consider required-state dependencies (creators before consumers), where complexity is concentrated, and what makes a coherent slice for review.
 
 <!-- section: story_synthesizer.strategy.slices.running -->
-## Running Slices
-
-1. **Run the first slice** — Produce output for Slice 1 according to the run's stopping point (e.g., 4–7 stories if stopping at stories; epics and sub-epics only if stopping at sub-epics). Write the run log. User reviews.
-2. **Corrections → run log** — When a mistake is found, add a **DO** or **DO NOT** to the **run log** (the run's Corrections section). Each correction must include:
-   - The **DO** or **DO NOT** rule
-   - **Example (wrong):** What was done incorrectly
-   - **Example (correct):** What it should be after the fix
-   - If it is the second (or later) time failing on the same guidance, add an extra example to the existing DO/DO NOT block
-   - Re-run the slice; update the run log with the new Before/After and any additional corrections; repeat until the user approves
-3. **Next slice** — Proceed to the next slice. Same pattern: produce → review → corrections to run log → re-run until approved.
-4. **Slice ordering** — At any point, you may change the slice order; update the strategy and continue.
-5. **Progressive expansion** — Slice size may increase as the user prefers.
 
 <!-- section: story_synthesizer.strategy.corrections -->
 ## Corrections Format
@@ -542,6 +572,8 @@ When analyzing **existing content**, review and follow the strategy.
 
 Format specification reverse-engineered from the Complete Example in `core.md`. See that example for a full reference.
 
+**Constraints:** Any node can have a `Constraints:` collection — qualitative instructions on how the interaction is shaped. Each constraint may be a sentence, a file path, or (most commonly) a markdown reference. Inherited high to low. Typically at epic or story level; may appear in steps.
+
 ---
 
 # Epics and Stories View (Hierarchy)
@@ -553,12 +585,14 @@ The tree view: Epic → Epic/Story children. Each node shows name, actors, and i
 - Heading: `# Epic: <name using **Domain Concepts**> (<statement>)`
 - `- Initiating-Actor:` value
 - `- Responding-Actor:` value
+- `- Constraints:` collection (sentence, file path, or markdown reference; inherited high to low)
 - `- Pre-Condition:` full label (Given/And)
 - `- Examples:` state table block (see Example Block Format below)
 
 ## Epic (not filled out — inherits only)
 
 - Heading: `## Epic: <name using **Domain Concepts**> (<statement>)`
+- `- Constraints:` [inherited] or own collection
 - `- Pre-Condition:` [full inherited label]
 - `- Examples:` [list of inherited state table names]
 - `- Initiating-Actor:` [User] (or other actor)
@@ -578,6 +612,7 @@ The tree view: Epic → Epic/Story children. Each node shows name, actors, and i
 ### Story (not filled out)
 
 - Heading: `#### Story:` + **Name**
+- `- Constraints:` [inherited] or own collection
 - `- Pre-Condition:` [inherited]
 - `- Examples:` [inherited table names]
 - `- Initiating-Actor:` [inherited]
@@ -592,6 +627,7 @@ When a story is expanded: Scenarios, Steps, and per-step Initiation/Response/Exa
 ## Step (no Examples)
 
 - `- Step N: <name using **Domain Concepts**> (When/Then <statement>)`
+- `- Constraints:` [inherited] or own (when step-specific)
 - `- Initiation:` [inherited], Behavior
 - `- Response:` [inherited], Behavior
 
@@ -699,10 +735,33 @@ Run logs are used to track progress, feed into agents, analyze patterns, or refi
 
 # Validation Pass
 
+<!-- section: story_synthesizer.validation.scope_run -->
+## Scope: Validate Run
+
+Validate **only the output of the current run**. Ignore previous work. Use when the user says "validate our run" or "check what we just did."
+
+**Required:** Run `python scripts/build.py validate` (or `validate <path>`) to execute rule scanners. Report any violations. **Fix them before marking the run complete** — this is part of the build phase.
+
+<!-- section: story_synthesizer.validation.scope_slice -->
+## Scope: Validate Slice
+
+Validate **everything in the slice** — all accumulated output for that slice. Use when the user says "validate the slice" or "validate slice 1."
+
+**Required:** Run `python scripts/build.py validate` (or `validate <path>`) to execute rule scanners. Report any violations. **Fix them before marking the run complete** — this is part of the build phase.
+
+<!-- section: story_synthesizer.validation.explicit_validate -->
+## Explicit Validate (User Request Only)
+
+When the user **explicitly asks to validate** (e.g. "validate", "run validation", "check the output") **outside a build phase** — do **not** fix violations. Run validate, report violations, and leave with the reviewer. Do not edit files in front of the user unless you are in a build phase (run_slice, validate_run, validate_slice).
+
 <!-- section: story_synthesizer.validation.checklist -->
 ## Validation Checklist
 
 After generating interactions and concepts, verify against the output format in `output/interaction-tree-output.md` and `output/state-model-output.md`.
+
+**Run scanners:** Execute `python scripts/build.py validate` (or `validate <path>`) to run rule-based scanners on the interaction tree and state model. Scanners use regex and native Python only (or grammar/AST when available). When in a build phase (run_slice, validate_run, validate_slice), fix any reported violations before considering the run complete. When the user explicitly asks to validate outside a build phase, report violations only — do not fix.
+
+**Strategy alignment:** Check that nodes include the fields specified by the strategy's **Comprehensiveness Criteria** for the current mode (Shaping, Discovery, Exploration, Walkthrough, Specification). The strategy states which mode(s) apply and what is in scope — e.g. Discovery expects Pre-Condition, Initiating-State, Resulting-State, Initiation, Response; Specification expects Examples, scenarios, failure conditions. Do not require fields that are out of scope for the run.
 
 ---
 
@@ -784,22 +843,68 @@ If failing on the same guidance again, add an extra example to the existing DO/D
 
 AI guidance for calling abd-story-synthesizer scripts.
 
+## Two-phase flow
+
+1. **Create strategy** — Analyze source, propose Epic/Story breakdown and **slices**, save to `strategy.md`. Do not produce output until approved.
+2. **Perform runs** — Each run produces output for a slice. Runs iterate (user reviews → corrections to run log → re-run) until approved. Then next slice.
+
+## Strategy passed into API
+
+The strategy is **passed into the API** (not just embedded in markdown). The strategy declares a **collection of components** to render: `epic`, `story`, `step`, `scenario`, `examples`, `domain_concept`. The engine uses those components to filter rules — only rules tagged for in-scope components are included. See `content/rules-tagging-proposal.md` for component-based filtering.
+
+**Bespoke strategies:** A custom strategy can mix components (e.g. discovery + mapping to stories + domain concepts + examples at sub-epic level). Examples can be scoped at different levels — the strategy defines where.
+
 ## build.py get_instructions
 
-Gets the assembled prompt for an operation from the Engine. **Call this before producing any shaping output.**
+Gets the assembled prompt for an operation from the Engine. **Call this before producing any shaping output.** The strategy (path or content) is passed in; the engine parses it for components and filters rules accordingly.
 
-**When to call:** When the user requests:
-- `generate_slice` — "do slice 1", "generate the first slice", "proceed with slice 1", etc.
-- `create_strategy` — "create the strategy", "analyze and propose breakdown", etc.
-- `improve_strategy` — "improve the strategy based on feedback", etc.
+**When to call:**
+
+| Operation | User says | Notes |
+|-----------|-----------|-------|
+| `create_strategy` | "create the strategy", "analyze and propose breakdown", "propose slices" | Produces strategy with slices. No output until approved. |
+| `run_slice` | "do slice 1", "run slice 2", "proceed with slice 1", "re-run slice 1" | Performs a run on a slice. Strategy passed in; components drive rule filtering. Use `generate_slice` if that alias is configured. |
+| `validate_run` | "validate our run", "check what we just did" | Validate only the output of the current run. Ignores previous work. |
+| `validate_slice` | "validate the slice", "validate slice 1", "check the slice" | Validate everything in the slice — all accumulated output for that slice. |
+| `improve_strategy` | "improve the strategy based on feedback" | Refines strategy before runs. |
 
 **Usage:**
 ```bash
 cd skills/abd-story-synthesizer
-python scripts/build.py get_instructions generate_slice
+python scripts/build.py get_instructions create_strategy
+python scripts/build.py get_instructions run_slice [--strategy path/to/strategy.md]
 ```
 
-**Output:** The assembled prompt (sections + strategy doc + context). **Inject this output into your response and follow it.** Do not skip this step — the Engine assembles the correct sections, strategy, and paths.
+**With custom skill space (e.g. mm3e):**
+```bash
+python scripts/build.py get_instructions create_strategy --engine-root C:\dev\agile_bot_demos\mm3e
+python scripts/build.py get_instructions run_slice --engine-root C:\dev\agile_bot_demos\mm3e [--strategy path/to/strategy.md]
+```
+Output goes to `<engine-root>/story-synthesizer/` (strategy.md, runs/, interaction-tree.md, state-model.md). Ensure `conf/abd-config.json` exists at engine-root with `skill_space_path` and `skills` configured.
+
+**Output:** The assembled prompt (sections + strategy doc + context). Rules are filtered by the strategy's in-scope components. **Inject this output into your response and follow it.** Do not skip this step — the Engine assembles the correct sections, strategy, and paths.
+
+## build.py validate
+
+Runs rule-based scanners on the interaction tree and state model. Scanners are defined in `rules/*.md` (frontmatter `scanner:` field) and implemented in `scripts/scanners/`. Uses regex and native Python only; optional grammar/AST when deps available.
+
+**Scanner mode:** With NLTK (grammar) or mistune (AST) installed, scanner mode is **full**. Without them, the scanner runs automatically in **nerfed** mode (regex-only checks). The validate command prints `Scanner mode: full` or `Scanner mode: nerfed` at startup.
+
+**When to call:** After producing or updating interaction tree or state model output. Use when the user says "validate" or "run validation" or "check the output."
+
+**Usage:**
+```bash
+cd skills/abd-story-synthesizer
+python scripts/build.py validate
+python scripts/build.py validate path/to/interaction-tree.md
+python scripts/build.py validate --engine-root C:\dev\agile_bot_demos\mm3e
+```
+
+**Output:** Prints violations (rule_id, message, location, snippet). Exit code 0 always — violations are reported so the AI can create a violation report or fix them during a build phase.
+
+**AI behavior:**
+- **Build phase** (validate_run, validate_slice as part of run_slice): Report violations and fix them before marking complete.
+- **Explicit validate** (user said "validate" outside a build): Report violations only. Do not fix — leave with reviewer. Do not edit files in front of the user unless in a build phase.
 
 ## build.py
 
@@ -814,5 +919,11 @@ python scripts/build.py
 ```
 
 **Output:** Writes `AGENTS.md` with merged content in order: core, process, strategy, output, validation.
+
+---
+
+## Script change recommendations
+
+See `content/script-changes.md` for full analysis of where scripts need to change.
 
 ---

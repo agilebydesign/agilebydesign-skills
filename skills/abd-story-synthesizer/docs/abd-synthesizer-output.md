@@ -205,7 +205,7 @@ Concepts scoped to the smallest subtree where they are used. Each section lists 
 AgileContextEngine
 - Path engine_path
      Path to the engine itself
-     invariant: agilebydesign-skills/skills/abd-shaping/ (engine root)
+     invariant: agilebydesign-skills/skills/abd-story-synthesizer/ (self-contained)
 - Path config_path
      Path to engine config
      invariant: e.g. conf/abd-config.json; config lives outside any workspace
@@ -511,7 +511,7 @@ Slice
 | Subsequent slices | Future slices |
 
 - **Object-oriented model:** AgileContextEngine → AbdSkill[] (not EngineConfig). Each abd-skill has path, RuleSet (markdown + JSON), hard-coded properties (core, process, strategy, output, validation), assembled agent file, build method.
-- **Abd-skill:** Story-synthesizer skill is `abd-story-synthesizer`. Engine lives in `abd-shaping`. Every abd-skill has content pieces: core, process, strategy, output, validation.
+- **Abd-skill:** Story-synthesizer skill is `abd-story-synthesizer`. Engine is self-contained in the skill. Every abd-skill has content pieces: core, process, strategy, output, validation.
 - **Rule dual representation:** Abd-skill–rule relationship lives in (1) markdown (content files) and (2) JSON (for scanners).
 - **Create Skill:** User creates markdown(s) describing intent; initiates build abd-skill through AI. AI uses agile-skill-build; skill runs script with params to create scaffolding; AI fills content pieces from markdown/prompts/text; if incomplete, user completes; AI reruns build script when done.
 - **Python/JSON hybrid:** Config lists skill paths in JSON; Python (or CLI) loads skills and assembles; instruction injection uses merged content.

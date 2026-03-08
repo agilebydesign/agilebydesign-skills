@@ -13,7 +13,7 @@ Rules should be **tagged to strategy components** rather than tied to a single m
 
 ---
 
-## 1. abd-story-synthesizer rules (current — from abd-shaping)
+## 1. abd-story-synthesizer rules (current — self-contained)
 
 These are the `.md` rules in `rules/`. They are currently shaping-focused.
 
@@ -140,7 +140,7 @@ These apply to domain concepts (State Model).
 
 ## 7. Implementation notes
 
-1. **Rule format:** Synthesizer uses `.md` rules (from abd-shaping). Story bot and CRC bot use `.json` with scanners. For synthesizer: keep `.md` and add YAML frontmatter with `tags: [epic, story, ...]`.
+1. **Rule format:** Synthesizer uses `.md` rules. Story bot and CRC bot use `.json` with scanners. For synthesizer: keep `.md` and add YAML frontmatter with `tags: [epic, story, ...]`.
 
 2. **Filtering:** When assembling instructions for an operation, filter rules by the strategy's in-scope components. Include rules whose tags match any in-scope component. **Quick filtering** for minimal scope: if strategy says "just discovery" (or similar), include only rules tagged for that scope (e.g. `epic`, `story`, `domain_concept`) — no `step`, `scenario`, `examples`. E.g. Shaping → `epic`, `story`; Specification → `step`, `scenario`, `examples`; Discovery only → `epic`, `story`, `domain_concept`.
 

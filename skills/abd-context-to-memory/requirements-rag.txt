@@ -1,7 +1,8 @@
 # RAG (vector search) dependencies for ace-context-to-memory
 # Install: pip install -r requirements-rag.txt
 # Uses OpenAI embeddings (pure Python, no native compilation)
-# Requires: OPENAI_API_KEY environment variable
+# Requires: OPENAI_API_KEY (set in .env or environment)
+python-dotenv>=1.0.0
 openai>=1.0.0
 faiss-cpu>=1.7.0
 numpy>=1.22.0

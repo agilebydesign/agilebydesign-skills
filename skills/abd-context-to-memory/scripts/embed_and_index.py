@@ -76,9 +76,14 @@ def _chunk_text_for_embed(text: str) -> str:
 def collect_chunks(memory_name: str | None) -> list[tuple[Path, str, dict]]:
     """Collect chunk files from memory folder. Returns [(path, text, metadata), ...].
     Chunked files are in memory/<name>/*.md (no chunked subfolder).
+    When memory_name is 'context', also check ROOT/context (chunks written into source folder).
     """
     chunks = []
-    base = MEMORY / memory_name if memory_name else MEMORY
+    # When memory_name is "context", chunks may be in ROOT/context (written into source)
+    if memory_name == "context" and (ROOT / "context").exists():
+        base = ROOT / "context"
+    else:
+        base = MEMORY / memory_name if memory_name else MEMORY
     if not base.exists():
         return chunks
 
@@ -94,9 +99,12 @@ def collect_chunks(memory_name: str | None) -> list[tuple[Path, str, dict]]:
         if len(clean) < 20:
             continue
         try:
-            rel = md_path.relative_to(MEMORY)
+            rel = md_path.relative_to(base)
         except ValueError:
-            rel = md_path
+            try:
+                rel = md_path.relative_to(ROOT)
+            except ValueError:
+                rel = md_path
         meta = {
             "source": source or str(rel),
             "path": str(rel),

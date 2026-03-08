@@ -9,7 +9,7 @@ Analysis of where scripts need to change to support: (1) create strategy (with s
 | **script-invocation.md** | ✅ Updated — two-phase flow, strategy passed into API, component-based rule filtering |
 | **skill-config.json** | Add `run_slice` operation (or alias `generate_slice` → run_slice) |
 | **build.py** | Add `run_slice` to usage; accept `--strategy` path; pass strategy into engine |
-| **instructions.py** (abd-shaping) | Accept strategy (path or parsed); parse components; filter rules by component tags |
+| **instructions.py** (synthesizer) | Accept strategy (path or parsed); parse components; filter rules by component tags |
 | **engine.py** | Accept strategy path/content; expose components for rule filtering |
 | **Post-synthesis review** | Consider adding `review_corrections` operation |
 
@@ -55,7 +55,7 @@ Keep `generate_slice` as alias for backward compatibility if desired.
 
 ---
 
-## 3. instructions.py (abd-shaping)
+## 3. instructions.py (synthesizer)
 
 **Current:** Strategy is read from `engine.strategy_path` and injected as markdown for `generate_slice`, `run_slice`, `improve_strategy`, etc.
 
@@ -128,4 +128,4 @@ Process specifies:
 
 Engine's `strategy_path` already prefers `workspace/story-synthesizer/strategy.md`. Good.
 
-Engine's `_create_output_dirs` creates `slice-1` — that may be legacy from abd-shaping. For story-synthesizer, ensure `runs/` exists.
+Engine's `_create_output_dirs` creates output folders. For story-synthesizer, ensure `runs/` exists.

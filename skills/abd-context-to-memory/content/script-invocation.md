@@ -1,6 +1,8 @@
 # Script Invocation
 
-Run from workspace root. Set `CONTENT_MEMORY_ROOT` if workspace root differs from current directory.
+Run from workspace root.
+
+**Memory root (ROOT):** When running the full pipeline with `--path` or default context, ROOT is derived from the source folder (parent of source path). Memory and index are stored alongside the source project. Set `CONTENT_MEMORY_ROOT` only when running `--memory` without a source (chunk+embed only).
 
 **Dependencies**: `pip install "markitdown[all]"` (convert)
 
@@ -135,14 +137,22 @@ Full pipeline: convert → chunk → sync SharePoint → embed. Builds or update
 
 **Dependencies**: `pip install -r skills/abd-context-to-memory/requirements-rag.txt` (OpenAI API key for embeddings)
 
+**API key**: Set `OPENAI_API_KEY` in a `.env` file in the memory root (e.g. `mm3e-experiment/.env`) or as an environment variable.
+
 **Usage:**
 ```bash
 python scripts/index_memory.py --path <source_folder>
+python scripts/index_memory.py --memory <memory_name>
+python scripts/index_memory.py
 python scripts/index_memory.py --replace
 ```
 
 - `--path`: Source folder (e.g. `source/JBOM` or `Assets/04 Service Offering`). Full pipeline: convert → chunk → sync SharePoint → embed. Or chunk + embed if convert already ran.
+- `--memory`: Memory folder name (chunk + embed only; convert already ran).
+- **No args:** When `skill_space_path` is set (in `skill-config.json` or `abd-story-synthesizer/conf/abd-config.json`), automatically runs on `{skill_space_path}/context`. Use when the user says "add to memory" or "refresh memory" without specifying a folder.
 - `--replace`: Rebuild entire vector index from all memory (drops existing index).
+
+**Memory root:** ROOT is derived from the source path (parent of source folder). When the source folder is named `context`, chunks are written **into** the context folder (e.g. `project/context/`), not into `memory/context/`. Index is stored in `{source_parent}/data/rag/`.
 
 **When to run:** After adding or updating content; before first semantic search.
 
