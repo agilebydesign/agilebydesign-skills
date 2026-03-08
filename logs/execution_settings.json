@@ -1,0 +1,7 @@
+{
+  "story_bot.shape.clarify": "skip",
+  "story_bot.shape.strategy": "skip",
+  "story_bot._behavior.prioritization": "skip",
+  "story_bot._behavior.exploration": "combine_with_next",
+  "story_bot._behavior.shape": "combine_with_next"
+}

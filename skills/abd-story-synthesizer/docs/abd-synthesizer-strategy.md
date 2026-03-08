@@ -166,7 +166,9 @@ We do not try to figure out the rest (Specify, Test, Code, common vs skill-speci
 | **6** | Hierarchy scoping | Scope filtering at epic/sub-epic/story level (renamed from "story scoping") | Set scope; filter by hierarchy | **Filtering.** Scope by hierarchy. |
 | **7** | Panel | Panel ↔ skill contract; **architecture constraint: visualize through panel** | Get it back into the panel; works with existing agilebydesign-skills code | **Integration.** Add constraint: must visualize through panel. |
 | **8** | Impacts + other constraints | Qualitative/quantitative impacts on epics; non-functional constraints | Add impacts, other constraints to data model | **Enrichment.** Impacts on epics; other constraints. |
-
+Code behavior
+ build --> do we need a json file as this scales or for rendering? and render
+Story-Diagram synching
 **Order:** Define → Build. Slice 1 gets the skill working with our hybrid. Slice 2 decides structure (one vs many, slice semantics). Slice 3 implements. Slice 4 explores instruction injection. Slices 5–8 add CLI, hierarchy scoping, panel, impacts.
 
 ---
