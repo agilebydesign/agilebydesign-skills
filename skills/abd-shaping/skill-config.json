@@ -1,0 +1,9 @@
+{
+  "name": "abd-shaping",
+  "version": "1.0.0",
+  "operation_sections": {
+    "create_strategy": ["shaping.process.intro", "shaping.strategy.phase", "shaping.strategy.criteria", "shaping.core.interaction", "shaping.core.state_concept"],
+    "generate_slice": ["shaping.process.intro", "shaping.strategy.slices.running", "shaping.strategy.corrections", "shaping.output.interaction_tree", "shaping.output.state_model", "shaping.validation.checklist", "shaping.validation.rules", "shaping.core.interaction", "shaping.core.state_concept"],
+    "improve_strategy": ["shaping.strategy.corrections", "shaping.validation.checklist"]
+  }
+}
