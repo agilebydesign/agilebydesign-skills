@@ -1,11 +1,23 @@
 """
 Instructions — assembles sectioned content per operation.
 """
+import re
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from engine import AgileContextEngine
+
+
+def _parse_rule_tags(content: str) -> set[str]:
+    """Extract tags from YAML frontmatter. Returns empty set if no tags."""
+    match = re.search(r"^---\s*\ntags:\s*\[([^\]]*)\]", content, re.MULTILINE | re.DOTALL)
+    if match:
+        return {t.strip() for t in match.group(1).split(",") if t.strip()}
+    match = re.search(r"^---\s*\ntags:\s*(.+?)(?:\n|$)", content, re.MULTILINE)
+    if match:
+        return {t.strip() for t in match.group(1).split(",") if t.strip()}
+    return set()
 
 
 class Instructions:
@@ -41,7 +53,7 @@ class Instructions:
         if context:
             parts.insert(0, context + "\n\n---\n\n")
 
-        if operation in ("generate_slice", "improve_strategy", "answer_questions", "proceed_slice") and self.engine.strategy_path:
+        if operation in ("generate_slice", "run_slice", "validate_run", "validate_slice", "improve_strategy", "answer_questions", "proceed_slice") and self.engine.strategy_path:
             if self.engine.strategy_path.exists():
                 strategy_content = self.engine.strategy_path.read_text(encoding="utf-8").strip()
                 parts.append("## Strategy Document\n\n")
@@ -58,21 +70,35 @@ class Instructions:
             rules_dir = self.skill_path / "rules"
             if not rules_dir.exists():
                 return ""
+            components = getattr(self.engine, "components", None) or set()
             parts: list[str] = []
             for md in sorted(rules_dir.glob("*.md")):
-                parts.append(md.read_text(encoding="utf-8").strip())
+                content = md.read_text(encoding="utf-8")
+                if components:
+                    rule_tags = _parse_rule_tags(content)
+                    if rule_tags and not (rule_tags & components):
+                        continue
+                parts.append(content.strip())
                 parts.append("\n\n---\n\n")
             return "".join(parts).rstrip() if parts else ""
 
-        domain = section_id.split(".")[1] if "." in section_id else ""
-        file_map = {
-            "process": "process.md",
-            "strategy": "strategy.md",
-            "output": "output.md",
-            "validation": "validation.md",
-            "core": "core.md",
+        # Section-specific file mapping for split output (e.g. story_synthesizer)
+        section_file_map = {
+            "story_synthesizer.output.interaction_tree": "output/interaction-tree-output.md",
+            "story_synthesizer.output.state_model": "output/state-model-output.md",
         }
-        fname = file_map.get(domain, "process.md")
+        if section_id in section_file_map:
+            fname = section_file_map[section_id]
+        else:
+            domain = section_id.split(".")[1] if "." in section_id else ""
+            file_map = {
+                "process": "process.md",
+                "strategy": "strategy.md",
+                "output": "output.md",
+                "validation": "validation.md",
+                "core": "core.md",
+            }
+            fname = file_map.get(domain, "process.md")
         path = content_dir / fname
         if not path.exists():
             return ""

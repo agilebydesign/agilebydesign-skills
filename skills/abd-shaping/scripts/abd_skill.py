@@ -1,5 +1,5 @@
 """
-AceSkill — skill with Engine injected; operation_sections; instructions property.
+AbdSkill — skill with Engine injected; operation_sections; instructions property.
 """
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -11,8 +11,8 @@ if TYPE_CHECKING:
     from engine import AgileContextEngine
 
 
-class AceSkill:
-    """Ace-skill. Receives Engine at construction."""
+class AbdSkill:
+    """Abd-skill. Receives Engine at construction."""
 
     def __init__(self, path: str | Path, engine: "AgileContextEngine"):
         self.path = Path(path).resolve()

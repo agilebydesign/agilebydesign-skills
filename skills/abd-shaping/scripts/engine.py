@@ -5,8 +5,8 @@ import json
 from pathlib import Path
 from typing import Any
 
-from config import AceConfig
-from ace_skill import AceSkill
+from config import load_abd_config
+from abd_skill import AbdSkill
 
 
 def _default_engine_root() -> Path:
@@ -14,23 +14,43 @@ def _default_engine_root() -> Path:
     return Path(__file__).resolve().parent.parent
 
 
+def _parse_strategy_components(strategy_text: str) -> set[str]:
+    """Parse strategy markdown for Comprehensiveness Criteria modes; return component set."""
+    components: set[str] = set()
+    text = strategy_text.lower()
+    # Mode -> components mapping (from strategy.md Comprehensiveness Criteria)
+    if "shaping" in text:
+        components.update(("epic", "story"))
+    if "discovery" in text:
+        components.update(("epic", "story", "domain_concept"))
+    if "exploration" in text:
+        components.add("step")
+    if "walkthrough" in text:
+        components.add("story")
+    if "specification" in text:
+        components.update(("step", "scenario", "examples"))
+    return components
+
+
 class AgileContextEngine:
     """Engine for building and running skills in their entirety."""
 
-    def __init__(self, engine_root: str | Path | None = None):
+    def __init__(self, engine_root: str | Path | None = None, strategy_path_override: Path | None = None):
         self.engine_root = Path(engine_root).resolve() if engine_root else _default_engine_root()
         self.config_path = self.engine_root / "conf" / "abd-config.json"
         self.workspace_path: Path | None = None
         self.strategy_path: Path | None = None
+        self.strategy_path_override: Path | None = strategy_path_override
+        self.components: set[str] = set()
         self.context_paths: list[Path] = []
-        self.skills: list[AceSkill] = []
+        self.skills: list[AbdSkill] = []
 
     def load(self) -> "AgileContextEngine":
         """Load config; load skills; inject self into each skill."""
         if not self.config_path.exists():
             raise FileNotFoundError(f"Config not found: {self.config_path}")
         data = json.loads(self.config_path.read_text(encoding="utf-8"))
-        config = AceConfig.model_validate(data)
+        config = load_abd_config(data)
         self.context_paths = [
             (self.engine_root / p).resolve() if not Path(p).is_absolute() else Path(p).resolve()
             for p in (config.context_paths or [])
@@ -40,12 +60,13 @@ class AgileContextEngine:
         for rel_path in order:
             skill_path = (self.engine_root / rel_path).resolve()
             if skill_path.exists():
-                skill = AceSkill(skill_path, engine=self)
+                skill = AbdSkill(skill_path, engine=self)
                 skill.rule_set.load()
                 self.skills.append(skill)
         if self.skills:
             self.workspace_path = self._skill_space_from_path(self.skills[0].path)
             self._update_strategy_path()
+            self._parse_components()
             self._create_output_dirs()
         return self
 
@@ -58,7 +79,7 @@ class AgileContextEngine:
             return p.parent.parent
         return p.parent
 
-    def get_skill(self, name: str) -> AceSkill | None:
+    def get_skill(self, name: str) -> AbdSkill | None:
         """Get skill by name (e.g. abd-shaping)."""
         for s in self.skills:
             if s.path.name == name or name in str(s.path):
@@ -89,14 +110,29 @@ class AgileContextEngine:
             output_root = self.workspace_path / output_folder
             output_root.mkdir(parents=True, exist_ok=True)
             (output_root / "slice-1").mkdir(parents=True, exist_ok=True)
+            if "story-synthesizer" in skill_name or skill_name == "abd-story-synthesizer":
+                (output_root / "runs").mkdir(parents=True, exist_ok=True)
 
     def _update_strategy_path(self) -> None:
+        if self.strategy_path_override and self.strategy_path_override.exists():
+            self.strategy_path = self.strategy_path_override
+            return
         if not self.workspace_path:
             self.strategy_path = None
+            return
+        # Prefer strategy path for first loaded skill
+        if self.skills:
+            out_folder = self._output_folder_for_skill(self.skills[0].path.name)
+            preferred = self.workspace_path / out_folder / "strategy.md"
+            if preferred.exists():
+                self.strategy_path = preferred
+                return
+            self.strategy_path = preferred
             return
         candidates = [
             self.workspace_path / "response" / "strategy.md",  # abd-proposal-respond
             self.workspace_path / "shaping" / "strategy.md",
+            self.workspace_path / "story-synthesizer" / "strategy.md",  # abd-story-synthesizer
             self.workspace_path / "docs" / "strategy.md",
         ]
         for p in candidates:
@@ -104,6 +140,30 @@ class AgileContextEngine:
                 self.strategy_path = p
                 return
         self.strategy_path = candidates[0]
+
+    def _parse_components(self) -> None:
+        """Parse strategy for components; used for rule filtering."""
+        path = self.strategy_path_override or self.strategy_path
+        if not path or not path.exists():
+            self.components = set()
+            return
+        try:
+            text = path.read_text(encoding="utf-8")
+            self.components = _parse_strategy_components(text)
+        except OSError:
+            self.components = set()
+
+    def _create_output_dirs(self) -> None:
+        if not self.workspace_path:
+            return
+        for skill in self.skills:
+            skill_name = skill.path.name
+            output_folder = self._output_folder_for_skill(skill_name)
+            output_root = self.workspace_path / output_folder
+            output_root.mkdir(parents=True, exist_ok=True)
+            (output_root / "slice-1").mkdir(parents=True, exist_ok=True)
+            if "story-synthesizer" in skill_name or skill_name == "abd-story-synthesizer":
+                (output_root / "runs").mkdir(parents=True, exist_ok=True)
 
 
 CONTENT_ORDER = [
@@ -165,7 +225,7 @@ def scaffold_skill(name: str, path: str | Path, engine_root: str | Path | None =
 
     skill_md = path / "SKILL.md"
     if not skill_md.exists():
-        skill_md.write_text(f"# {name}\n\nAce-skill. Fill content pieces and run build.\n", encoding="utf-8")
+        skill_md.write_text(f"# {name}\n\nAbd-skill. Fill content pieces and run build.\n", encoding="utf-8")
 
     readme = path / "README.md"
     if not readme.exists():
@@ -188,8 +248,19 @@ def build_skill(skill_path: str | Path, engine_root: str | Path | None = None) -
     content_dir = skill_path / "content"
     output_path = skill_path / "AGENTS.md"
 
+    # Skill-specific content order from skill-config.json overrides default
+    content_order = CONTENT_ORDER
+    skill_config_path = skill_path / "skill-config.json"
+    if skill_config_path.exists():
+        try:
+            data = json.loads(skill_config_path.read_text(encoding="utf-8"))
+            if "content_order" in data:
+                content_order = data["content_order"]
+        except (json.JSONDecodeError, KeyError):
+            pass
+
     parts: list[str] = []
-    for fname in CONTENT_ORDER:
+    for fname in content_order:
         p = content_dir / fname
         if p.exists():
             parts.append(p.read_text(encoding="utf-8").strip())

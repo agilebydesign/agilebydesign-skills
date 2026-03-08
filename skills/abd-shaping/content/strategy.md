@@ -78,8 +78,8 @@ When analyzing **existing content**, review and follow the strategy.
 
 **DO** — Inject the Engine (or context provider) into components that need it. Use properties over getters. Encapsulate over passing parameters — components pull context from injected dependencies instead of receiving it as method arguments.
 
-- **Example (wrong):** `AceSkill.get_instructions_for(operation, context)` — context passed as parameter.
-- **Example (correct):** AceSkill has `Engine engine` (injected); `instructions` property; assembles using `engine.workspace`, `engine.strategy_path` when needed.
+- **Example (wrong):** `AbdSkill.get_instructions_for(operation, context)` — context passed as parameter.
+- **Example (correct):** AbdSkill has `Engine engine` (injected); `instructions` property; assembles using `engine.workspace`, `engine.strategy_path` when needed.
 
 ### Skill Update Workflow
 
