@@ -6,16 +6,16 @@
     "process.md",
     "strategy.md",
     "output/interaction-tree-output.md",
-    "output/state-model-output.md",
+    "output/domain-model-output.md",
     "run-output.md",
     "validation.md"
   ],
   "operation_sections": {
-    "create_strategy": ["story_synthesizer.process.intro", "story_synthesizer.strategy.phase", "story_synthesizer.strategy.criteria", "story_synthesizer.core.interaction", "story_synthesizer.core.state_concept"],
-    "run_slice": ["story_synthesizer.process.intro", "story_synthesizer.strategy.slices.running", "story_synthesizer.strategy.corrections", "story_synthesizer.output.interaction_tree", "story_synthesizer.output.state_model", "story_synthesizer.validation.checklist", "story_synthesizer.validation.rules", "story_synthesizer.core.interaction", "story_synthesizer.core.state_concept"],
-    "generate_slice": ["story_synthesizer.process.intro", "story_synthesizer.strategy.slices.running", "story_synthesizer.strategy.corrections", "story_synthesizer.output.interaction_tree", "story_synthesizer.output.state_model", "story_synthesizer.validation.checklist", "story_synthesizer.validation.rules", "story_synthesizer.core.interaction", "story_synthesizer.core.state_concept"],
+    "create_strategy": ["story_synthesizer.process.intro", "story_synthesizer.strategy.iterative", "story_synthesizer.strategy.criteria", "story_synthesizer.validation.rules", "story_synthesizer.core.interaction", "story_synthesizer.core.domain_concept"],
+    "run_slice": ["story_synthesizer.process.intro", "story_synthesizer.strategy.slices.running", "story_synthesizer.strategy.corrections", "story_synthesizer.output.interaction_tree", "story_synthesizer.output.domain_model", "story_synthesizer.validation.checklist", "story_synthesizer.validation.rules", "story_synthesizer.core.interaction", "story_synthesizer.core.domain_concept"],
+    "generate_slice": ["story_synthesizer.process.intro", "story_synthesizer.strategy.slices.running", "story_synthesizer.strategy.corrections", "story_synthesizer.output.interaction_tree", "story_synthesizer.output.domain_model", "story_synthesizer.validation.checklist", "story_synthesizer.validation.rules", "story_synthesizer.core.interaction", "story_synthesizer.core.domain_concept"],
     "improve_strategy": ["story_synthesizer.strategy.corrections", "story_synthesizer.validation.checklist"],
-    "validate_run": ["story_synthesizer.validation.scope_run", "story_synthesizer.strategy.criteria", "story_synthesizer.output.interaction_tree", "story_synthesizer.output.state_model", "story_synthesizer.validation.checklist", "story_synthesizer.validation.rules"],
-    "validate_slice": ["story_synthesizer.validation.scope_slice", "story_synthesizer.strategy.criteria", "story_synthesizer.output.interaction_tree", "story_synthesizer.output.state_model", "story_synthesizer.validation.checklist", "story_synthesizer.validation.rules"]
+    "validate_run": ["story_synthesizer.validation.scope_run", "story_synthesizer.strategy.criteria", "story_synthesizer.output.interaction_tree", "story_synthesizer.output.domain_model", "story_synthesizer.validation.checklist", "story_synthesizer.validation.rules"],
+    "validate_slice": ["story_synthesizer.validation.scope_slice", "story_synthesizer.strategy.criteria", "story_synthesizer.output.interaction_tree", "story_synthesizer.output.domain_model", "story_synthesizer.validation.checklist", "story_synthesizer.validation.rules"]
   }
 }

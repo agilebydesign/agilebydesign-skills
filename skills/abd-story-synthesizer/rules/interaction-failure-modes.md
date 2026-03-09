@@ -1,7 +1,7 @@
 ---
 title: Failure modes
 impact: MEDIUM
-tags: story, step
+tags: [story, step_edge_case]
 scanner: failure_modes
 ---
 

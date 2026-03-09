@@ -17,7 +17,7 @@ Analysis of where scripts need to change to support: (1) create strategy (with s
 
 ## 0. Strategy passed into API (component-based filtering)
 
-**Design:** The strategy is passed into the API (path or content), not only read from workspace. The strategy declares **components** to render (epic, story, step, scenario, examples, domain_concept). The engine parses the strategy for these components and uses them to filter rules — only rules whose tags intersect with in-scope components are included in the assembled prompt.
+**Design:** The strategy is passed into the API (path or content), not only read from workspace. The strategy declares **components** to render (epic, story, step, scenario, examples, domain). The engine parses the strategy for these components and uses them to filter rules — only rules whose tags intersect with in-scope components are included in the assembled prompt.
 
 **Flow:** `build.py --strategy path` → engine loads strategy → parses components → instructions loads rules → filters by component tags → assembles prompt with strategy markdown + filtered rules.
 
@@ -59,7 +59,7 @@ Keep `generate_slice` as alias for backward compatibility if desired.
 
 **Current:** Strategy is read from `engine.strategy_path` and injected as markdown for `generate_slice`, `run_slice`, `improve_strategy`, etc.
 
-**Change:** Strategy is passed into the API (path or content). Parse strategy for **components** (epic, story, step, scenario, examples, domain_concept). Filter rules by component tags — only include rules whose tags intersect with in-scope components. See `content/rules-tagging-proposal.md`.
+**Change:** Strategy is passed into the API (path or content). Parse strategy for **components** (epic, story, step, scenario, examples, domain). Filter rules by component tags — only include rules whose tags intersect with in-scope components. See `content/rules-tagging-proposal.md`.
 
 ```python
 # Accept strategy from engine (path or parsed structure)
@@ -78,7 +78,7 @@ Keep `generate_slice` as alias for backward compatibility if desired.
 
 **Change:**
 - Accept strategy path or content as input (from build.py `--strategy`). Expose `strategy_path` or `strategy_content` and parsed `components` for rule filtering.
-- Parse strategy for components (Comprehensiveness Criteria modes: epic, story, step, scenario, examples, domain_concept). See `content/strategy.md`.
+- Parse strategy for components (Comprehensiveness Criteria modes: epic, story, step, scenario, examples, domain). See `content/strategy.md`.
 - For abd-story-synthesizer, create `runs/` instead of (or in addition to) `slice-1`. Process says output goes to `story-synthesizer/` and run logs to `story-synthesizer/runs/run-N.md`. The engine should ensure `runs/` exists.
 
 ```python

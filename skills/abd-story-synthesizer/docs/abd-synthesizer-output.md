@@ -119,7 +119,7 @@
           1. User → AI: Requests strategy creation
           2. AI → Engine: Requests context source paths and instructions for create_strategy
           3. Engine → AI: Returns (1) context source paths, (2) assembled instructions (injected into prompt)
-          4. AI: Reads context from returned paths; instructions already in prompt (story_synthesizer.process.intro, shaping.strategy.phase, story_synthesizer.strategy.criteria, story_synthesizer.core.*)
+          4. AI: Reads context from returned paths; instructions already in prompt (story_synthesizer.process.intro, story_synthesizer.strategy.iterative, story_synthesizer.strategy.criteria, story_synthesizer.core.*)
           5. AI: Analyzes source; determines complexity areas in order to determine splitting criteria, slice ordering criteria, depth criteria
           6. AI: Generates initial strategy criteria, scaffold (epic breakdown, assumptions); and slicing order, and validates all sections
           7. AI → User: Presents strategy (content in output path)

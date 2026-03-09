@@ -329,7 +329,7 @@ Instructions are assembled and **injected** into the AI prompt. The AI doesn't "
 | File | Section IDs | Content |
 |------|-------------|---------|
 | **process.md** | `shaping.process.intro`, `shaping.process.post_shaping.review` | Process overview; post-shaping review |
-| **strategy.md** | `shaping.strategy.phase`, `shaping.strategy.criteria`, `shaping.strategy.slices.running`, `shaping.strategy.corrections` | Strategy phase, criteria, running slices, DO/DO NOT |
+| **strategy.md** | `shaping.strategy.iterative`, `shaping.strategy.criteria`, `shaping.strategy.slices.running`, `shaping.strategy.corrections` | Iterative Strategy, criteria, running slices, DO/DO NOT |
 | **output.md** | `shaping.output.interaction_tree`, `shaping.output.state_model` | Interaction Tree and State Model format |
 | **validation.md** | `shaping.validation.checklist`, `shaping.validation.rules` | Validation checklist; DO/DON'T rules |
 | **core.md** | `shaping.core.interaction`, `shaping.core.state_concept` | Interaction and State Concept definitions |
@@ -341,7 +341,7 @@ Instructions are assembled and **injected** into the AI prompt. The AI doesn't "
 
 | Operation | Inject | Story |
 |-----------|--------|-------|
-| **create_strategy** | `shaping.process.intro`, `shaping.strategy.phase`, `shaping.strategy.criteria`, `shaping.core.interaction`, `shaping.core.state_concept` | Create Shaping Strategy |
+| **create_strategy** | `shaping.process.intro`, `shaping.strategy.iterative`, `shaping.strategy.criteria`, `shaping.core.interaction`, `shaping.core.state_concept` | Create Shaping Strategy |
 | **generate_slice** | `shaping.process.intro`, `shaping.strategy.slices.running`, `shaping.strategy.corrections`, `shaping.output.*`, `shaping.validation.checklist`, `shaping.validation.rules`, `shaping.core.*`, **strategy doc** (from path) | Generate Shaping Slices |
 | **improve_strategy** | `shaping.strategy.corrections`, `shaping.validation.checklist` (correction format only) | Improve Strategy |
 | **improve_skill** | `shaping.process.post_shaping.review`, `shaping.strategy.corrections`, **strategy doc** (from path) | Improve Skill |

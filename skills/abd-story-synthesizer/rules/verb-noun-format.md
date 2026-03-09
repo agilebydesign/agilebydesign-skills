@@ -1,7 +1,7 @@
 ---
 title: Verb-noun format
 impact: HIGH
-tags: epic, story, step, scenario
+tags: [shaping, discovery, exploration, specification, interaction_tree, story, step, scenario]
 scanner: verb_noun
 ---
 

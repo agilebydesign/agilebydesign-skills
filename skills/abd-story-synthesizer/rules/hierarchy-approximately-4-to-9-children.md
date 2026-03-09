@@ -1,7 +1,7 @@
 ---
 title: Hierarchy — approximately 4 to 9 children
 impact: MEDIUM
-tags: epic, story, scenario
+tags: [shaping, discovery, interaction_tree, epic, story, scenario]
 ---
 
 ## Hierarchy — approximately 4 to 9 children

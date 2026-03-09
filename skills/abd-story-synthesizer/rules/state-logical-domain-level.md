@@ -1,7 +1,7 @@
 ---
 title: Logical/domain level
 impact: HIGH
-tags: epic, story, step, scenario, examples, domain_concept
+tags: shaping, discovery, exploration, specification
 scanner: logical_domain
 ---
 

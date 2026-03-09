@@ -1,7 +1,7 @@
 ---
 title: Story granularity
 impact: MEDIUM-HIGH
-tags: story
+tags: [shaping, discovery, interaction_tree, epic, story]
 ---
 
 ## Story granularity

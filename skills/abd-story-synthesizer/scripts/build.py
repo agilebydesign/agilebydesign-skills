@@ -12,46 +12,26 @@ if str(_scripts_dir) not in sys.path:
 from engine import AgileContextEngine, build_skill
 
 
-def _parse_engine_root(args: list[str]) -> tuple[Path | None, list[str]]:
-    """Extract --engine-root from args if present. Returns (engine_root or None, remaining_args)."""
-    out: list[str] = []
-    engine_root: Path | None = None
-    i = 0
-    while i < len(args):
-        if args[i] == "--engine-root" and i + 1 < len(args):
-            engine_root = Path(args[i + 1]).resolve()
-            i += 2
-            continue
-        out.append(args[i])
-        i += 1
-    return engine_root, out
-
-
-def _resolve_engine_root(override: Path | None) -> Path:
-    """Resolve engine_root: --engine-root override, or project config, or skill dir."""
-    if override:
-        return override.resolve()
-    project_config = _skill_dir.parent.parent / "conf" / "abd-config.json"
-    if project_config.exists():
-        return _skill_dir.parent.parent
-    return _skill_dir.parent
-
-
-def _run_validate(target_path: Path | None = None, engine_root_override: Path | None = None) -> None:
-    """Run scanners on interaction tree and state model. Exit 1 if violations."""
+def _run_validate(target_path: Path | None = None) -> None:
+    """Run scanners on interaction tree and Domain Model. Exit 1 if violations."""
     from scanners.registry import run_scanners, scanner_mode
 
     mode = scanner_mode()
     print(f"Scanner mode: {mode}")
 
-    engine_root = _resolve_engine_root(engine_root_override)
-    out_dir = engine_root / "story-synthesizer"
+    engine_root = _skill_dir  # Always the synthesizer skill; never changes
+    # Use workspace_path from config (skill_space_path) when set; else engine_root
+    try:
+        engine = AgileContextEngine(engine_root=engine_root).load()
+        out_dir = (engine.workspace_path or engine_root) / "story-synthesizer"
+    except FileNotFoundError:
+        out_dir = engine_root / "story-synthesizer"
     if target_path and target_path.exists():
         paths = [target_path]
     else:
         paths = [
             out_dir / "interaction-tree.md",
-            out_dir / "state-model.md",
+            out_dir / "domain-model.md",
         ]
         paths = [p for p in paths if p.exists()]
 
@@ -78,19 +58,13 @@ def _run_validate(target_path: Path | None = None, engine_root_override: Path | 
         print("Validation passed: no violations")
 
 
-def _get_instructions(operation: str, strategy_path: Path | None = None, engine_root_override: Path | None = None) -> None:
+def _get_instructions(operation: str, strategy_path: Path | None = None) -> None:
     """Load engine, get abd-story-synthesizer skill, print display_content(operation)."""
     if sys.stdout.encoding and sys.stdout.encoding.lower() not in ("utf-8", "utf8"):
         sys.stdout.reconfigure(encoding="utf-8")
-    engine_root = _resolve_engine_root(engine_root_override)
+    engine_root = _skill_dir  # Always the synthesizer skill; never changes
     config_path = _skill_dir / "conf" / "abd-config.json"
-    project_config = engine_root / "conf" / "abd-config.json"
-    if not engine_root_override and not project_config.exists():
-        alt = _skill_dir.parent.parent / "conf" / "abd-config.json"
-        if alt.exists():
-            engine_root = _skill_dir.parent.parent
-            project_config = alt
-    if not project_config.exists() and not config_path.exists():
+    if not config_path.exists():
         _skill_dir.joinpath("conf").mkdir(parents=True, exist_ok=True)
         config_path.write_text(
             json.dumps({
@@ -110,11 +84,10 @@ def _get_instructions(operation: str, strategy_path: Path | None = None, engine_
 
 if __name__ == "__main__":
     args = sys.argv[1:]
-    engine_root_override, args = _parse_engine_root(args)
 
     if args and args[0] == "get_instructions":
         if len(args) < 2:
-            print("Usage: python build.py get_instructions <operation> [--strategy path] [--engine-root path]", file=sys.stderr)
+            print("Usage: python build.py get_instructions <operation> [--strategy path]", file=sys.stderr)
             print("Operations: create_strategy, run_slice, generate_slice, validate_run, validate_slice, improve_strategy", file=sys.stderr)
             sys.exit(1)
         strategy_path = None
@@ -126,12 +99,12 @@ if __name__ == "__main__":
                 rest = rest[:idx] + rest[idx + 2:]
         operation = rest[0] if rest else None
         if not operation:
-            print("Usage: python build.py get_instructions <operation> [--strategy path] [--engine-root path]", file=sys.stderr)
+            print("Usage: python build.py get_instructions <operation> [--strategy path]", file=sys.stderr)
             sys.exit(1)
-        _get_instructions(operation, strategy_path=strategy_path, engine_root_override=engine_root_override)
+        _get_instructions(operation, strategy_path=strategy_path)
     elif args and args[0] == "validate":
         target = Path(args[1]).resolve() if len(args) >= 2 else None
-        _run_validate(target_path=target, engine_root_override=engine_root_override)
+        _run_validate(target_path=target)
     else:
         out = build_skill(_skill_dir, engine_root=_skill_dir)
         print(f"Wrote {out}")

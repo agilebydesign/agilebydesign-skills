@@ -1,7 +1,7 @@
 ---
 title: Supporting actor and Response
 impact: MEDIUM-HIGH
-tags: epic, story, step
+tags: [shaping, discovery, interaction_tree, epic, story, step]
 ---
 
 ## Supporting actor and Response

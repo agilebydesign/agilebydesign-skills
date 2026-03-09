@@ -1,7 +1,7 @@
 ---
 title: Interactions inheritance — actors
 impact: HIGH
-tags: epic, story, step
+tags: [shaping, discovery, exploration, interaction_tree, story, step]
 ---
 
 ## Actors inheritance

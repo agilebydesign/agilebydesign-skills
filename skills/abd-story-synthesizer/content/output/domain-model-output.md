@@ -1,5 +1,5 @@
-<!-- section: story_synthesizer.output.state_model -->
-# State Model Output
+<!-- section: story_synthesizer.output.domain_model -->
+# Domain Model Output
 
 Separate from the Interaction Tree. Concepts referenced via `**Concept**` in labels. Format specification reverse-engineered from the Complete Example in `core.md`. See that example for a full reference.
 
@@ -12,5 +12,5 @@ Concept : <Base Concept if any>
 - <type> operation(<param>, ...)
      <collaborating concepts if any>
 - Interactons Interaction Concept used by (root node only)
-- examples: list of state concept tables in interaction tree using this concept
+- examples: list of domain concept tables in interaction tree using this concept
 ```

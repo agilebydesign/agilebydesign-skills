@@ -49,8 +49,8 @@
 
 | Approach | Primary driver | Files reflect | Section ID pattern | Why it matters |
 |----------|----------------|---------------|--------------------|----------------|
-| **Domain-led** | Organize by domain concept (strategy, process, output, validation, core) | One file per domain: `shaping-strategy.md`, `shaping-process.md`, `shaping-output.md`, `shaping-validation.md`, `shaping-core.md` | `shaping.{domain}.{topic}` — e.g. `shaping.strategy.phase`, `shaping.process.intro` | Domain coherence: everything about strategy in one place; easier to assemble per operation; consistent meaning. |
-| **File-led** | Organize by existing source file | Keep current file layout; section IDs mirror file paths | `shaping.{filename}.{section}` — e.g. `shaping.intro.process`, `shaping.process.strategy_phase` | Minimal file churn: second level = source file; works when files already exist and you don't want to reorganize. |
+| **Domain-led** | Organize by domain concept (strategy, process, output, validation, core) | One file per domain: `shaping-strategy.md`, `shaping-process.md`, `shaping-output.md`, `shaping-validation.md`, `shaping-core.md` | `shaping.{domain}.{topic}` — e.g. `shaping.strategy.iterative`, `shaping.process.intro` | Domain coherence: everything about strategy in one place; easier to assemble per operation; consistent meaning. |
+| **File-led** | Organize by existing source file | Keep current file layout; section IDs mirror file paths | `shaping.{filename}.{section}` — e.g. `shaping.intro.process`, `shaping.process.strategy_iterative` | Minimal file churn: second level = source file; works when files already exist and you don't want to reorganize. |
 
 **Recommended: Domain-led.** Group by domain so `shaping.strategy.*` → `shaping-strategy.md`, `shaping.process.*` → `shaping-process.md`, etc. Easier to pull out later; consistent meaning.
 
@@ -59,7 +59,7 @@
 | File | Section IDs | Content |
 |------|-------------|---------|
 | **shaping-process.md** | `shaping.process.intro`, `shaping.process.post_shaping.review` | Process overview; post-shaping review (promote corrections to skill) |
-| **shaping-strategy.md** | `shaping.strategy.phase`, `shaping.strategy.criteria`, `shaping.strategy.slices.running`, `shaping.strategy.corrections` | Strategy phase, criteria, running slices, DO/DO NOT corrections |
+| **shaping-strategy.md** | `shaping.strategy.iterative`, `shaping.strategy.criteria`, `shaping.strategy.slices.running`, `shaping.strategy.corrections` | Iterative Strategy, criteria, running slices, DO/DO NOT corrections |
 | **shaping-output.md** | `shaping.output.interaction_tree`, `shaping.output.state_model` | Interaction Tree and State Model format |
 | **shaping-validation.md** | `shaping.validation.checklist`, `shaping.validation.rules` | Validation checklist; DO/DON'T rules (from rules/) |
 | **shaping-core.md** | `shaping.core.interaction`, `shaping.core.state_concept` | Interaction and State Concept definitions |
@@ -71,7 +71,7 @@
 |------------|--------|---------|
 | `shaping.process.intro` | shaping-process.md | Process overview, when-user-says, before-you-produce |
 | `shaping.process.post_shaping.review` | shaping-process.md | Post-Shaping Review: review corrections; determine changes to rules/instructions; promote cross-domain rules |
-| `shaping.strategy.phase` | shaping-strategy.md | Strategy Phase (analyze, present, validate, save) |
+| `shaping.strategy.iterative` | shaping-strategy.md | Iterative Strategy (create, update, refine; runs through every run) |
 | `shaping.strategy.criteria` | shaping-strategy.md | Splitting criteria, depth, traversal order |
 | `shaping.strategy.slices.running` | shaping-strategy.md | Run slice, corrections, next slice |
 | `shaping.strategy.corrections` | shaping-strategy.md | Corrections → DO/DO NOT with examples |
@@ -88,7 +88,7 @@
 
 | Operation | Inject | Rationale |
 |-----------|--------|-----------|
-| **create_strategy** | `shaping.process.intro`, `shaping.strategy.phase`, `shaping.strategy.criteria`, `shaping.core.interaction`, `shaping.core.state_concept` | AI needs process overview, strategy phase steps, splitting/depth/traversal criteria, and domain language. No output-structure or validation yet — we're not producing output. |
+| **create_strategy** | `shaping.process.intro`, `shaping.strategy.iterative`, `shaping.strategy.criteria`, `shaping.core.interaction`, `shaping.core.state_concept` | AI needs process overview, iterative strategy, splitting/depth/traversal criteria, and domain language. Creates strategy + tree + state model as you go. |
 | **generate_slice** | `shaping.process.intro`, `shaping.strategy.slices.running`, `shaping.strategy.corrections`, `shaping.output.interaction_tree`, `shaping.output.state_model`, `shaping.validation.checklist`, `shaping.validation.rules`, `shaping.core.interaction`, `shaping.core.state_concept`, **strategy doc** (from path) | AI produces output; needs output format, validation checklist + rules, and the approved strategy. **Corrections top of mind** — when user feedback implies reusable rule, AI adds DO/DO NOT during slice flow; no separate improve_strategy call. |
 | **improve_strategy** | `shaping.strategy.corrections`, `shaping.validation.checklist` (correction format only) | AI adds DO/DO NOT to strategy doc; needs correction format and example requirements. |
 | **improve_skill** | `shaping.process.post_shaping.review`, `shaping.strategy.corrections`, **strategy doc** (from path) | AI reviews strategy corrections; needs correction format and the strategy doc with accumulated DO/DO NOT; determines what to change in skill content/rules; promotes rules that apply across domains. |

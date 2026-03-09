@@ -1,7 +1,7 @@
 ---
 title: Speculation and assumptions
 impact: HIGH
-tags: epic, story, step, scenario, examples, domain_concept
+tags: [interaction_tree, story, step, scenario, example, domain]
 ---
 
 ## Speculation and assumptions

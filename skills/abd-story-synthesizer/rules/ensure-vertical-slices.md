@@ -1,7 +1,7 @@
 ---
 title: Ensure vertical slices
 impact: MEDIUM
-tags: epic
+tags: [shaping, discovery, interaction_tree, epic, story]
 ---
 
 ## Ensure vertical slices

@@ -1,7 +1,7 @@
 ---
 title: Background vs scenario setup
 impact: MEDIUM
-tags: story, scenario, examples
+tags: [story, scenario, example]
 ---
 
 ## Shared setup as Pre-Condition with Examples at story level

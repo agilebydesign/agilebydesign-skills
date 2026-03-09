@@ -212,7 +212,7 @@ Story-Diagram synching
 
 ### Context and Concepts — Derive from Skill Process, Not Current Application
 
-**DO** derive State Concepts and context structure from how the skill/process works (strategy phase → source analysis → slice runs → corrections). Ask: What does the synthesizer process need? What structure supports that?
+**DO** derive State Concepts and context structure from how the skill/process works (iterative strategy → source analysis → slice runs → corrections). Ask: What does the synthesizer process need? What structure supports that?
 
 **DO NOT** mimic agile_bots (or current application) data structures (story-graph.json, clarification.json, workspace test/src/context) unless they align with the skill's process. We are designing the replacement. Skill lives in `agilebydesign-skills/skills/abd-story-synthesizer/`.
 

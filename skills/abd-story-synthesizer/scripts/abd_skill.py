@@ -43,7 +43,7 @@ class AbdSkill:
         default = {
             "create_strategy": [
                 "story_synthesizer.process.intro",
-                "story_synthesizer.strategy.phase",
+                "story_synthesizer.strategy.iterative",
                 "story_synthesizer.strategy.criteria",
                 "story_synthesizer.core.interaction",
                 "story_synthesizer.core.state_concept",

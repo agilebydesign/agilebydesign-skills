@@ -1,7 +1,7 @@
 ---
 title: Small and testable
 impact: HIGH
-tags: story, step
+tags: [shaping, discovery, exploration, story, step]
 ---
 
 ## Small and testable

@@ -1,0 +1,45 @@
+# Rules
+
+Shaping, identification, and validation rules for the story synthesizer. Rules are Markdown files with YAML frontmatter.
+
+## Tag format (required)
+
+Each rule **must** have YAML frontmatter with `tags`:
+
+```yaml
+---
+title: Rule name
+impact: HIGH | MEDIUM | LOW
+tags: [shaping, discovery, interaction_tree, story, domain]
+---
+```
+
+**Tag set:** `shaping`, `discovery`, `exploration`, `walkthrough`, `specification`, `interaction_tree`, `stories`, `domain`, `steps`, `steps_edge_cases`, `examples`, `scenarios`
+
+Use the tags that apply to the rule. Include a rule if any of its tags matches any tag the strategy declares in scope. Tags do everything — strategy can declare by mode, component, or explicitly. See `content/rules-tagging-proposal.md` and strategy section "1 - Comprehensiveness Criteria and Tags in Scope".
+
+**Validation is scoped to what you synthesize.** All runs get validated, but the rules injected depend on tags in scope — domain rules for domain output, step rules for steps, example rules for examples, etc. The engine filters rules by strategy tags so only relevant rules are injected.
+
+## How to get rules injected
+
+**You MUST call the build script** — rules are not in AGENTS.md alone. The Engine assembles sections and injects rules when you run:
+
+```bash
+cd <skill-root>/abd-story-synthesizer
+python scripts/build.py get_instructions create_strategy
+python scripts/build.py get_instructions run_slice [--strategy path/to/strategy.md]
+```
+
+| Operation       | When to use                          | Injects rules |
+|----------------|--------------------------------------|----------------|
+| `create_strategy` | Strategy phase, identification criteria | Yes            |
+| `run_slice`       | Runs, slice output                   | Yes            |
+| `generate_slice`  | Alias for run_slice                   | Yes            |
+| `validate_run`    | Validate current run output           | Yes            |
+| `validate_slice`  | Validate slice output                 | Yes            |
+
+**Do not skip this step.** The AI must run `get_instructions` and inject its output before producing any shaping output. Rules are included automatically when the operation includes `story_synthesizer.validation.rules`.
+
+## Validation scanners
+
+Rules with frontmatter `scanner: <name>` are used by `python scripts/build.py validate` to run rule-based checks on the interaction tree and Domain Model. See `scripts/scanners/` for implementations.

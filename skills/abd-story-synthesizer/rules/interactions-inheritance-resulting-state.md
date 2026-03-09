@@ -1,7 +1,7 @@
 ---
 title: Interactions inheritance — Resulting-State
 impact: HIGH
-tags: epic, story
+tags: [shaping, discovery, interaction_tree, story]
 ---
 
 ## Resulting-State inheritance

@@ -4,15 +4,15 @@
 
 The story synthesizer skill helps you take context and synthesize it into **stories** that explain how a user engages with a solution or system(s) to create value. Stories are about **interaction**, but also about **structure**, **state**, and **rules**.
 
-Your task is to **synthesize** source material into an **Interaction Tree** and **State Model** — meaningful exchanges between actors, plus the domain concepts and state that support them. Outputs: story map, domain model, acceptance criteria, specifications, walkthroughs.
+Your task is to **synthesize** source material into an **Interaction Tree** and **Domain Model** — meaningful exchanges between actors, plus the domain concepts and state that support them. Outputs: story map, domain model, acceptance criteria, specifications, walkthroughs.
 
 **Hierarchy:** Epic → Story → Scenario → Step. Epics can nest (an epic whose parent is an epic is sometimes called a sub-epic). Epics group stories; the story is the backbone — the smallest unit that is both valuable and independently deliverable. Each story has Pre-Condition, Initiation, Response, and statement. Scenarios optionally group steps; steps are atomic interactions.
 
-**State** runs alongside. Pre-Condition is what must be true before; Response implies resulting state. Domain concepts (the things that hold state and get operated on) are referenced via `**Concept**` in labels; each must exist in the State Model. Tree and State Model evolve together — no drift.
+**State** runs alongside. Pre-Condition is what must be true before; Response implies resulting state. Domain concepts (the things that hold state and get operated on) are referenced via `**Concept**` in labels; each must exist in the Domain Model. Tree and Domain Model evolve together — no drift.
 
 ---
 
-All concepts are defined below. See the output folder: `output/interaction-tree-output.md` and `output/state-model-output.md` for format and presentation.
+All concepts are defined below. See the output folder: `output/interaction-tree-output.md` and `output/domain-model-output.md` for format and presentation.
 
 <!-- section: story_synthesizer.core.interaction -->
 ## Interaction Model
@@ -22,12 +22,12 @@ An interaction is a single meaningful exchange between two actors that results i
 ### Interaction
 
 - **Name** — name of the interaction. **Ground in domain:** Every epic, story, scenario, and step must be grounded in domain language — either in the name or in the statement — using `**Concept**` (double stars, capitalization). Domain concepts must appear in `**Concept**` format so the domain conditions are described.
-- **Statement** — one-sentence initiation and response; include state concepts where appropriate.
+- **Statement** — one-sentence initiation and response; include domain concepts where appropriate.
 
 **Name and statement (all nodes):** Use active verb language. Short name first, longer statement in brackets. Format: `Node: Short Name (Longer statement.)` — e.g. `Step 1: Browse Country for Payment (When **User** browses countries; Then **System** displays...)`. Name is always verb-noun or subject-qualifier; statement is always the longer sentence. **Epic statement:** Describe the scope of the epic (broad flows), not a single interaction. **Story/Step statement:** One initiation and response.
 - **Impacts** — zero or more (see Impact below)
 - **Constraints** — zero or more. Qualitative instructions on how this interaction is shaped. A constraint may be a sentence, a reference to a collection of files, or (most commonly) a reference to a markdown file. Constraints are inherited from high to low (parent → child).
-- **Pre-Condition** — label only. What must be true before. State qualifies through the label. Use `**Concept**` to reference domain concepts; each must exist in the State Model.
+- **Pre-Condition** — label only. What must be true before. State qualifies through the label. Use `**Concept**` to reference domain concepts; each must exist in the Domain Model.
 - **Initiation** — Initiating-Actor, Behavior (label), Initiating-State. Initiating-State is any state that qualifies the interaction (e.g. selecting an option of a certain type). Labels reference domain concepts; examples live on the interaction.
 - **Response** — Responding-Actor, Behavior (label), Resulting-State. Resulting-State is the state that results from the interaction. Labels reference domain concepts; examples live on the interaction.
 - **Examples** — collection of tables at the interaction level. One per concept referenced in labels. Pre-Condition, Initiation, and Response reference these through their labels; examples live on the interaction.
@@ -45,6 +45,17 @@ Epic → children (Epics, Stories)
 Story → Scenarios OR Steps
 Scenario → Steps  
 Step --> lowest interaction for now
+
+#### The Story as Backbone
+
+The **story** is the backbone of all the work above and below it. It is the central unit that everything connects to.
+
+- **Above the story:** Epics and sub-epics exist only to **group stories together**. They are organizational structure, not the primary unit of value.
+- **Below the story:** All steps, examples, and scenarios **belong to the story**. The story is the central spoke — everything below it hangs off the story.
+
+**What a story is:** A story is something we can reasonably discuss as a valuable tactical interaction between the user and the system (or between systems). It is something that can be developed in a small amount of time — typically a couple of days for a developer (or a couple of hours for AI :). It is the smallest unit that is both valuable and independently deliverable. It needs to be testable, which means it must have a recognizable behavior that a user or stakeholder would recognize. Not necessarily always user-facing, but at least recognizable as a tangible business state that's changed or logic has been executed here.
+
+**Stopping point:** The story is typically the stopping point **for Shaping and Discovery**. For Exploration, Walkthrough, and Specification, we go below the story (to steps, examples, scenarios). With slices and runs, *we have explicit control on the stopping point*: a run on a slice of a couple of epics can have criteria to only identify other epics and not stories. The stopping point is configurable. See Impact below for the Impact data model (types, status, evidence linking).
 
 **Commonly Generated Fields Vary By Node Type:** 
 Any node level can use any field. Exceptions are always possible. The table below lists what we commonly generate for each node.
@@ -65,9 +76,9 @@ Child nodes inherit state, examples, pre-conditions, actors, domain concepts, an
 - **Scenario from Story:** Almost nothing needs to be explicitly stated.
 - **Step from Story:** Initiating-Actor and Responding-Actor are often used, eg [User] and [System] from the story or higher. Exception: when a step is system-initiated (e.g. "When **System** receives payment type selection"), that step may override Initiating-Actor.
 
-**Domain grounding:** Every epic, story, scenario, and step must be grounded in domain language. This primarily comes from the interactions (e.g., initiation and response) if they have been defined, but if they have not been defined, then it would come from the  the name or  the statement. When When initiation and response have been defined, the name is based on those, but sometimes we don't define these for a node, and just define the name at first. In either case, all of the above need to be grounded using `**Concept**` (double stars on both sides, capitalization). Avoid generic terms; use `**Country**`, `**PaymentType**`, etc., not "country" or "payment type". Concepts must come from the state model here. Concept identified as part of exploring the interaction tree should be added to the state model and vice versa. When we add things to the state model, we should explore which interactions require those and update accordingly.
+**Domain grounding:** Every epic, story, scenario, and step must be grounded in domain language. This primarily comes from the interactions (e.g., initiation and response) if they have been defined, but if they have not been defined, then it would come from the  the name or  the statement. When When initiation and response have been defined, the name is based on those, but sometimes we don't define these for a node, and just define the name at first. In either case, all of the above need to be grounded using `**Concept**` (double stars on both sides, capitalization). Avoid generic terms; use `**Country**`, `**PaymentType**`, etc., not "country" or "payment type". Concepts must come from the Domain Model here. Concept identified as part of exploring the interaction tree should be added to the Domain Model and vice versa. When we add things to the Domain Model, we should explore which interactions require those and update accordingly.
 
-Concepts are placed at the level of the interaction hierarchy where they apply to all descendants. Every `**Concept**` must exist in the State Model — no drift.
+Concepts are placed at the level of the interaction hierarchy where they apply to all descendants. Every `**Concept**` must exist in the Domain Model — no drift.
 
 ### State
 
@@ -92,14 +103,25 @@ Who responds and what they do.
 - **Behavior** — the label. Describes the response. Use Given/When/Then for BDD, or verb-noun as appropriate.
 - **Resulting-State** — the state that results from the interaction. Labels reference domain concepts; examples live on the interaction.
 
+### Step format
+
+When steps are in scope, specify the format for step text:
+
+- **When/Then** — strict BDD: Initiation as When, Response as Then (e.g. `When **User** browses countries; Then **System** displays list of **Country** options`).
+- **Vanilla steps** — verb-noun: short labels (e.g. `User submits form`, `System validates payment`).
+
+These are artificial distinctions — we can say any of these elements. The strategy specifies which mode(s) apply and what is in scope.
+
 ### Impact
 
-Applies to Epic, Story. An interaction may have an impact; a known result can provide evidence for another impact (tie a hypothesis to a result).
+An interaction may have an **impact**. Impacts apply at any level of the hierarchy. A known result can provide evidence for another impact (tie a hypothesis to a result).
 
 - **Type** — user | economic | feasibility
 - **Status** — hypothesis (we don't know yet) | result (measured outcome for an existing system)
 - **Description**
 - **Evidence-Ref** — optional; links to another impact that is a result
+
+**Example:** Epic "User checks out" has impact hypothesis: "Reduces cart abandonment by 15%." Story "Apply discount code" has result: "In pilot, 12% of users who applied a code completed checkout." The result becomes evidence for the hypothesis.
 
 ### Constraints
 
@@ -108,29 +130,31 @@ Any node at any level can have one or more **constraints** — qualitative instr
 - A reference to a collection of files that describe the constraint
 - Most commonly: a reference to a markdown file
 
-Constraints are inherited from high to low (parent → child). Typically appear at epic or story level; may appear at step level when step-specific.
+Constraints are inherited from high to low (parent → child). Typically at epic or story level; may appear in steps.
 
-## State Model
+## Domain Model
 
-The State Model holds **modules** (groupings of tightly related concepts) and **domain concepts** — the things that have state and can be operated on. Concepts are referenced in interactions via `**Concept**` in Pre-Condition, Initiation, Response, and Failure-Modes. Every `**Concept**` must exist in the State Model; concepts must be placed at the right level in the hierarchy. No drift between tree and model. Use source entity data, not aggregated/calculated values.
+The Domain Model holds **modules** (groupings of tightly related concepts) and **domain concepts** — the things that have state and can be operated on. Concepts are referenced in interactions via `**Concept**` in Pre-Condition, Initiation, Response, and Failure-Modes. Every `**Concept**` must exist in the Domain Model; concepts must be placed at the right level in the hierarchy. No drift between tree and model. Use source entity data, not aggregated/calculated values.
 
 ### Module
 
 Grouping of tightly related concepts.
 
 - **name** — module name
-- **concepts** — list of tightly related StateConcepts
+- **concepts** — list of tightly related domain concepts
 
-<!-- section: story_synthesizer.core.state_concept -->
-### State Concept
+<!-- section: story_synthesizer.core.domain_concept -->
+### Domain Concept
 
-A domain concept that holds state and can be operated on. Referenced in interactions via `**Concept**` in labels. Examples live on the interaction.
+A domain concept that holds state and can be operated on. Referenced in interactions via `**Concept**` in labels. Examples live on the interaction. The Domain Model connects what concepts know and do to interactions — concepts participate as callers, receivers, and collaborators; state flows through Pre-Condition, Initiating-State, and Resulting-State.
 
 - **Name**
 - **Module** — optional; grouping of tightly related concepts
 - **Base-Concept** — optional
-- **Properties** — with optional collaborating concepts and invariants
-- **Operations** — with optional collaborating concepts and invariants  ; It should be easy to reverse engineer the interactions in the interaction diagram to at least some level of operations on the state model.
+- **Properties** — with optional collaborating concepts and invariants. Use standard types: String, Number, Boolean, List, Dictionary, UniqueID, Instant. Use `List<T>` or `Dictionary<K,V>` when element types matter.
+- **Operations** — with optional collaborating concepts and invariants. It should be easy to reverse engineer the interactions in the interaction diagram to at least some level of operations on the Domain Model.
+
+**Concept relationships:** When a concept "has" another concept, use composition (strong has-a; part cannot exist without whole) or aggregation (weak has-a; whole has no meaning without multiple instances of the same part — e.g. crowd, flock, mob). Prefer composition/aggregation over inheritance.
 ---
 
 ## Hierarchy Inheritance

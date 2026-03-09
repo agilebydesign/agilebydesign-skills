@@ -1,7 +1,7 @@
 ---
 title: Interactions inheritance — Pre-Condition
 impact: HIGH
-tags: epic, story
+tags: [shaping, discovery, interaction_tree, story]
 ---
 
 ## Pre-Condition inheritance

@@ -11,6 +11,17 @@ metadata:
 
 Shape source material into an **Interaction Tree** and **State Model** — a story map and domain model. Contains rules across Context, Interactions Inheritance, Hierarchy, and State & Interaction categories to guide shaping of requirements into epics, sub-epics, and stories with associated state concepts. See `content/rules-tagging-proposal.md` for tagging by strategy component.
 
+## Config Location (IMPORTANT)
+
+**abd-config.json MUST live in this skill's `conf/` directory, NOT in the skill space (workspace).**
+
+| Location | Contains | Config? |
+|----------|----------|---------|
+| `abd-story-synthesizer/conf/abd-config.json` | Engine config (skills, context_paths, skill_space_path) | **YES** |
+| Skill space (e.g. `mm3e/`) | Content to synthesize (goal.md, context/, docs/) | **NO** — never put abd-config in the skill space |
+
+The skill space is the workspace. Set `skill_space_path` in abd-config.json to point to it.
+
 ## Source Folder Structure
 
 `abd_content/source/` contains content sources. Workspace RFQ folders are linked in for skill access:

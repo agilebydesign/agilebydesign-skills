@@ -1,7 +1,7 @@
 ---
 title: Interactions inheritance — Initiating-State
 impact: MEDIUM-HIGH
-tags: epic, story
+tags: [shaping, discovery, interaction_tree, story]
 ---
 
 ## Initiating-State inheritance

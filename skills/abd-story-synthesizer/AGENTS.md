@@ -4,15 +4,15 @@
 
 The story synthesizer skill helps you take context and synthesize it into **stories** that explain how a user engages with a solution or system(s) to create value. Stories are about **interaction**, but also about **structure**, **state**, and **rules**.
 
-Your task is to **synthesize** source material into an **Interaction Tree** and **State Model** — meaningful exchanges between actors, plus the domain concepts and state that support them. Outputs: story map, domain model, acceptance criteria, specifications, walkthroughs.
+Your task is to **synthesize** source material into an **Interaction Tree** and **Domain Model** — meaningful exchanges between actors, plus the domain concepts and state that support them. Outputs: story map, domain model, acceptance criteria, specifications, walkthroughs.
 
 **Hierarchy:** Epic → Story → Scenario → Step. Epics can nest (an epic whose parent is an epic is sometimes called a sub-epic). Epics group stories; the story is the backbone — the smallest unit that is both valuable and independently deliverable. Each story has Pre-Condition, Initiation, Response, and statement. Scenarios optionally group steps; steps are atomic interactions.
 
-**State** runs alongside. Pre-Condition is what must be true before; Response implies resulting state. Domain concepts (the things that hold state and get operated on) are referenced via `**Concept**` in labels; each must exist in the State Model. Tree and State Model evolve together — no drift.
+**State** runs alongside. Pre-Condition is what must be true before; Response implies resulting state. Domain concepts (the things that hold state and get operated on) are referenced via `**Concept**` in labels; each must exist in the Domain Model. Tree and Domain Model evolve together — no drift.
 
 ---
 
-All concepts are defined below. See the output folder: `output/interaction-tree-output.md` and `output/state-model-output.md` for format and presentation.
+All concepts are defined below. See the output folder: `output/interaction-tree-output.md` and `output/domain-model-output.md` for format and presentation.
 
 <!-- section: story_synthesizer.core.interaction -->
 ## Interaction Model
@@ -22,12 +22,12 @@ An interaction is a single meaningful exchange between two actors that results i
 ### Interaction
 
 - **Name** — name of the interaction. **Ground in domain:** Every epic, story, scenario, and step must be grounded in domain language — either in the name or in the statement — using `**Concept**` (double stars, capitalization). Domain concepts must appear in `**Concept**` format so the domain conditions are described.
-- **Statement** — one-sentence initiation and response; include state concepts where appropriate.
+- **Statement** — one-sentence initiation and response; include domain concepts where appropriate.
 
 **Name and statement (all nodes):** Use active verb language. Short name first, longer statement in brackets. Format: `Node: Short Name (Longer statement.)` — e.g. `Step 1: Browse Country for Payment (When **User** browses countries; Then **System** displays...)`. Name is always verb-noun or subject-qualifier; statement is always the longer sentence. **Epic statement:** Describe the scope of the epic (broad flows), not a single interaction. **Story/Step statement:** One initiation and response.
 - **Impacts** — zero or more (see Impact below)
 - **Constraints** — zero or more. Qualitative instructions on how this interaction is shaped. A constraint may be a sentence, a reference to a collection of files, or (most commonly) a reference to a markdown file. Constraints are inherited from high to low (parent → child).
-- **Pre-Condition** — label only. What must be true before. State qualifies through the label. Use `**Concept**` to reference domain concepts; each must exist in the State Model.
+- **Pre-Condition** — label only. What must be true before. State qualifies through the label. Use `**Concept**` to reference domain concepts; each must exist in the Domain Model.
 - **Initiation** — Initiating-Actor, Behavior (label), Initiating-State. Initiating-State is any state that qualifies the interaction (e.g. selecting an option of a certain type). Labels reference domain concepts; examples live on the interaction.
 - **Response** — Responding-Actor, Behavior (label), Resulting-State. Resulting-State is the state that results from the interaction. Labels reference domain concepts; examples live on the interaction.
 - **Examples** — collection of tables at the interaction level. One per concept referenced in labels. Pre-Condition, Initiation, and Response reference these through their labels; examples live on the interaction.
@@ -65,9 +65,9 @@ Child nodes inherit state, examples, pre-conditions, actors, domain concepts, an
 - **Scenario from Story:** Almost nothing needs to be explicitly stated.
 - **Step from Story:** Initiating-Actor and Responding-Actor are often used, eg [User] and [System] from the story or higher. Exception: when a step is system-initiated (e.g. "When **System** receives payment type selection"), that step may override Initiating-Actor.
 
-**Domain grounding:** Every epic, story, scenario, and step must be grounded in domain language. This primarily comes from the interactions (e.g., initiation and response) if they have been defined, but if they have not been defined, then it would come from the  the name or  the statement. When When initiation and response have been defined, the name is based on those, but sometimes we don't define these for a node, and just define the name at first. In either case, all of the above need to be grounded using `**Concept**` (double stars on both sides, capitalization). Avoid generic terms; use `**Country**`, `**PaymentType**`, etc., not "country" or "payment type". Concepts must come from the state model here. Concept identified as part of exploring the interaction tree should be added to the state model and vice versa. When we add things to the state model, we should explore which interactions require those and update accordingly.
+**Domain grounding:** Every epic, story, scenario, and step must be grounded in domain language. This primarily comes from the interactions (e.g., initiation and response) if they have been defined, but if they have not been defined, then it would come from the  the name or  the statement. When When initiation and response have been defined, the name is based on those, but sometimes we don't define these for a node, and just define the name at first. In either case, all of the above need to be grounded using `**Concept**` (double stars on both sides, capitalization). Avoid generic terms; use `**Country**`, `**PaymentType**`, etc., not "country" or "payment type". Concepts must come from the Domain Model here. Concept identified as part of exploring the interaction tree should be added to the Domain Model and vice versa. When we add things to the Domain Model, we should explore which interactions require those and update accordingly.
 
-Concepts are placed at the level of the interaction hierarchy where they apply to all descendants. Every `**Concept**` must exist in the State Model — no drift.
+Concepts are placed at the level of the interaction hierarchy where they apply to all descendants. Every `**Concept**` must exist in the Domain Model — no drift.
 
 ### State
 
@@ -110,19 +110,19 @@ Any node at any level can have one or more **constraints** — qualitative instr
 
 Constraints are inherited from high to low (parent → child). Typically appear at epic or story level; may appear at step level when step-specific.
 
-## State Model
+## Domain Model
 
-The State Model holds **modules** (groupings of tightly related concepts) and **domain concepts** — the things that have state and can be operated on. Concepts are referenced in interactions via `**Concept**` in Pre-Condition, Initiation, Response, and Failure-Modes. Every `**Concept**` must exist in the State Model; concepts must be placed at the right level in the hierarchy. No drift between tree and model. Use source entity data, not aggregated/calculated values.
+The Domain Model holds **modules** (groupings of tightly related concepts) and **domain concepts** — the things that have state and can be operated on. Concepts are referenced in interactions via `**Concept**` in Pre-Condition, Initiation, Response, and Failure-Modes. Every `**Concept**` must exist in the Domain Model; concepts must be placed at the right level in the hierarchy. No drift between tree and model. Use source entity data, not aggregated/calculated values.
 
 ### Module
 
 Grouping of tightly related concepts.
 
 - **name** — module name
-- **concepts** — list of tightly related StateConcepts
+- **concepts** — list of tightly related domain concepts
 
-<!-- section: story_synthesizer.core.state_concept -->
-### State Concept
+<!-- section: story_synthesizer.core.domain_concept -->
+### Domain Concept
 
 A domain concept that holds state and can be operated on. Referenced in interactions via `**Concept**` in labels. Examples live on the interaction.
 
@@ -130,7 +130,7 @@ A domain concept that holds state and can be operated on. Referenced in interact
 - **Module** — optional; grouping of tightly related concepts
 - **Base-Concept** — optional
 - **Properties** — with optional collaborating concepts and invariants
-- **Operations** — with optional collaborating concepts and invariants  ; It should be easy to reverse engineer the interactions in the interaction diagram to at least some level of operations on the state model.
+- **Operations** — with optional collaborating concepts and invariants  ; It should be easy to reverse engineer the interactions in the interaction diagram to at least some level of operations on the Domain Model.
 ---
 
 ## Hierarchy Inheritance
@@ -354,12 +354,12 @@ A typical reference hierarchy for making a country-specific payment (initiate, m
 # Process Overview
 
 <!-- section: story_synthesizer.process.intro -->
-Your task is to **synthesize** context into an **Interaction Tree** and **State Model** — a hierarchical structure of meaningful exchanges between actors, plus the domain concepts and state that support them. In Agile terminology, this translates to a **story map** and **domain model**. The hierarchy goes from larger, coarser-grain business outcomes (*Epics*) down to **Stories** — tangible user and system interactions. Synthesis can stop at the story level; details are flushed out later.
+Your task is to **synthesize** context into an **Interaction Tree** and **Domain Model** — a hierarchical structure of meaningful exchanges between actors, plus the domain concepts and state that support them. In Agile terminology, this translates to a **story map** and **domain model**. The hierarchy goes from larger, coarser-grain business outcomes (*Epics*) down to **Stories** — tangible user and system interactions. Synthesis can stop at the story level; details are flushed out later.
 
 Each rule has a DO with example and a DO NOT with example.
 
 **You MUST follow this process.**
-When the user says "create the story map," "proceed," "build it," "generate the output," or similar, you **MUST begin with the Strategy Phase**. Do not skip to producing the full output.
+When the user says "create the story map," "proceed," "build it," "build a strategy," "generate the output," or similar, you **MUST** call `python scripts/build.py get_instructions <operation>` (e.g. `create_strategy` for strategy phase, `run_slice` for runs) and inject its output before producing any shaping output. Do not rely on AGENTS.md alone.
 
 1. **Strategy Phase first** — Analyze the source, propose Epic/Story breakdown and slice order, save the strategy. Do not produce an interaction tree until the strategy is approved.
 2. **Work in runs** — Each run produces output for a slice (4–7 stories typical). A run may require **multiple iterations**: user reviews, finds mistakes, you add corrections to the **run log**, re-run. Repeat until the user approves. Only then proceed to the next run.
@@ -369,7 +369,7 @@ When the user says "create the story map," "proceed," "build it," "generate the 
 ## Output Paths (default)
 
 - **Strategy:** `<skill-space>/story-synthesizer/strategy.md`
-- **Output:** `<skill-space>/story-synthesizer/` — Interaction Tree and State Model (format in `output/interaction-tree-output.md` and `output/state-model-output.md`)
+- **Output:** `<skill-space>/story-synthesizer/` — Interaction Tree and Domain Model (format in `output/interaction-tree-output.md` and `output/domain-model-output.md`)
 - **Runs:** `<skill-space>/story-synthesizer/runs/` — run logs (one file per run, e.g. `run-1.md`)
 
 **Runs** — Each run is a purposeful loop: it defines how much detail to synthesize, where to stop (epics vs stories vs steps), and produces output. We track runs, not slices. Each run writes a run log. **Corrections go to the run log** (the run's Corrections section), not to the strategy. See `run-output.md` for format;
@@ -449,14 +449,14 @@ An interaction may have an **impact**. Impacts apply at any level of the hierarc
 ## Strategy Criteria
 
 <!-- section: story_synthesizer.strategy.criteria -->
-### 1 - Comprehensiveness Criteria
+### 1 - Comprehensiveness Criteria and Tags in Scope
 
 **What are we synthesizing context into?** Be specific about the typical criteria for each mode. Criteria must match the node types at each level — see `core.md` and `output/interaction-tree-output.md` for field definitions.
 
 | Mode | Node levels | Fields per node |
 |------|-------------|-----------------|
-| **Shaping** | Epics (can nest), Stories. Stopping point: story. | Epic: Name (verb-noun), Initiating-Actor, Responding-Actor, Constraints. Story: Name (verb-noun), Initiating-Actor, Responding-Actor, Constraints. Short names and actor only. |
-| **Discovery** | Epics, Stories. Same levels as Shaping; stopping point: story. | Epic: Shaping fields + domain concepts (`**Concept**`), Pre-Condition, Initiating-State, Resulting-State, Initiation (Behavior, Initiating-Actor), Response (Behavior, Responding-Actor), Constraints. Story: same. State Model with concepts. |
+| **Shaping** | Epics (can nest), Stories. Stopping point: story. | Epic: Name (verb-noun), Initiating-Actor, Responding-Actor, Constraints. Story: same. Short names and actor only. **When identifying patterns and slices:** use Discovery-level detail. |
+| **Discovery** | Epics, Stories. Same levels as Shaping; stopping point: story. | Epic: Shaping fields + domain concepts (`**Concept**`), Pre-Condition, Initiating-State, Resulting-State, Initiation (Behavior, Initiating-Actor), Response (Behavior, Responding-Actor), Constraints. Story: same. Domain Model with concepts. |
 | **Exploration** | Steps (below story). | Step: Initiation, Response, Constraints (when step-specific). Steps not grouped into scenarios. No error conditions or edge cases. Straight and linear. |
 | **Walkthrough** | Stories. | Domain walkthrough on stories — no new node fields. |
 | **Specification** | Steps, Scenarios (below story). | Step: Initiation, Response, Examples, Constraints (when step-specific). Steps grouped into scenarios. Failure-Modes (failure conditions). |
@@ -469,7 +469,9 @@ An interaction may have an **impact**. Impacts apply at any level of the hierarc
 
 These are artificial distinctions — we can say any of these elements. The strategy must state which mode(s) apply and what is in scope.
 
-### 2 - Identification Criteria
+**How rules align:** Tags map this comprehensiveness to rule filtering. Strategy declares tags in scope; include a rule if any of its tags matches. Tags: `shaping`, `discovery`, `exploration`, `walkthrough`, `specification`, `interaction_tree`, `story`, `domain`, `step`, `step_edge_case`, `example`, `scenario`. Default when no strategy: `tags: [shaping, discovery, interaction_tree, story, domain]`.
+
+### 1 - Identification Criteria
 
 **How do we identify anything in the model?** Come up with criteria ahead of time for what parts of the context map to what we want to build. State your identification criteria and reasoning so the user can adjust. Include examples of wrong vs right identification.
 
@@ -539,6 +541,20 @@ Favour slicing vertically, often by a common theme or category of complexity. Co
 <!-- section: story_synthesizer.strategy.slices.running -->
 
 <!-- section: story_synthesizer.strategy.corrections -->
+## When User Gives a Correction
+
+**Trigger phrases:** "wrong", "correction", "this is wrong", "strategy is wrong", "too superficial", "fix this", "redo", "try again"
+
+**You MUST:**
+1. **Add to run log** — Create or append to `runs/run-N.md` (use `run-0.md` for strategy-phase corrections). Format:
+   - **DO** or **DO NOT:** [the rule]
+   - **Example (wrong):** [what was done incorrectly]
+   - **Example (correct):** [what it should be]
+2. **Apply the correction** — Refine strategy or re-run with corrections as input.
+3. **Proactively confirm** — Say: "I've added this to the run log. Correction: [brief summary]. I've applied it."
+
+**Strategy-phase corrections:** Use `runs/run-0.md` to capture corrections to the strategy. Same format. The run log feeds future runs.
+
 ## Corrections Format
 
 When adding corrections to the run log (Corrections section), each **DO** or **DO NOT** must include:
@@ -680,8 +696,8 @@ Entity table (scenario + fields):
 
 ---
 
-<!-- section: story_synthesizer.output.state_model -->
-# State Model Output
+<!-- section: story_synthesizer.output.domain_model -->
+# Domain Model Output
 
 Separate from the Interaction Tree. Concepts referenced via `**Concept**` in labels. Format specification reverse-engineered from the Complete Example in `core.md`. See that example for a full reference.
 
@@ -694,7 +710,7 @@ Concept : <Base Concept if any>
 - <type> operation(<param>, ...)
      <collaborating concepts if any>
 - Interactons Interaction Concept used by (root node only)
-- examples: list of state concept tables in interaction tree using this concept
+- examples: list of domain concept tables in interaction tree using this concept
 ```
 
 ---
@@ -757,9 +773,9 @@ When the user **explicitly asks to validate** (e.g. "validate", "run validation"
 <!-- section: story_synthesizer.validation.checklist -->
 ## Validation Checklist
 
-After generating interactions and concepts, verify against the output format in `output/interaction-tree-output.md` and `output/state-model-output.md`.
+After generating interactions and concepts, verify against the output format in `output/interaction-tree-output.md` and `output/domain-model-output.md`.
 
-**Run scanners:** Execute `python scripts/build.py validate` (or `validate <path>`) to run rule-based scanners on the interaction tree and state model. Scanners use regex and native Python only (or grammar/AST when available). When in a build phase (run_slice, validate_run, validate_slice), fix any reported violations before considering the run complete. When the user explicitly asks to validate outside a build phase, report violations only — do not fix.
+**Run scanners:** Execute `python scripts/build.py validate` (or `validate <path>`) to run rule-based scanners on the interaction tree and Domain Model. Scanners use regex and native Python only (or grammar/AST when available). When in a build phase (run_slice, validate_run, validate_slice), fix any reported violations before considering the run complete. When the user explicitly asks to validate outside a build phase, report violations only — do not fix.
 
 **Strategy alignment:** Check that nodes include the fields specified by the strategy's **Comprehensiveness Criteria** for the current mode (Shaping, Discovery, Exploration, Walkthrough, Specification). The strategy states which mode(s) apply and what is in scope — e.g. Discovery expects Pre-Condition, Initiating-State, Resulting-State, Initiation, Response; Specification expects Examples, scenarios, failure conditions. Do not require fields that are out of scope for the run.
 
@@ -797,12 +813,12 @@ After generating interactions and concepts, verify against the output format in 
 
 ---
 
-## State Model
+## Domain Model
 
 **Concept**
 - [ ] Format: `Concept : <Base Concept if any>`
 - [ ] Properties, operations, collaborating concepts listed
-- [ ] `examples:` list of state concept tables from interaction tree
+- [ ] `examples:` list of domain concept tables from interaction tree
 - [ ] Each concept referenced via `**Concept**` in interaction tree must exist here
 - [ ] Concepts scoped to Epic/Story that owns it (lowest common ancestor of all interactions that use it)
 - [ ] Stories rarely define domain concepts — they inherit from epic
@@ -850,19 +866,19 @@ AI guidance for calling abd-story-synthesizer scripts.
 
 ## Strategy passed into API
 
-The strategy is **passed into the API** (not just embedded in markdown). The strategy declares a **collection of components** to render: `epic`, `story`, `step`, `scenario`, `examples`, `domain_concept`. The engine uses those components to filter rules — only rules tagged for in-scope components are included. See `content/rules-tagging-proposal.md` for component-based filtering.
+The strategy is **passed into the API** (not just embedded in markdown). The strategy declares a **collection of components** to render: `epic`, `story`, `step`, `scenario`, `examples`, `domain`. The engine uses those components to filter rules — only rules tagged for in-scope components are included. See `content/rules-tagging-proposal.md` for component-based filtering.
 
 **Bespoke strategies:** A custom strategy can mix components (e.g. discovery + mapping to stories + domain concepts + examples at sub-epic level). Examples can be scoped at different levels — the strategy defines where.
 
 ## build.py get_instructions
 
-Gets the assembled prompt for an operation from the Engine. **Call this before producing any shaping output.** The strategy (path or content) is passed in; the engine parses it for components and filters rules accordingly.
+Gets the assembled prompt for an operation from the Engine. **You MUST call this before producing any shaping output.** Do not rely on AGENTS.md alone — run the command and inject its output. The strategy (path or content) is passed in; the engine parses it for components and filters rules accordingly.
 
 **When to call:**
 
 | Operation | User says | Notes |
 |-----------|-----------|-------|
-| `create_strategy` | "create the strategy", "analyze and propose breakdown", "propose slices" | Produces strategy with slices. No output until approved. |
+| `create_strategy` | "build a strategy", "create the strategy", "analyze and propose breakdown", "propose slices" | Produces strategy with slices. No output until approved. |
 | `run_slice` | "do slice 1", "run slice 2", "proceed with slice 1", "re-run slice 1" | Performs a run on a slice. Strategy passed in; components drive rule filtering. Use `generate_slice` if that alias is configured. |
 | `validate_run` | "validate our run", "check what we just did" | Validate only the output of the current run. Ignores previous work. |
 | `validate_slice` | "validate the slice", "validate slice 1", "check the slice" | Validate everything in the slice — all accumulated output for that slice. |
@@ -875,29 +891,23 @@ python scripts/build.py get_instructions create_strategy
 python scripts/build.py get_instructions run_slice [--strategy path/to/strategy.md]
 ```
 
-**With custom skill space (e.g. mm3e):**
-```bash
-python scripts/build.py get_instructions create_strategy --engine-root C:\dev\agile_bot_demos\mm3e
-python scripts/build.py get_instructions run_slice --engine-root C:\dev\agile_bot_demos\mm3e [--strategy path/to/strategy.md]
-```
-Output goes to `<engine-root>/story-synthesizer/` (strategy.md, runs/, interaction-tree.md, state-model.md). Ensure `conf/abd-config.json` exists at engine-root with `skill_space_path` and `skills` configured.
+**Skill space:** Set `skill_space_path` in `conf/abd-config.json` to point to your workspace (e.g. mm3e). Output goes to `<skill_space_path>/story-synthesizer/` (strategy.md, runs/, interaction-tree.md, domain-model.md). Engine root is always the synthesizer skill — no CLI param.
 
-**Output:** The assembled prompt (sections + strategy doc + context). Rules are filtered by the strategy's in-scope components. **Inject this output into your response and follow it.** Do not skip this step — the Engine assembles the correct sections, strategy, and paths.
+**Output:** The assembled prompt (sections + strategy doc + context). Rules are filtered by the strategy's in-scope components. **You MUST run this command and inject its output into your response.** Do not skip this step — the Engine assembles the correct sections, strategy, and paths. Never proceed without calling it first.
 
 ## build.py validate
 
-Runs rule-based scanners on the interaction tree and state model. Scanners are defined in `rules/*.md` (frontmatter `scanner:` field) and implemented in `scripts/scanners/`. Uses regex and native Python only; optional grammar/AST when deps available.
+Runs rule-based scanners on the interaction tree and Domain Model. Scanners are defined in `rules/*.md` (frontmatter `scanner:` field) and implemented in `scripts/scanners/`. Uses regex and native Python only; optional grammar/AST when deps available.
 
 **Scanner mode:** With NLTK (grammar) or mistune (AST) installed, scanner mode is **full**. Without them, the scanner runs automatically in **nerfed** mode (regex-only checks). The validate command prints `Scanner mode: full` or `Scanner mode: nerfed` at startup.
 
-**When to call:** After producing or updating interaction tree or state model output. Use when the user says "validate" or "run validation" or "check the output."
+**When to call:** After producing or updating interaction tree or Domain Model output. Use when the user says "validate" or "run validation" or "check the output."
 
 **Usage:**
 ```bash
 cd skills/abd-story-synthesizer
 python scripts/build.py validate
 python scripts/build.py validate path/to/interaction-tree.md
-python scripts/build.py validate --engine-root C:\dev\agile_bot_demos\mm3e
 ```
 
 **Output:** Prints violations (rule_id, message, location, snippet). Exit code 0 always — violations are reported so the AI can create a violation report or fix them during a build phase.

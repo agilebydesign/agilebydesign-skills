@@ -7,6 +7,9 @@
       "."
     ]
   },
-  "context_paths": [],
-  "skill_space_path": "C:/dev/agile_bot_demos/mm3e-experiment"
+  "context_paths": [
+    "C:/dev/agile_bots_demo/mm3e/goal.md",
+    "C:/dev/agile_bots_demo/mm3e/context/rules"
+  ],
+  "skill_space_path": "C:/dev/agile_bots_demo/mm3e"
 }

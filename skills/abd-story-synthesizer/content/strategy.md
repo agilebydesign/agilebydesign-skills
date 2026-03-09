@@ -1,64 +1,95 @@
-# Strategy Phase
+# Iterative Strategy
 
-<!-- section: story_synthesizer.strategy.phase -->
+<!-- section: story_synthesizer.strategy.iterative -->
 ## Purpose
 
 The synthesizer skill helps you take context and synthesize it into **stories** that explain how a user engages with a solution or system(s) to create value. Stories are about **interaction**, but also about **structure**, **state**, and **rules**.
 
 ## Process
 
-1. **Analyze the source** to determine where complexity lives.
-2. **Present the strategy** to the user. Include: complexity areas identified, proposed initial breakdown, assumptions, **comprehensiveness criteria**, **identification criteria**, **proposed traversal order criteria(slices)**.
-3. **Validate until reasonable** — User reviews; refine until approved. Do not produce an interaction tree until then.
-4. **Save the strategy** to `<skill-space>/story-synthesizer/strategy.md`.
+**Strategy is part of every run.** Early runs focus on strategy and doing enough identification to spot patterns that lay out future slices, order, and size. All runs should examine all runs from the perspective of a new pattern — if found, add the pattern to the strategy. Runs get richer as we go.
+
+1. **First run** — Analyze the source, create the strategy document, build enough of the tree and Domain Model to spot patterns, extrapolate. Save to `<skill-space>/story-synthesizer/strategy.md`.
+2. **Present the strategy** to the user. Include: complexity areas identified, proposed initial breakdown, assumptions, **comprehensiveness criteria**, **identification criteria**, **proposed traversal order (slices)**, **patterns** (as found).
+3. **Validate until reasonable** — User reviews; refine until approved. Create the tree and Domain Model as you go. Iterative Strategy — it runs through every run.
+4. **Every run** — After each run, examine all runs for new patterns. If found, add to the strategy's Patterns section.
+
+### Strategy Document Structure
+
+The strategy document (`strategy.md`) includes the criteria below plus a **Patterns** section. Add patterns as they are found during runs.
+
+**Patterns section format** — For each run that yields a pattern:
+
+| Run | What was built | Pattern found | Applicable to |
+|-----|----------------|---------------|---------------|
+| run-1 | Qualitative statement (e.g. "wrote steps and examples for all stories under epic X") | Brief pattern description | Scope where pattern applies (can be qualitative) |
+
+**Example:** Run 2 built steps and examples for "Configure Power Effect" stories. Pattern: "Effect-type stories share same step structure — Configure, Validate, Apply." Applicable to: other effect types (Advantages, Skills) under the same epic.
 
 ## Interaction Hierarchy
 
-Interactions exist at **all levels** of the hierarchy. **Hierarchy:** Epic → Story → Scenario → Step. Epics can nest (an epic whose parent is an epic is sometimes called a sub-epic). The hierarchy goes from high-level epic (coarse interaction) down through nested epics to stories, and below stories to scenarios and steps. Domain concepts are often inherited: sub-epics use inherited concepts from their parent epic; stories very rarely define domain concepts — they inherit from the epic. See `core.md` for inheritance patterns and Initiating-State / Resulting-State.
-
-### The Story as Backbone
-
-The **story** is the backbone of all the work above and below it. It is the central unit that everything connects to.
-
-- **Above the story:** Epics and sub-epics exist only to **group stories together**. They are organizational structure, not the primary unit of value.
-- **Below the story:** All steps, examples, and scenarios **belong to the story**. The story is the central spoke — everything below it hangs off the story.
-
-**What a story is:** A story is something we can reasonably discuss as a valuable tactical interaction between the user and the system (or between systems). It is something that can be developed in a small amount of time — typically a couple of days for a developer (or a couple of hours for AI :). It is the smallest unit that is both valuable and independently deliverable. It needs to be testable, which means it must have a recognizable behavior that a user or stakeholder would recognize. Not necessarily always user-facing, but at least recognizable as a tangible business state that's changed or logic has been executed here.
-
-**Stopping point:** The story is typically the stopping point **for Shaping and Discovery**. For Exploration, Walkthrough, and Specification, we go below the story (to steps, examples, scenarios). With slices and runs, *we have explicit control on the stopping point*: a run on a slice of a couple of epics can have criteria to only identify other epics and not stories. The stopping point is configurable.
-
-## Impacts
-
-An interaction may have an **impact**. Impacts apply at any level of the hierarchy. See `core.md` for the full Impact data model (types, status, evidence linking).
-
-**Example:** Epic "User checks out" has impact hypothesis: "Reduces cart abandonment by 15%." Story "Apply discount code" has result: "In pilot, 12% of users who applied a code completed checkout." The result becomes evidence for the hypothesis.
+The Strategy document will have **criteria** and **patterns** that refer to slices of the interaction model and domain model. Strategy links to those documents: `core.md` (hierarchy Epic → Story → Scenario → Step, nesting, inheritance, field definitions, story as backbone, stopping points), `output/interaction-tree-output.md`, and `output/domain-model-output.md`.
 
 ## Strategy Criteria
 
-<!-- section: story_synthesizer.strategy.criteria -->
-### 1 - Comprehensiveness Criteria
+Criteria define what the synthesizer produces and how it identifies content from context. Every strategy needs criteria — without them, the AI and validation engine cannot know what to synthesize or which rules to apply.
 
-**What are we synthesizing context into?** Be specific about the typical criteria for each mode. Criteria must match the node types at each level — see `core.md` and `output/interaction-tree-output.md` for field definitions.
+<!-- section: story_synthesizer.strategy.criteria -->
+### 1 - Comprehensiveness Criteria 
+
+**What are we synthesizing context into?** Be specific about what tree and domain elelements we want to synthesize in the strategy. Criteria must specify node types and node attributes — see `core.md` and `output/interaction-tree-output.md` for field definitions.
+
+Criteria can be either bespoke (i want to generate epics with examples...) or defined through "Modes" that represent different stages of refinement.
 
 | Mode | Node levels | Fields per node |
 |------|-------------|-----------------|
-| **Shaping** | Epics (can nest), Stories. Stopping point: story. | Epic: Name (verb-noun), Initiating-Actor, Responding-Actor, Constraints. Story: Name (verb-noun), Initiating-Actor, Responding-Actor, Constraints. Short names and actor only. |
-| **Discovery** | Epics, Stories. Same levels as Shaping; stopping point: story. | Epic: Shaping fields + domain concepts (`**Concept**`), Pre-Condition, Initiating-State, Resulting-State, Initiation (Behavior, Initiating-Actor), Response (Behavior, Responding-Actor), Constraints. Story: same. State Model with concepts. |
+| **Shaping** | Epics (can nest), Stories. Stopping point: story. | Epic: Name (verb-noun), Initiating-Actor, Responding-Actor, Constraints. Story: same. Short names and actor only for most output. **When identifying patterns and slices:** use Discovery (domain concepts, Pre-Condition, Initiating-State, Resulting-State, Initiation, Response, Domain Model) — you need domain-level detail to distinguish stories and slice boundaries. |
+| **Discovery** | Epics, Stories. Same levels as Shaping; stopping point: story. | Epic: Shaping fields + domain concepts (`**Concept**`), Pre-Condition, Initiating-State, Resulting-State, Initiation (Behavior, Initiating-Actor), Response (Behavior, Responding-Actor), Constraints. Story: same. Domain Model with concepts. |
 | **Exploration** | Steps (below story). | Step: Initiation, Response, Constraints (when step-specific). Steps not grouped into scenarios. No error conditions or edge cases. Straight and linear. |
 | **Walkthrough** | Stories. | Domain walkthrough on stories — no new node fields. |
 | **Specification** | Steps, Scenarios (below story). | Step: Initiation, Response, Examples, Constraints (when step-specific). Steps grouped into scenarios. Failure-Modes (failure conditions). |
 
-**Constraints:** Any node can have one or more constraints (sentence, file reference, or markdown reference). Inherited high to low. Typically at epic or story level; may appear in steps.
+See `core.md` for constraints, step format, and the full field definitions. The strategy must state which mode(s) apply and what is in scope.
 
-**Step format:** When steps are in scope, specify the format for step text:
-- **When/Then** — strict BDD: Initiation as When, Response as Then (e.g. `When **User** browses countries; Then **System** displays list of **Country** options`).
-- **Vanilla steps** — verb-noun: short labels (e.g. `User submits form`, `System validates payment`).
+**How rules align:** Tags map this comprehensiveness to rule filtering. The strategy declares which tags are in scope; include a rule if any of its tags matches any in-scope tag. Tags can be declared by mode, by component, or explicitly — tags do everything.
 
-These are artificial distinctions — we can say any of these elements. The strategy must state which mode(s) apply and what is in scope.
+**All runs get validated.** Validation is based on what you synthesize — different rules apply to domain concepts, steps, examples, scenarios, etc. If you're only shaping the tree, you get tree rules; if you're building steps and examples, you get step and example rules. These rules must be **injected based on tags in scope** — the engine filters rules by the strategy's declared tags so the AI receives only the rules that apply to what it's producing. Run `get_instructions` before producing output so the correct rules are injected.
+
+| Tag | Description |
+|-----|-------------|
+| `shaping` | Coarse structure; epics and stories; names and actors only |
+| `discovery` | Story-level detail: Initiation, Response, Pre-Condition, Initiating-State, Resulting-State |
+| `exploration` | Steps below story; linear, no edge cases |
+| `walkthrough` | Domain walkthrough on stories |
+| `specification` | Steps, scenarios, examples, failure modes |
+| `interaction_tree` | Epic/Story hierarchy; names, actors, constraints |
+| `epic` | Epic-level nodes; hierarchy, granularity |
+| `story` | Story-level fields: Initiation, Response, Pre-Condition, etc. |
+| `domain` | Domain Model — concepts, Properties, Operations |
+| `step` | Atomic Initiation/Response; When/Then or verb-noun |
+| `step_edge_case` | Steps + Failure-Modes; error paths |
+| `example` | Example tables per concept |
+| `scenario` | Step grouping by path |
+
+**Example declarations:** Mode-based `tags: [discovery]`; component-based `tags: [interaction_tree, story, domain]`; explicit `tags: [shaping, discovery, interaction_tree, epic, story, domain]`. **When no strategy or new pattern:** default to `tags: [shaping, discovery, interaction_tree, epic, story, domain]`.
 
 ### 2 - Identification Criteria
 
-**How do we identify anything in the model?** Come up with criteria ahead of time for what parts of the context map to what we want to build. State your identification criteria and reasoning so the user can adjust. Include examples of wrong vs right identification.
+**How do we identify the interactions and state from the context?** Analyze the source to identify criteria that drive the identification. Identify elements based on:
+- **Business rules** — distinct rules or conditions change behavior.
+- **System interactions** — different systems or integration points change exchange pattern.
+- **Workflows** — different sequences or paths change steps, actors, or outcomes.
+- **Structure** — different concept shapes or taxonomies change the interaction.
+- **State** — different state transitions or preconditions change required or resulting state.
+
+**The process (identification, pattern matching, extrapolating):** Treat strategy like a run — create a few stories, create a few Domain Model samples, get the pattern, then go through memory chunks and say "more of same pattern" → X more stories. Repeat until patterns change. Patterns change in context based on different epics. **Identification criteria:** Different data structure, different business rules, or different workflow → separate story. Same pattern across chunks → "X more stories of this pattern."
+
+**How shaping helps:** The **shaping rules** and **domain rules** that come from the injected instructions (from `get_instructions create_strategy`) guide this process. Apply them across memory chunks to build viable identification criteria and validate your identification against those rules. Come up with criteria ahead of time for what parts of the context map to what we want to build. State your identification criteria and reasoning so the user can adjust. Include examples of wrong vs right identification.
+
+**DO** — When creating strategy, perform thorough verb-noun and OOAD analysis. Create a sampling with a common pattern: a few stories and Domain Model samples until a pattern is clear. Go through memory chunks and say "more of same pattern" → X more stories. Repeat until patterns change. Track potential patterns until you find others of the same; discard if they are one-offs. Patterns change in context based on different epics. We do not want deep OOAD and story analysis of every doc — we do that in runs — but we need enough pattern matching to create viable identification criteria. For example, handbook chapters may represent larger epics, likely with sub-epics. Power Effects, Advantages, bespoke skills, and similar high-complexity concepts often have many individual items that each warrant a separate story — analyze every memory chunk in depth.
+
+- **Example (wrong):** Strategy with 3 epics, 6 slices, and high-level treatment (e.g. "Configure Power Effect" as one story).
+- **Example (correct):** Strategy with chunk-by-chunk analysis, verb-noun discovery, Domain Model scaffolding per concept, pattern identification ("Pattern 1: Configure Effect — 24 stories grouped by structural similarity"), and explicit pattern-change boundaries by epic. Each effect type with distinct data structure gets its own story or grouped story.
 
 #### Epics vs Stories
 
@@ -126,6 +157,20 @@ Favour slicing vertically, often by a common theme or category of complexity. Co
 <!-- section: story_synthesizer.strategy.slices.running -->
 
 <!-- section: story_synthesizer.strategy.corrections -->
+## When User Gives a Correction
+
+**Trigger phrases:** "wrong", "correction", "this is wrong", "strategy is wrong", "too superficial", "fix this", "redo", "try again"
+
+**You MUST:**
+1. **Add to run log** — Create or append to `runs/run-N.md` (use `run-0.md` for corrections during the first run / strategy creation). Format:
+   - **DO** or **DO NOT:** [the rule]
+   - **Example (wrong):** [what was done incorrectly]
+   - **Example (correct):** [what it should be]
+2. **Apply the correction** — Refine strategy or re-run with corrections as input.
+3. **Proactively confirm** — Say: "I've added this to the run log. Correction: [brief summary]. I've applied it."
+
+**First-run corrections:** Use `runs/run-0.md` to capture corrections during strategy creation and initial tree/model building. Same format. The run log feeds future runs.
+
 ## Corrections Format
 
 When adding corrections to the run log (Corrections section), each **DO** or **DO NOT** must include:

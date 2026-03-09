@@ -1,14 +1,14 @@
 # Process Overview
 
 <!-- section: story_synthesizer.process.intro -->
-Your task is to **synthesize** context into an **Interaction Tree** and **State Model** — a hierarchical structure of meaningful exchanges between actors, plus the domain concepts and state that support them. In Agile terminology, this translates to a **story map** and **domain model**. The hierarchy goes from larger, coarser-grain business outcomes (*Epics*) down to **Stories** — tangible user and system interactions. Synthesis can stop at the story level; details are flushed out later.
+Your task is to **synthesize** context into an **Interaction Tree** and **Domain Model** — a hierarchical structure of meaningful exchanges between actors, plus the domain concepts and state that support them. In Agile terminology, this translates to a **story map** and **domain model**. The hierarchy goes from larger, coarser-grain business outcomes (*Epics*) down to **Stories** — tangible user and system interactions. Synthesis can stop at the story level; details are flushed out later.
 
 Each rule has a DO with example and a DO NOT with example.
 
 **You MUST follow this process.**
-When the user says "create the story map," "proceed," "build it," "generate the output," or similar, you **MUST begin with the Strategy Phase**. Do not skip to producing the full output.
+When the user says "create the story map," "proceed," "build it," "build a strategy," "generate the output," or similar, you **MUST** call `python scripts/build.py get_instructions <operation>` (e.g. `create_strategy` for strategy, `run_slice` for runs) and inject its output before producing any shaping output. Do not rely on AGENTS.md alone.
 
-1. **Strategy Phase first** — Analyze the source, propose Epic/Story breakdown and slice order, save the strategy. Do not produce an interaction tree until the strategy is approved.
+1. **Iterative Strategy** — Strategy runs through every run. First run: analyze the source, create the strategy document, build enough of the tree and Domain Model to spot patterns, extrapolate. Create the tree and Domain Model as you go — do not wait for strategy approval before producing output.
 2. **Work in runs** — Each run produces output for a slice (4–7 stories typical). A run may require **multiple iterations**: user reviews, finds mistakes, you add corrections to the **run log**, re-run. Repeat until the user approves. Only then proceed to the next run.
 3. **No full output in one go** — Do not produce a complete interaction tree in a single pass. Iterate run by run.
 4. **Review and Adjust** - Once all runs are done, have the AI review all corrections collected in the **run log** and determine what needs to change in the rules and/or instructions. Promote those that apply across projects  to the skill's rules.
@@ -16,7 +16,7 @@ When the user says "create the story map," "proceed," "build it," "generate the 
 ## Output Paths (default)
 
 - **Strategy:** `<skill-space>/story-synthesizer/strategy.md`
-- **Output:** `<skill-space>/story-synthesizer/` — Interaction Tree and State Model (format in `output/interaction-tree-output.md` and `output/state-model-output.md`)
+- **Output:** `<skill-space>/story-synthesizer/` — Interaction Tree and Domain Model (format in `output/interaction-tree-output.md` and `output/domain-model-output.md`)
 - **Runs:** `<skill-space>/story-synthesizer/runs/` — run logs (one file per run, e.g. `run-1.md`)
 
 **Runs** — Each run is a purposeful loop: it defines how much detail to synthesize, where to stop (epics vs stories vs steps), and produces output. We track runs, not slices. Each run writes a run log. **Corrections go to the run log** (the run's Corrections section), not to the strategy. See `run-output.md` for format;
@@ -49,8 +49,7 @@ These paths can be configured under the skill-space config (`abd-config.json` or
 
 ## Process Checklist
 
-- [ ] **Strategy Phase complete** — Source analyzed; Epic/Story breakdown proposed; strategy saved to `<skill-space>/story-synthesizer/strategy.md`
-- [ ] **Strategy approved by user** — Do not produce an interaction tree until then
+- [ ] **Strategy document created/updated** — Source analyzed; Epic/Story breakdown proposed; strategy saved to `<skill-space>/story-synthesizer/strategy.md`; tree and Domain Model built as you go
 - [ ] **Run 1 produced** — Output for first slice; run log written to `runs/run-1.md`
 - [ ] **Run 1 iterated to approval** — User reviews; when mistakes are found, add DO/DO NOT to the **run log** Corrections section (with wrong/correct examples); re-run taking corrections into account; repeat until user approves
 - [ ] **Post-synthesis review** — Review all corrections collected in run log; determine what needs to change in rules/instructions; promote reusable corrections to strategy and/or skill

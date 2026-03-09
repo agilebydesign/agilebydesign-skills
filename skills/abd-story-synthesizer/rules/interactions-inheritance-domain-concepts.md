@@ -1,7 +1,7 @@
 ---
 title: Interactions inheritance — domain concepts
 impact: HIGH
-tags: epic, story, domain_concept
+tags: [shaping, discovery, interaction_tree, story, domain]
 ---
 
 ## Domain concepts inheritance

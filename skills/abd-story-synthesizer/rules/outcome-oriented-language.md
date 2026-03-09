@@ -1,7 +1,7 @@
 ---
 title: Outcome-oriented language
 impact: HIGH
-tags: epic, story, step
+tags: [interaction_tree, story, step]
 ---
 
 ## Outcome-oriented language

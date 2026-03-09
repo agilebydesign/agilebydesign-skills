@@ -1,7 +1,7 @@
 ---
 title: Sequential order
 impact: HIGH
-tags: epic, story
+tags: [shaping, discovery, interaction_tree, epic, story]
 ---
 
 ## Sequential order

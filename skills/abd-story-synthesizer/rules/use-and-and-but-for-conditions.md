@@ -1,7 +1,7 @@
 ---
 title: Use And and But for conditions
 impact: MEDIUM
-tags: step, scenario
+tags: [exploration, specification, step, scenario]
 ---
 
 ## Use And and But for conditions

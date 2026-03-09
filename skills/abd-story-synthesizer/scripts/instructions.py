@@ -65,7 +65,7 @@ class Instructions:
                 parts.append("\n\n---\n\n")
             return "".join(parts).rstrip() if parts else ""
 
-        # story_synthesizer.process.intro, story_synthesizer.strategy.phase, etc.
+        # story_synthesizer.process.intro, story_synthesizer.strategy.iterative, etc.
         domain = section_id.split(".")[1] if "." in section_id else ""
         file_map = {
             "process": "process.md",
