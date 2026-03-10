@@ -62,6 +62,11 @@ python scripts/run_orchestrator.py --skill-space <path-to-skill-space>
 | `--strategy-only` | off | Stop after strategy creation (test run); skip slice runs |
 | `--test-mode` | off | Stop at every step; prompt accepts N to do N runs then exit; state persisted for resume |
 | `--max-runs N` | - | (test-mode) Max runs this session; then exit and save state for resume |
+| `--correct-level` | run | Correction depth on failure: none, run, session, skill, all |
+| `--archive-dir` | `C:\dev\synchronizer_runs` | Directory to archive session output at end |
+| `--no-archive` | off | Skip session archival at end |
+| `--branch NAME` | - | Git branch for skill version control; commits on pass, rolls back on regression |
+| `--no-rollback` | off | Disable automatic rollback of skill changes when output degrades |
 
 ### Typical Workflow
 
@@ -78,13 +83,50 @@ python scripts/run_orchestrator.py --skill-space <path-to-skill-space>
 4. Re-run with `--test-mode` to resume from where you left off
 5. Use `--max-runs N` to do N runs then exit (e.g. agent says "proceed with 3 runs" → `--max-runs 3`)
 
+## Self-Correction Pipeline
+
+The orchestrator integrates with the synthesizer's three-layer correction system. Use `--correct-level` to control depth:
+
+| Level | What happens on validation failure |
+|-------|------------------------------------|
+| `none` | No correction — just log and re-run |
+| `run` (default) | `correct_run`: capture DO/DO NOT in run log with wrong/correct examples |
+| `session` | `run` + `correct_session`: fold corrections into session strategy for future runs |
+| `skill` | `run` + `session` + `correct_skill`: promote corrections to skill rules (cross-project) |
+| `all` | All three layers in one shot |
+
+Correction instructions are saved to `runs/slice-N-run-M-corrections.md` alongside the run instructions.
+
+## Session Archival
+
+At the end of every session, the orchestrator copies the `story-synthesizer/` output to an archive directory for history. Default: `C:\dev\synchronizer_runs\<skill-space-name>\<timestamp>\`.
+
+- Use `--archive-dir <path>` to change the archive location
+- Use `--no-archive` to skip archival
+
+## Skill Version Control
+
+Use `--branch <name>` to enable git-based version control for the synthesizer skill:
+
+1. On validation **pass** with `--correct-level skill` or `all`: skill changes are committed to the branch
+2. On validation **fail** with `--rollback-on-regression`: skill changes are rolled back to the pre-correction state
+3. Use `--no-rollback` to keep skill changes even when output degrades (for manual review)
+
+Typical usage:
+
+```bash
+python scripts/run_orchestrator.py --skill-space C:/dev/mm3e --correct-level all --branch orchestrator
+```
+
+This creates a traceable history of skill evolution driven by session corrections.
+
 ## Workflow (Essential Instructions)
 
 **Lifecycle stages:** shaping → discovery → exploration → specification. Each slice goes through all four stages in order.
 
 **Strategy validation:** (1) Does the strategy make sense from an identification perspective? (2) Does it slice to cover the full domain model? Slices must validate the entire domain (concepts, effects, attributes; commonality or diversity).
 
-**Validation flow:** Run `validate` from the synthesizer skill (includes scanners). Check: (a) run was successful, (b) run produced good content. If not approved → add correction to run log; next run uses corrections as input.
+**Validation flow:** Run `validate` from the synthesizer skill (includes scanners). On failure, the correction pipeline runs automatically at the configured level (`--correct-level`). Correction instructions are saved for the agent.
 
 **Re-runs:** When re-running the same stage, use corrections from the previous run as input.
 
