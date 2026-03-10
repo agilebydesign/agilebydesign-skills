@@ -29,10 +29,10 @@ class Instructions:
             return ""
 
         parts: list[str] = []
-        content_dir = self.skill_path / "content"
+        pieces_dir = self.skill_path / "pieces"
 
         for sid in section_ids:
-            text = self._get_section_content(sid, content_dir)
+            text = self._get_section_content(sid, pieces_dir)
             if text:
                 parts.append(text)
                 parts.append("\n\n---\n\n")
@@ -54,7 +54,7 @@ class Instructions:
     def sections_included(self, operation: str) -> list[str]:
         return list(self.operation_sections.get(operation, []))
 
-    def _get_section_content(self, section_id: str, content_dir: Path) -> str:
+    def _get_section_content(self, section_id: str, pieces_dir: Path) -> str:
         if section_id.endswith(".rules") or "validation.rules" in section_id:
             rules_dir = self.skill_path / "rules"
             if not rules_dir.exists():
@@ -65,34 +65,33 @@ class Instructions:
                 parts.append("\n\n---\n\n")
             return "".join(parts).rstrip() if parts else ""
 
-        # story_synthesizer.process.intro, story_synthesizer.strategy.iterative, etc.
-        domain = section_id.split(".")[1] if "." in section_id else ""
+        # Map section_id prefix to pieces file:
+        # story_synthesizer.interaction.model -> interaction.md
+        # story_synthesizer.session.traversal -> session.md
+        parts_split = section_id.split(".")
+        if len(parts_split) < 2:
+            return ""
+        piece_name = parts_split[1]
         file_map = {
+            "introduction": "introduction.md",
+            "interaction": "interaction.md",
+            "domain": "domain.md",
             "process": "process.md",
-            "strategy": "strategy.md",
-            "output": "output",
+            "session": "session.md",
+            "runs": "runs.md",
             "validation": "validation.md",
-            "core": "core.md",
         }
-        fpath = file_map.get(domain, "process.md")
-        if fpath == "output":
-            # story_synthesizer.output.interaction_tree -> output/interaction-tree-output.md
-            sub = section_id.split(".")[-1] if "." in section_id else ""
-            if "interaction" in sub or "tree" in sub:
-                path = content_dir / "output" / "interaction-tree-output.md"
-            elif "state" in sub or "model" in sub:
-                path = content_dir / "output" / "state-model-output.md"
-            else:
-                path = content_dir / "process.md"
-        else:
-            path = content_dir / fpath
+        fpath = file_map.get(piece_name)
+        if not fpath:
+            return ""
+        path = pieces_dir / fpath
         if not path.exists():
             return ""
 
         text = path.read_text(encoding="utf-8")
         marker = f"<!-- section: {section_id} -->"
         if marker not in text:
-            return ""
+            return text.strip()
 
         start = text.index(marker) + len(marker)
         rest = text[start:]

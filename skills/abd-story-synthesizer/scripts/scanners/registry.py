@@ -14,7 +14,7 @@ def scanner_mode() -> str:
     except ImportError:
         pass
     try:
-        from .ast_helpers import has_ast_support
+        from .interaction_tree_parser import has_ast_support
         ast_ok = has_ast_support()
     except ImportError:
         pass
@@ -24,20 +24,33 @@ def scanner_mode() -> str:
 from .logical_domain_scanner import LogicalDomainScanner
 from .failure_modes_scanner import FailureModesScanner
 from .verb_noun_scanner import VerbNounScanner
+from .example_domain_match_scanner import ExampleDomainMatchScanner
+from .given_state_scanner import GivenStateScanner
+from .atomic_steps_scanner import AtomicStepsScanner
+from .step_permutations_scanner import StepPermutationsScanner
+from .consistent_steps_scanner import ConsistentStepsScanner
 
 
-# Scanner short name -> scanner class (no dynamic import; native Python only)
 SCANNER_BY_NAME: dict[str, type[BaseScanner]] = {
     "logical_domain": LogicalDomainScanner,
     "failure_modes": FailureModesScanner,
     "verb_noun": VerbNounScanner,
+    "example_domain_match": ExampleDomainMatchScanner,
+    "given_state": GivenStateScanner,
+    "atomic_steps": AtomicStepsScanner,
+    "step_permutations": StepPermutationsScanner,
+    "consistent_steps": ConsistentStepsScanner,
 }
 
-# Rule filename (stem) -> scanner name (for rules that have scanner in frontmatter)
 RULE_TO_SCANNER: dict[str, str] = {
-    "state-logical-domain-level": "logical_domain",
+    "domain-logical-domain-level": "logical_domain",
     "interaction-failure-modes": "failure_modes",
     "verb-noun-format": "verb_noun",
+    "interaction-examples-match-domain-model": "example_domain_match",
+    "interaction-given-state-not-actions": "given_state",
+    "interaction-atomic-steps": "atomic_steps",
+    "interaction-enumerate-step-permutations": "step_permutations",
+    "interaction-consistent-steps-across-domains": "consistent_steps",
 }
 
 

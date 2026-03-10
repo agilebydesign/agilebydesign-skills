@@ -1,6 +1,6 @@
 """
 Agile Context Engine — defines skill structure, scaffold, and build.
-Self-contained in abd-story-synthesizer; no dependency on abd-shaping.
+Self-contained in abd-story-synthesizer; self-contained; no dependency on other abd skills.
 """
 import json
 from pathlib import Path
@@ -120,7 +120,7 @@ class AgileContextEngine:
             return
         candidates = [
             self.workspace_path / "story-synthesizer" / "strategy.md",
-            self.workspace_path / "shaping" / "strategy.md",
+            self.workspace_path / "story-synthesizer" / "strategy.md",
             self.workspace_path / "docs" / "strategy.md",
         ]
         for p in candidates:
@@ -131,27 +131,29 @@ class AgileContextEngine:
 
 
 CONTENT_ORDER = [
-    "core.md",
+    "introduction.md",
+    "interaction.md",
+    "domain.md",
     "process.md",
-    "strategy.md",
-    "output.md",
+    "session.md",
+    "runs.md",
     "validation.md",
 ]
-SCRIPT_INVOCATION = "script-invocation.md"
 
 
 def get_skill_scaffold_spec() -> dict[str, Any]:
     return {
-        "content_files": CONTENT_ORDER + [SCRIPT_INVOCATION],
-        "dirs": ["content", "rules", "scripts"],
+        "content_files": CONTENT_ORDER,
+        "dirs": ["pieces", "rules", "scripts"],
         "root_files": ["SKILL.md", "README.md", "skill-config.json"],
         "content_templates": {
-            "core.md": "# Core Definitions\n\n",
+            "introduction.md": "# Introduction\n\n",
+            "interaction.md": "# Interaction Model\n\n",
+            "domain.md": "# Domain Model\n\n",
             "process.md": "# Process\n\n",
-            "strategy.md": "# Strategy\n\n",
-            "output.md": "# Output Structure\n\n",
+            "session.md": "# Sessions\n\n",
+            "runs.md": "# Runs\n\n",
             "validation.md": "# Validation\n\n",
-            "script-invocation.md": "# Script Invocation\n\nHow to call scripts (params, when, what to expect).\n",
         },
         "rules_default": {"scanners": []},
     }
@@ -169,7 +171,7 @@ def scaffold_skill(name: str, path: str | Path, engine_root: str | Path | None =
         (path / d).mkdir(parents=True, exist_ok=True)
 
     for fname in spec["content_files"]:
-        content_path = path / "content" / fname
+        content_path = path / "pieces" / fname
         content_path.parent.mkdir(parents=True, exist_ok=True)
         template = spec["content_templates"].get(fname, "")
         if not content_path.exists():
@@ -203,13 +205,13 @@ def scaffold_skill(name: str, path: str | Path, engine_root: str | Path | None =
 
 
 def build_skill(skill_path: str | Path, engine_root: str | Path | None = None) -> Path:
-    """Assembles content/*.md into AGENTS.md per engine conventions."""
+    """Assembles pieces/*.md into AGENTS.md per engine conventions."""
     skill_path = Path(skill_path)
     if not skill_path.is_absolute() and engine_root:
         skill_path = Path(engine_root) / skill_path
     skill_path = skill_path.resolve()
 
-    content_dir = skill_path / "content"
+    content_dir = skill_path / "pieces"
     output_path = skill_path / "AGENTS.md"
 
     content_order = CONTENT_ORDER
@@ -228,11 +230,6 @@ def build_skill(skill_path: str | Path, engine_root: str | Path | None = None) -
         if p.exists():
             parts.append(p.read_text(encoding="utf-8").strip())
             parts.append("\n\n---\n\n")
-
-    script_inv = content_dir / SCRIPT_INVOCATION
-    if script_inv.exists():
-        parts.append(script_inv.read_text(encoding="utf-8").strip())
-        parts.append("\n\n---\n\n")
 
     output_path.write_text("".join(parts).rstrip() + "\n", encoding="utf-8")
     return output_path

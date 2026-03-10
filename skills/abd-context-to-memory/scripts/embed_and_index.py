@@ -230,7 +230,8 @@ def index_chunks(chunks: list[tuple[Path, str, dict]], replace: bool = False) ->
     else:
         existing = np.load(EMBEDDINGS_FILE)
         with open(METADATA_FILE, encoding="utf-8") as f:
-            existing_meta = json.load(f)
+            raw = json.load(f)
+            existing_meta = raw["chunks"] if isinstance(raw, dict) and "chunks" in raw else raw
         # Dedupe by path: drop existing entries whose path is in new chunks
         new_paths = {m["path"] for m in new_metadata}
         keep = [i for i, m in enumerate(existing_meta) if m["path"] not in new_paths]

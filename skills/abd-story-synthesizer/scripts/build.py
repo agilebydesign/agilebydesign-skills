@@ -58,6 +58,29 @@ def _run_validate(target_path: Path | None = None) -> None:
         print("Validation passed: no violations")
 
 
+def _get_config() -> None:
+    """Print engine_root, skill_space_path, config_path as JSON. Use when agent needs to know paths."""
+    engine_root = _skill_dir
+    config_path = engine_root / "conf" / "abd-config.json"
+    result = {
+        "engine_root": str(engine_root.resolve()),
+        "config_path": str(config_path.resolve()),
+        "skill_space_path": None,
+    }
+    if config_path.exists():
+        try:
+            engine = AgileContextEngine(engine_root=engine_root).load()
+            if engine.workspace_path:
+                p = str(engine.workspace_path.resolve())
+                result["skill_space_path"] = p
+                result["skill_path"] = p  # shorthand for skill_space_path
+            result["strategy_path"] = str(engine.strategy_path.resolve()) if engine.strategy_path else None
+            result["context_paths"] = [str(p) for p in engine.context_paths]
+        except Exception:
+            pass
+    print(json.dumps(result, indent=2))
+
+
 def _get_instructions(operation: str, strategy_path: Path | None = None) -> None:
     """Load engine, get abd-story-synthesizer skill, print display_content(operation)."""
     if sys.stdout.encoding and sys.stdout.encoding.lower() not in ("utf-8", "utf8"):
@@ -85,7 +108,9 @@ def _get_instructions(operation: str, strategy_path: Path | None = None) -> None
 if __name__ == "__main__":
     args = sys.argv[1:]
 
-    if args and args[0] == "get_instructions":
+    if args and args[0] == "get_config":
+        _get_config()
+    elif args and args[0] == "get_instructions":
         if len(args) < 2:
             print("Usage: python build.py get_instructions <operation> [--strategy path]", file=sys.stderr)
             print("Operations: create_strategy, run_slice, generate_slice, validate_run, validate_slice, improve_strategy", file=sys.stderr)

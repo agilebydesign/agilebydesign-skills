@@ -22,9 +22,9 @@
 
 ### Actor Model
 
-- **Actor (Initiating):** Developer — uses CLI or Panel to invoke bot, navigate, get instructions, save guardrails, submit to AI.
+- **Actor (Triggering):** Developer — uses CLI or Panel to invoke bot, navigate, get instructions, save guardrails, submit to AI.
 - **Supporting:** Bot System — loads config, assembles instructions, persists scope/guardrails, renders/syncs diagrams.
-- **Optional:** AI Agent — invokes via MCP tools; same instruction flow, different initiation path.
+- **Optional:** AI Agent — invokes via MCP tools; same instruction flow, different trigger path.
 
 ---
 
@@ -115,7 +115,7 @@ The data model is like we have now, with these additions:
 ## 4. Granularity Rules
 
 **Stories must be distinguished by:**
-- Different actors or initiation paths (Developer vs AI Agent)
+- Different actors or trigger paths (Developer vs AI Agent)
 - Different required state (e.g., scope set vs not set; guardrails defined vs not; story graph exists vs not)
 - Different state transitions (instructions retrieved vs guardrails saved vs story graph updated vs diagram rendered)
 - Different failure modes (missing config vs empty scope vs malformed diagram)
@@ -128,7 +128,7 @@ The data model is like we have now, with these additions:
 - Initialize vs Perform Action vs Set Scope vs Work With Story Map — distinct workflows
 - Clarify (save answers) vs Strategy (save decisions) — different persisted state
 - Render diagram vs Sync diagram to story graph — different outcomes and concepts
-- Submit instructions to AI — distinct initiation and outcome
+- Submit instructions to AI — distinct trigger and outcome
 - **Behavior-specific interactions when the domain differs** — e.g., shape.build (creates epic/sub-epic/story) vs code.build (creates source files) — different concepts, different resulting state
 
 ---
@@ -192,15 +192,15 @@ Story-Diagram synching
 
 - **Scope:** We are synthesizing the *usage* of the Agile Context Engine system AND designing the **target solution** that replaces it — new data model (steps, examples, impacts, constraints), new process (strategy→slices replaces clarify/strategy), behaviors TBD.
 - **Clarify/Strategy:** Being replaced by the strategy→slices→refine process. If context-gathering exists, it is a separate skill in front — not embedded in every behavior.
-- **MCP:** AI Agent invocation via MCP tools uses the same instruction flow; initiation differs. We may add a story for "AI Agent invokes bot via MCP" in a later slice if needed.
-- **Panel vs CLI:** Treated as same logical interaction (Developer initiates; Bot System responds). No separate stories for UI modality.
+- **MCP:** AI Agent invocation via MCP tools uses the same instruction flow; trigger differs. We may add a story for "AI Agent invokes bot via MCP" in a later slice if needed.
+- **Panel vs CLI:** Treated as same logical interaction (Developer triggers; Bot System responds). No separate stories for UI modality.
 - **Existing output:** `skills/abd-story-synthesizer/docs/abd-synthesizer-output.md` exists from a previous run. Slice 1 will get the story-synthesizer skill working with Python/JSON hybrid and add architecture-pattern constraints.
 
 ---
 
 ## 8. Synthesizer Depth
 
-- **Interactions + actors** — Full format: Actor, Supporting, Required State, State Concepts, Initiation, Response, Resulting State, Failure Modes
+- **Interactions + actors** — Full format: Actor, Supporting, Required State, State Concepts, Trigger, Response, Resulting State, Failure Modes
 - **Inline Concepts** — Add compact Concepts blocks under Epics with properties/operations
 - **Failure Modes** — Include; max 3 per interaction; domain/state only
 
@@ -230,12 +230,12 @@ Synthesizer mode is about defining and modeling what we need, not building it ye
 
 ## 9. Inheritance Deduplication (DO / DO NOT)
 
-**DO** — Shared Required State, Initiation, and Resulting State on parent only; children use `—` when inheriting (no new or specialized state to add).
+**DO** — Shared Required State, Trigger, and Resulting State on parent only; children use `—` when inheriting (no new or specialized state to add).
 
-- **Example (wrong):** Child story "Load registered skills" had Required State: "Story-synthesizer skill installed (abd-story-synthesizer)" and Initiation: "User runs engine" — same as parent Epic.
-- **Example (correct):** Child uses `—` for Required State and Initiation; parent Epic carries "Story-synthesizer skill installed (abd-story-synthesizer)" and "User runs engine".
+- **Example (wrong):** Child story "Load registered skills" had Required State: "Story-synthesizer skill installed (abd-story-synthesizer)" and Trigger: "User runs engine" — same as parent Epic.
+- **Example (correct):** Child uses `—` for Required State and Trigger; parent Epic carries "Story-synthesizer skill installed (abd-story-synthesizer)" and "User runs engine".
 
-**DO NOT** — Repeat Required State, Initiation, or Resulting State in a child when it is the same as or overlaps with the parent. Put shared state on the parent; child inherits with `—`.
+**DO NOT** — Repeat Required State, Trigger, or Resulting State in a child when it is the same as or overlaps with the parent. Put shared state on the parent; child inherits with `—`.
 
 - **Example (wrong):** Gather Context story repeated "Ready for strategy creation or slice production" as Resulting State when parent already had it.
 - **Example (correct):** Child uses `—`; parent carries the shared Resulting State.

@@ -1,5 +1,5 @@
 """
-RuleSet — loads markdown from content/, JSON from rules/.
+RuleSet — loads markdown from pieces/, JSON from rules/.
 Per skill: rules/*.md (Markdown), rules/scanners.json (JSON).
 """
 from pathlib import Path
@@ -16,15 +16,17 @@ class RuleSet:
         self.merged_content: str = ""
 
     def load(self) -> "RuleSet":
-        """Load markdown from content/, JSON from rules/."""
-        content_dir = self.skill_path / "content"
+        """Load markdown from pieces/, JSON from rules/."""
+        content_dir = self.skill_path / "pieces"
         rules_dir = self.skill_path / "rules"
 
-        # Synthesizer content structure
         content_order = [
-            "core.md",
+            "introduction.md",
+            "interaction.md",
+            "domain.md",
             "process.md",
-            "strategy.md",
+            "session.md",
+            "runs.md",
             "validation.md",
         ]
         parts: list[str] = []

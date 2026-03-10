@@ -1,6 +1,8 @@
 # Rules
 
-Shaping, identification, and validation rules for the story synthesizer. Rules are Markdown files with YAML frontmatter.
+Discovery, identification, and validation rules for the story synthesizer. Rules are Markdown files with YAML frontmatter.
+
+**Rule format:** Each rule has a **DO** with example and a **DO NOT** with example.
 
 ## Tag format (required)
 
@@ -10,13 +12,13 @@ Each rule **must** have YAML frontmatter with `tags`:
 ---
 title: Rule name
 impact: HIGH | MEDIUM | LOW
-tags: [shaping, discovery, interaction_tree, story, domain]
+tags: [discovery, interaction_tree, story, domain]
 ---
 ```
 
-**Tag set:** `shaping`, `discovery`, `exploration`, `walkthrough`, `specification`, `interaction_tree`, `stories`, `domain`, `steps`, `steps_edge_cases`, `examples`, `scenarios`
+**Tag set:** `discovery`, `exploration`, `specification`, `interaction_tree`, `stories`, `domain`, `steps`, `steps_edge_cases`, `examples`, `scenarios`
 
-Use the tags that apply to the rule. Include a rule if any of its tags matches any tag the strategy declares in scope. Tags do everything — strategy can declare by mode, component, or explicitly. See `content/rules-tagging-proposal.md` and strategy section "1 - Comprehensiveness Criteria and Tags in Scope".
+Use the tags that apply to the rule. Include a rule if any of its tags matches any tag the session/strategy declares in scope. Session type (Discovery, Exploration, Specification) determines scope; see `pieces/session.md` Session Types table.
 
 **Validation is scoped to what you synthesize.** All runs get validated, but the rules injected depend on tags in scope — domain rules for domain output, step rules for steps, example rules for examples, etc. The engine filters rules by strategy tags so only relevant rules are injected.
 
@@ -38,7 +40,7 @@ python scripts/build.py get_instructions run_slice [--strategy path/to/strategy.
 | `validate_run`    | Validate current run output           | Yes            |
 | `validate_slice`  | Validate slice output                 | Yes            |
 
-**Do not skip this step.** The AI must run `get_instructions` and inject its output before producing any shaping output. Rules are included automatically when the operation includes `story_synthesizer.validation.rules`.
+**Do not skip this step.** The AI must run `get_instructions` and inject its output before producing any synthesis output. Rules are included automatically when the operation includes `story_synthesizer.validation.rules`.
 
 ## Validation scanners
 

@@ -3,7 +3,7 @@
 **Source:** `agile_bots` — bots/, src/, docs/story/story-graph.json; `abd-story-synthesizer` skill — AGENTS.md, content/*.md  
 **Methodology:** abd-story-synthesizer skill (`skills/abd-story-synthesizer/`)  
 **Strategy:** `skills/abd-story-synthesizer/docs/abd-synthesizer-strategy.md`  
-**Assumption:** Developer initiates; Agile Context Engine responds. AI Agent may invoke via MCP tools.
+**Assumption:** Developer triggers; Agile Context Engine responds. AI Agent may invoke via MCP tools.
 
 ---
 
@@ -14,21 +14,21 @@
      Supporting: AI Agent, agile-skill-build
      Required State: User has one or more markdown files (or prompts, text) describing how the skill will work
      State Concepts: AbdSkill, AssembledAgent, BuildScript, agile-skill-build
-     Initiation: User initiates build abd-skill through AI
+     Trigger: User triggers build abd-skill through AI
      Response: AI uses agile-skill-build; skill invokes script with params to create scaffolding; AI follows skill guidance to fill content pieces from markdown/prompts/text; if pieces missing/incomplete, AI tells user and user completes; AI reruns build script when all pieces done
      Resulting State: Abd-skill created; ready to register
      
      - Story: **Create scaffolding via script**
           Required State: agile-skill-build skill available; user has provided skill name and params
           State Concepts: AbdSkill, BuildScript, agile-skill-build
-          Initiation: AI invokes agile-skill-build with params (skill name, etc.)
+          Trigger: AI invokes agile-skill-build with params (skill name, etc.)
           Response: Skill runs script with params; creates abd-skill directory; content/ with core, process, strategy, output, validation; scripts/ folder; build script
           Resulting State: Abd-skill scaffold created; ready for content fill
           Failure Modes: Template missing; path conflict; invalid abd-skill name; script fails
      - Story: **AI fills content pieces from input**
           Required State: Scaffold created
           State Concepts: AbdSkill
-          Initiation: AI follows agile-skill-build guidance
+          Trigger: AI follows agile-skill-build guidance
           Response: AI takes markdown file(s), prompts, text passed in; fills core, process, strategy, output, validation per skill guidance
           Resulting State: Content pieces filled (or gaps identified)
           Failure Modes: Input insufficient; skill guidance unclear
@@ -36,7 +36,7 @@
      - Story: **User completes missing pieces**
           Required State: AI has identified missing/incomplete pieces
           State Concepts: AbdSkill
-          Initiation: AI tells user which pieces are missing or incomplete
+          Trigger: AI tells user which pieces are missing or incomplete
           Response: User completes those pieces; repeats until all pieces done
           Resulting State: All content pieces complete
           Failure Modes: User does not complete; invalid content format
@@ -44,7 +44,7 @@
      - Story: **AI reruns build script**
           Required State: All content pieces complete
           State Concepts: AbdSkill, AssembledAgent
-          Initiation: AI reruns build script (when necessary)
+          Trigger: AI reruns build script (when necessary)
           Response: Build script assembles core, process, strategy, output, validation into single agent file; produces rules, readme, metadata, skills file
           Resulting State: Assembled agent file ready; abd-skill usable
           Failure Modes: Build script fails; content merge conflict
@@ -54,14 +54,14 @@
      Supporting: Agile Context Engine
      Required State: Story-synthesizer skill installed (abd-story-synthesizer)
      State Concepts: AgileContextEngine
-     Initiation: Developer chats to AI guided by skill, AI calls skill code
+     Trigger: Developer chats to AI guided by skill, AI calls skill code
      Response: Engine loads registered skills from JSON; sets workspace when specified; rule sets available
      Resulting State: Engine initialized; skills loaded; rule sets available
 
      - Story: **Load registered skills and rule sets**
           Required State: —
           State Concepts: AbdSkill, RuleSet
-          Initiation: —
+          Trigger: —
           Response: Engine loads skills list from JSON; for each skill path, loads rule set (markdown from content/, JSON for scanners); merges into unified rule set per skill
           Resulting State: Available for instruction assembly
           Failure Modes: Malformed JSON config; missing skill path; invalid rule path
@@ -71,14 +71,14 @@
      Supporting: abd-context-to-memory
      Required State: Workspace with content sources
      State Concepts: ContentSource, Markdown, Chunk, Memory, Memories, Workspace
-     Initiation: Developer requests add to memory (convert and chunk, ingest, refresh)
+     Trigger: Developer requests add to memory (convert and chunk, ingest, refresh)
      Response: Skill converts each original artifact in full to markdown (alongside original, within workspace); chunks markdown into memory; each file → one memory; memories nested; each memory points to original artifact and markdown converted artifact
      Resulting State: Memories available for future reference
 
      - Story: **Convert content sources to markdown**
           Required State: Content in supported formats (PDF, PPTX, DOCX, etc.)
           State Concepts: ContentSource, Markdown
-          Initiation: Developer requests conversion (or step 1 of pipeline)
+          Trigger: Developer requests conversion (or step 1 of pipeline)
           Response: Skill converts original artifact in its entirety to markdown; markdown stored alongside original (same folder)
           Resulting State: Markdown converted artifact available alongside original artifact
           Failure Modes: Unsupported format; conversion fails; path invalid
@@ -86,7 +86,7 @@
      - Story: **Chunk markdown**
           Required State: Markdown available
           State Concepts: Markdown, Chunk
-          Initiation: Developer requests chunking (or step 2 of pipeline)
+          Trigger: Developer requests chunking (or step 2 of pipeline)
           Response: Skill splits markdown by slide, heading, or whole file; writes chunks with source attribution
           Resulting State: Chunks produced; available for reference
           Failure Modes: No markdown found; chunk strategy fails
@@ -94,7 +94,7 @@
      - Story: **Sync workspace to memory (convert + copy + chunk)**
           Required State: —
           State Concepts: ContentSource, Markdown, Chunk, Memory, Memories, Workspace
-          Initiation: Developer requests sync workspace to memory
+          Trigger: Developer requests sync workspace to memory
           Response: Skill converts each original to markdown in full (alongside original); copies chunks to <workspace>/context-to-memory/memory/; each file → one memory; memories nested; each memory points to original artifact and markdown converted artifact
           Resulting State: Memories populated
           Failure Modes: Workspace missing; copy fails; chunk fails
@@ -104,14 +104,14 @@
      Supporting: Agile Context Engine
      Required State: Engine initialized; context gathered
      State Concepts: Strategy, Slice
-     Initiation: Developer invokes synthesizer (create strategy, generate slice, improve strategy, improve skill)
+     Trigger: Developer invokes synthesizer (create strategy, generate slice, improve strategy, improve skill)
      Response: Engine loads story-synthesizer instructions (from assembled skill content); assembles with context; produces or updates strategy/slice output; or applies strategy corrections to base skill
      Resulting State: Strategy created or updated; slice output produced; strategy improved; or skill improved
 
      - Story: **Create Synthesizer Strategy**
           Required State: —
           State Concepts: SourceAnalysis
-          Initiation: Developer requests strategy creation
+          Trigger: Developer requests strategy creation
           Response: Engine assembles instructions for create_strategy; caller injects into prompt; AI reads context from paths; produces strategy doc (complexity analysis, epic breakdown, slice order, assumptions); AI validates sections; caller persists to output path in real time during iterations (steps 6–9)
           Resulting State: Ready for approval
           Failure Modes: Memories empty; strategy validation fails; save path invalid
@@ -130,13 +130,13 @@
      - Story: **Generate Slices**
           Required State: Strategy approved; slice order defined
           State Concepts: InteractionTree, StateModel
-          Initiation: Developer requests slice (e.g. Slice 1 or "next slice")
+          Trigger: Developer requests slice (e.g. Slice 1 or "next slice")
           Response: Caller injects instructions for generate_slice; AI reads strategy and context; produces 4–7 stories; derives concepts; builds Interaction Tree + State Model; validates; caller persists to output path in real time during iterations; when user feedback implies reusable correction, AI adds DO/DO NOT to strategy (no separate improve_strategy call)
           Resulting State: Slice available for review; corrections in strategy when applicable
           Failure Modes: Strategy not approved; slice index invalid; output validation fails
           Steps:
           1. User → AI: generate next slice (e.g. "Slice 1", "next slice")
-          2. Caller: Injects context paths and instructions for generate_slice into prompt (story_synthesizer.process.intro, story_synthesizer.strategy.slices.running, shaping.strategy.corrections, story_synthesizer.output.*, shaping.validation.*, story_synthesizer.core.*, strategy doc path)
+          2. Caller: Injects context paths and instructions for generate_slice into prompt (story_synthesizer.process.intro, story_synthesizer.strategy.slices.running, story_synthesizer.strategy.corrections, story_synthesizer.output.*, story_synthesizer.validation.*, story_synthesizer.core.*, strategy doc path)
           3. AI: Reads context from paths; loads strategy doc; instructions already in prompt
           4. AI: Determines current slice from strategy order; produces 4–7 stories; derives concepts; builds Interaction Tree + State Model
           5. AI: Generates slice output; validates against checklist; caller persists to output path
@@ -150,13 +150,13 @@
      - Story: **Improve Strategy**
           Required State: Slice produced; user has corrections
           State Concepts: —
-          Initiation: Developer provides corrections (DO/DO NOT rules)
+          Trigger: Developer provides corrections (DO/DO NOT rules)
           Response: Caller injects instructions for improve_strategy; AI adds DO/DO NOT to strategy doc per corrections format; caller persists; user may re-run slice (Generate Slices) until approved
           Resulting State: Strategy doc updated; slice ready for approval or next slice
           Failure Modes: Correction format invalid; rule conflicts with existing
           Steps:
           1. User → AI: Provides corrections (DO/DO NOT rules) — explicit or implied from slice feedback
-          2. Caller: Injects instructions for improve_strategy into prompt (shaping.strategy.corrections, correction format)
+          2. Caller: Injects instructions for improve_strategy into prompt (story_synthesizer.strategy.corrections, correction format)
           3. AI: Reads strategy doc; applies correction format (DO/DO NOT, example wrong, example correct)
           4. AI: Produces updated strategy doc with new DO/DO NOT block(s)
           5. Caller: Persists strategy to output path
@@ -167,7 +167,7 @@
      - Story: **Improve Skill**
           Required State: All slices done; strategy doc has accumulated corrections
           State Concepts: —
-          Initiation: Developer requests post-synthesis review
+          Trigger: Developer requests post-synthesis review
           Response: AI reviews all corrections in strategy; determines what to change in skill content/rules; promotes rules that apply across domains; updates base skill
           Resulting State: Base skill (content, rules) updated; skill improved
           Failure Modes: Promotion conflicts; invalid content format
@@ -429,7 +429,7 @@ Strategy (Markdown Document)
      
 - Path path
      Path to strategy document
-     invariant: <workspace>/shaping/strategy.md; returns Path, not String
+     invariant: <workspace>/story-synthesizer/strategy.md; returns Path, not String
 - SourceAnalysis source_analysis
      Semantic structure within the markdown
 - InteractionTree
@@ -473,7 +473,7 @@ Slice
 **Source:** `abd-context-to-memory` skill — SKILL.md, scripts  
 **Methodology:** abd-story-synthesizer skill  
 **Domain:** abd-context-to-memory — content sources → markdown → chunks → refer for future use  
-**Assumption:** Developer initiates; abd-context-to-memory responds. Integration (e.g. Vesta 7) is separate.
+**Assumption:** Developer triggers; abd-context-to-memory responds. Integration (e.g. Vesta 7) is separate.
 
 ### D.1) Interaction Tree (abd-context-to-memory)
 
@@ -493,7 +493,7 @@ Slice
 - **Source attribution:** Each chunk includes `<!-- Source: path | file://url -->` for traceability.
 - **Integration:** How chunks are added to context (e.g. Vesta 7) is separate; this skill produces referable chunks.
 - **Workspace:** All skill operations happen in the context of a workspace — a folder (likely at root of project/IDE, or a subfolder). Everything gets packed into this workspace. Workspace path in engine config (engine knows where to find it).
-- **Skill outputs:** Always at <workspace>/<output-folder>/ where output-folder = skill name with `abd-` stripped (e.g. shaping, context-to-memory).
+- **Skill outputs:** Always at <workspace>/<output-folder>/ where output-folder = skill name with `abd-` stripped (e.g. story-synthesizer, context-to-memory).
 
 ---
 
@@ -513,10 +513,10 @@ Slice
 - **Object-oriented model:** AgileContextEngine → AbdSkill[] (not EngineConfig). Each abd-skill has path, RuleSet (markdown + JSON), hard-coded properties (core, process, strategy, output, validation), assembled agent file, build method.
 - **Abd-skill:** Story-synthesizer skill is `abd-story-synthesizer`. Engine is self-contained in the skill. Every abd-skill has content pieces: core, process, strategy, output, validation.
 - **Rule dual representation:** Abd-skill–rule relationship lives in (1) markdown (content files) and (2) JSON (for scanners).
-- **Create Skill:** User creates markdown(s) describing intent; initiates build abd-skill through AI. AI uses agile-skill-build; skill runs script with params to create scaffolding; AI fills content pieces from markdown/prompts/text; if incomplete, user completes; AI reruns build script when done.
+- **Create Skill:** User creates markdown(s) describing intent; triggers build abd-skill through AI. AI uses agile-skill-build; skill runs script with params to create scaffolding; AI fills content pieces from markdown/prompts/text; if incomplete, user completes; AI reruns build script when done.
 - **Python/JSON hybrid:** Config lists skill paths in JSON; Python (or CLI) loads skills and assembles; instruction injection uses merged content.
 - **Architecture-pattern constraints:** Constraints (must use X, must run in Y time) are stored in config and applied when validating synthesizer output.
-- **Workspace:** Skill space is wherever you deploy the skill — parent of `.agents/skills`. Engine derives it from the skill path; no config needed. All outputs go under that path (e.g. `shaping/`, `context-to-memory/`).
+- **Workspace:** Skill space is wherever you deploy the skill — parent of `.agents/skills`. Engine derives it from the skill path; no config needed. All outputs go under that path (e.g. `story-synthesizer/`, `context-to-memory/`).
 - **Skill outputs:** Always at <workspace>/<output-folder>/ where output-folder = skill name with `abd-` stripped. Fixed convention; never changes.
 - **Context from memories, not raw paths:** Add Context to Memory populates memory (convert, chunk, sync via abd-context-to-memory). Use Synthesizer Skill gets context from those memories — not from raw file paths. Context comes from Memories (memory/ subfolder under workspace). Each folder = one Memory = chunked markdown for one file. Each memory points to (1) original artifact and (2) markdown converted artifact (full conversion, alongside original). Memories are nested.
 - **Subsequent slices:** Slice 2+ will add one-skill-vs-many, slice-as-run semantics, instruction injection, CLI, hierarchy scoping, panel, impacts.

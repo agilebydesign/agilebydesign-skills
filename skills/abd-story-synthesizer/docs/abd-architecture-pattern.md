@@ -188,7 +188,7 @@ Config format and paths are in §1.4 and §1.3.
 | **Per-skill load** | For each path in `skills`, instantiate `AbdSkill` at `skills/<path>/` |
 | **Rule set load** | Per skill: `rules/*.md` (Markdown), `rules/scanners.json` (JSON). Merge into unified `RuleSet` per skill. |
 | **Skill space** | Derived from skill path — parent of `.agents/skills` (or parent of `skills` when in engine). No config. |
-| **Output folders** | Create `<skill_space>/<output-folder>/` for each skill; output folder = skill name with `abd-` stripped (e.g. abd-shaping → shaping, abd-context-to-memory → context-to-memory) |
+| **Output folders** | Create `<skill_space>/<output-folder>/` for each skill; output folder = skill name with `abd-` stripped (e.g. abd-story-synthesizer → story-synthesizer, abd-context-to-memory → context-to-memory) |
 | **Engine API** | `Engine.load()` — reads config, loads skills, derives skill space, creates output dirs |
 | **Failure** | Malformed JSON; missing skill path; invalid rule path → report and fail |
 
@@ -212,7 +212,7 @@ Domain concepts for Create Abd-Skill, mapped to implementation: exact file path,
 
 | Concept / Property / Operator | Implementation |
 |------------------------------|----------------|
-| Class | `skills/abd-shaping/scripts/abd_skill.py` → `class AbdSkill` |
+| Class | `skills/abd-story-synthesizer/scripts/abd_skill.py` → `class AbdSkill` |
 | `AbdSkill.engine` | Injected at construction. Used for context (workspace, strategy_path, slice_index). |
 | `AbdSkill.path` | `skills/abd-<name>/` |
 | `AbdSkill.rule_set` | `skills/abd-<name>/rules/` (dir); `rules/scanners.json` (JSON); `rules/*.md` (Markdown) |
@@ -305,7 +305,7 @@ skills/abd-<name>/
 
 ## 3. Instruction Injection
 
-**Applies to:** Epic **Use Shape Skill** (Create Shaping Strategy, Generate Slices, Improve Strategy); Epic **Initialize Agile Context Engine** (Load registered skills and rule sets — AbdSkill must support `operation_sections` and `instructions`).
+**Applies to:** Epic **Use Story Synthesizer Skill** (Create Strategy, Generate Slices, Improve Strategy); Epic **Initialize Agile Context Engine** (Load registered skills and rule sets — AbdSkill must support `operation_sections` and `instructions`).
 
 Instructions are assembled and **injected** into the AI prompt. The AI doesn't "go read" the rules — they're given. The caller (MCP, CLI, panel, etc.) asks the skill for instructions before the AI runs an operation and injects the assembled markdown into the prompt.
 
@@ -313,10 +313,10 @@ Instructions are assembled and **injected** into the AI prompt. The AI doesn't "
 
 | Story | Operation | What it does |
 |-------|-----------|--------------|
-| Create Shaping Strategy | `create_strategy` | Analyze source; propose epic breakdown, slice order, assumptions; save strategy doc |
-| Generate Shaping Slices | `generate_slice` | Load strategy; produce 4–7 stories; output Interaction Tree + State Model |
+| Create Strategy | `create_strategy` | Analyze source; propose epic breakdown, slice order, assumptions; save strategy doc |
+| Generate Slices | `generate_slice` | Load strategy; produce 4–7 stories; output Interaction Tree + State Model |
 | Improve Strategy | `improve_strategy` | Add DO/DO NOT to strategy doc; re-run slice until approved |
-| Improve Skill (post-shaping) | `improve_skill` | Take accumulated corrections; update base skill content/rules |
+| Improve Skill (post-synthesis) | `improve_skill` | Take accumulated corrections; update base skill content/rules |
 
 **Improve strategy** = corrections go into the strategy document. **Improve skill** = strategy doc improvements are applied to the skill's content and rules.
 
@@ -324,27 +324,27 @@ Instructions are assembled and **injected** into the AI prompt. The AI doesn't "
 
 **Applies to:** Epic **Initialize Agile Context Engine** (Load registered skills — skills expose sectioned content); Epic **Use Shape Skill** (all operations — caller assembles per operation).
 
-**Alignment convention:** Section IDs mirror domain. `shaping.X.Y` → content in file matching X (e.g. `strategy.md` for `shaping.strategy.*`). **Domain-led** layout: one file per domain.
+**Alignment convention:** Section IDs mirror domain. `story_synthesizer.X.Y` → content in file matching X (e.g. `strategy.md` for `story_synthesizer.strategy.*`). **Domain-led** layout: one file per domain.
 
 | File | Section IDs | Content |
 |------|-------------|---------|
-| **process.md** | `shaping.process.intro`, `shaping.process.post_shaping.review` | Process overview; post-shaping review |
-| **strategy.md** | `shaping.strategy.iterative`, `shaping.strategy.criteria`, `shaping.strategy.slices.running`, `shaping.strategy.corrections` | Iterative Strategy, criteria, running slices, DO/DO NOT |
-| **output.md** | `shaping.output.interaction_tree`, `shaping.output.state_model` | Interaction Tree and State Model format |
-| **validation.md** | `shaping.validation.checklist`, `shaping.validation.rules` | Validation checklist; DO/DON'T rules |
-| **core.md** | `shaping.core.interaction`, `shaping.core.state_concept` | Interaction and State Concept definitions |
-| **rules/** (markdown + JSON) | `shaping.validation.rules` | DO/DON'T rules, scanner configs; merged into RuleSet |
+| **process.md** | `story_synthesizer.process.intro`, `story_synthesizer.process.post_synthesis.review` | Process overview; post-synthesis review |
+| **strategy.md** | `story_synthesizer.strategy.iterative`, `story_synthesizer.strategy.criteria`, `story_synthesizer.strategy.slices.running`, `story_synthesizer.strategy.corrections` | Iterative Strategy, criteria, running slices, DO/DO NOT |
+| **output.md** | `story_synthesizer.output.interaction_tree`, `story_synthesizer.output.state_model` | Interaction Tree and State Model format |
+| **validation.md** | `story_synthesizer.validation.checklist`, `story_synthesizer.validation.rules` | Validation checklist; DO/DON'T rules |
+| **core.md** | `story_synthesizer.core.interaction`, `story_synthesizer.core.state_concept` | Interaction and State Concept definitions |
+| **rules/** (markdown + JSON) | `story_synthesizer.validation.rules` | DO/DON'T rules, scanner configs; merged into RuleSet |
 
 ### 3.3 What to Inject and When
 
-**Applies to:** Epic **Use Shape Skill** — Stories: Create Shaping Strategy, Generate Slices, Improve Strategy.
+**Applies to:** Epic **Use Story Synthesizer Skill** — Stories: Create Strategy, Generate Slices, Improve Strategy.
 
 | Operation | Inject | Story |
 |-----------|--------|-------|
-| **create_strategy** | `shaping.process.intro`, `shaping.strategy.iterative`, `shaping.strategy.criteria`, `shaping.core.interaction`, `shaping.core.state_concept` | Create Shaping Strategy |
-| **generate_slice** | `shaping.process.intro`, `shaping.strategy.slices.running`, `shaping.strategy.corrections`, `shaping.output.*`, `shaping.validation.checklist`, `shaping.validation.rules`, `shaping.core.*`, **strategy doc** (from path) | Generate Shaping Slices |
-| **improve_strategy** | `shaping.strategy.corrections`, `shaping.validation.checklist` (correction format only) | Improve Strategy |
-| **improve_skill** | `shaping.process.post_shaping.review`, `shaping.strategy.corrections`, **strategy doc** (from path) | Improve Skill |
+| **create_strategy** | `story_synthesizer.process.intro`, `story_synthesizer.strategy.iterative`, `story_synthesizer.strategy.criteria`, `story_synthesizer.core.interaction`, `story_synthesizer.core.state_concept` | Create Strategy |
+| **generate_slice** | `story_synthesizer.process.intro`, `story_synthesizer.strategy.slices.running`, `story_synthesizer.strategy.corrections`, `story_synthesizer.output.*`, `story_synthesizer.validation.checklist`, `story_synthesizer.validation.rules`, `story_synthesizer.core.*`, **strategy doc** (from path) | Generate Slices |
+| **improve_strategy** | `story_synthesizer.strategy.corrections`, `story_synthesizer.validation.checklist` (correction format only) | Improve Strategy |
+| **improve_skill** | `story_synthesizer.process.post_synthesis.review`, `story_synthesizer.strategy.corrections`, **strategy doc** (from path) | Improve Skill |
 
 **Corrections in generate_slice:** When user feedback implies a reusable rule, AI adds DO/DO NOT during the slice flow; no separate `improve_strategy` call needed.
 
@@ -356,7 +356,7 @@ Instructions are assembled and **injected** into the AI prompt. The AI doesn't "
 
 ### 3.4 Injection Flow
 
-**Applies to:** Epic **Use Shape Skill** — Stories: Create Shaping Strategy, Generate Slices, Improve Strategy.
+**Applies to:** Epic **Use Story Synthesizer Skill** — Stories: Create Strategy, Generate Slices, Improve Strategy.
 
 | Step | Caller | Engine / Skill |
 |------|--------|----------------|
@@ -391,7 +391,7 @@ Everything below is placeholder. We will go into more detail on Create Abd-Skill
 
 ## 8. Epic: Gather Context
 
-### Story: Gather context for shaping run
+### Story: Gather context for synthesis run
 
 | Aspect | Implementation |
 |--------|----------------|
@@ -399,7 +399,7 @@ Everything below is placeholder. We will go into more detail on Create Abd-Skill
 | **Memory layout** | Each source file → one folder under `memory/`; folder = one `Memory`; chunks as `.md` files with `<!-- Source: path -->`. |
 | **ContextSources** | `scripts/context_sources.py` (or equivalent) — `class ContextSources` with `gather(content_sources, workspace, strategy)`. |
 | **Memories** | `scripts/memories.py` (or equivalent) — `Memories`, `Memory`, `Chunk`. |
-| **Refer** | `Memories.refer()` returns `Chunk[]` for shaping. |
+| **Refer** | `Memories.refer()` returns `Chunk[]` for synthesis. |
 
 **Memory path:** `<skill_space>/context-to-memory/memory/<artifact_id>/`  
 **Chunk files:** `chunk_001.md`, `chunk_002.md`, … with source attribution in each.
@@ -408,24 +408,24 @@ Everything below is placeholder. We will go into more detail on Create Abd-Skill
 
 ## 9. Epic: Use Shape Skill
 
-### Story: Create Shaping Strategy
+### Story: Create Strategy
 
 | Aspect | Implementation |
 |--------|----------------|
-| **Output path** | `<skill_space>/shaping/strategy.md` |
+| **Output path** | `<skill_space>/story-synthesizer/strategy.md` |
 | **Format** | Markdown. Structure: source analysis, epic breakdown, slice order, assumptions. |
 | **Strategy** | `scripts/strategy.py` (or equivalent) — `class Strategy` with `save(path)`, `load(path)`, `update(rules)`. |
-| **Metadata (optional)** | `<skill_space>/shaping/strategy.json` for structured parts (epics, slices) if needed. |
+| **Metadata (optional)** | `<skill_space>/story-synthesizer/strategy.json` for structured parts (epics, slices) if needed. |
 
-### Story: Generate Shaping Slices
+### Story: Generate Slices
 
 | Aspect | Implementation |
 |--------|----------------|
 | **Output** | Interaction Tree + State Model. |
-| **Paths** | `<skill_space>/shaping/slice-<n>/interaction-tree.md`, `slice-<n>/state-model.md` (or `.json` for structured). |
+| **Paths** | `<skill_space>/story-synthesizer/slice-<n>/interaction-tree.md`, `slice-<n>/state-model.md` (or `.json` for structured). |
 | **Slice** | `scripts/slice.py` (or equivalent) — `class Slice` with `produce(strategy): (InteractionTree, StateModel)`. |
 
-### Story: Improve Shaping Skill
+### Story: Improve Skill
 
 | Aspect | Implementation |
 |--------|----------------|
@@ -438,7 +438,7 @@ Everything below is placeholder. We will go into more detail on Create Abd-Skill
 
 ```
 <skill_space>/
-├── shaping/
+├── story-synthesizer/
 │   ├── strategy.md
 │   └── slice-1/
 │       ├── interaction-tree.md
@@ -459,11 +459,11 @@ Everything below is placeholder. We will go into more detail on Create Abd-Skill
 
 | Concept | Module | Class |
 |---------|--------|-------|
-| AgileContextEngine | `skills/abd-shaping/scripts/engine.py` | `AgileContextEngine` |
-| AbdSkill | `skills/abd-shaping/scripts/abd_skill.py` | `AbdSkill` |
-| RuleSet | `skills/abd-shaping/scripts/rule_set.py` | `RuleSet` |
-| AbdConfig | `skills/abd-shaping/scripts/config.py` | `AbdConfig` |
-| Instructions | `skills/abd-shaping/scripts/instructions.py` | `Instructions` |
+| AgileContextEngine | `skills/abd-story-synthesizer/scripts/engine.py` | `AgileContextEngine` |
+| AbdSkill | `skills/abd-story-synthesizer/scripts/abd_skill.py` | `AbdSkill` |
+| RuleSet | `skills/abd-story-synthesizer/scripts/rule_set.py` | `RuleSet` |
+| AbdConfig | `skills/abd-story-synthesizer/scripts/config.py` | `AbdConfig` |
+| Instructions | `skills/abd-story-synthesizer/scripts/instructions.py` | `Instructions` |
 | ContextSources | (future) | `ContextSources` |
 | Memories | (future) | `Memories`, `Memory`, `Chunk` |
 | Strategy | (future) | `Strategy` |
@@ -474,7 +474,7 @@ Everything below is placeholder. We will go into more detail on Create Abd-Skill
 ## 12. Pydantic Models (Tentative)
 
 ```python
-# skills/abd-shaping/scripts/config.py
+# skills/abd-story-synthesizer/scripts/config.py
 from pydantic import BaseModel
 from pathlib import Path
 
@@ -493,10 +493,10 @@ class AbdConfig(BaseModel):
 
 | Artifact | Format | Location |
 |----------|--------|----------|
-| Engine config | JSON | `skills/abd-shaping/conf/abd-config.json` (or per-skill `conf/abd-config.json`) |
+| Engine config | JSON | `skills/abd-story-synthesizer/conf/abd-config.json` (or per-skill `conf/abd-config.json`) |
 | Skill content | Markdown | `skills/abd-<name>/content/*.md` (includes script-invocation.md for AI) |
 | Scanner rules | JSON | `skills/abd-<name>/rules/*.json` |
 | Assembled agent | Markdown | `skills/abd-<name>/AGENTS.md` |
-| Strategy | Markdown | `<skill_space>/shaping/strategy.md` |
+| Strategy | Markdown | `<skill_space>/story-synthesizer/strategy.md` |
 | Memory chunks | Markdown | `<skill_space>/context-to-memory/memory/<id>/*.md` |
-| Slice output | Markdown / JSON | `<skill_space>/shaping/slice-<n>/*.md` |
+| Slice output | Markdown / JSON | `<skill_space>/story-synthesizer/slice-<n>/*.md` |

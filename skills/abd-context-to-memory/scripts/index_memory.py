@@ -62,7 +62,7 @@ def main():
         src_path = Path(src).resolve()
         content_root = src_path.parent  # memory lives alongside the source project
         memory_name = src_path.name
-        print(f"Pipeline: convert → chunk → sync SharePoint → embed for {src}")
+        print(f"Pipeline: convert -> chunk -> sync SharePoint -> embed for {src}")
         print(f"Memory root: {content_root}\n")
         if not _run("convert_to_markdown.py", ["--memory", src], content_root=content_root):
             sys.exit(1)

@@ -6,7 +6,9 @@ The story synthesizer skill helps you take context and synthesize it into **stor
 
 Your task is to **synthesize** source material into an **Interaction Tree** and **Domain Model** — meaningful exchanges between actors, plus the domain concepts and state that support them. Outputs: story map, domain model, acceptance criteria, specifications, walkthroughs.
 
-**Hierarchy:** Epic → Story → Scenario → Step. Epics can nest (an epic whose parent is an epic is sometimes called a sub-epic). Epics group stories; the story is the backbone — the smallest unit that is both valuable and independently deliverable. Each story has Pre-Condition, Initiation, Response, and statement. Scenarios optionally group steps; steps are atomic interactions.
+In Agile terminology, this translates to a **story map** and **domain model**. The hierarchy goes from larger, coarser-grain business outcomes (*Epics*) down to **Stories** — tangible user and system interactions. Synthesis can stop at the story level; details are flushed out later.
+
+**Interaction Tree:** Epic → Story → Scenario → Step. Epics can nest (an epic whose parent is an epic is sometimes called a sub-epic). Epics group stories; the story is the backbone — the smallest unit that is both valuable and independently deliverable. Each story has Pre-Condition, Trigger, Response, and statement. Scenarios optionally group steps; steps are atomic interactions.
 
 **State** runs alongside. Pre-Condition is what must be true before; Response implies resulting state. Domain concepts (the things that hold state and get operated on) are referenced via `**Concept**` in labels; each must exist in the Domain Model. Tree and Domain Model evolve together — no drift.
 
@@ -22,15 +24,15 @@ An interaction is a single meaningful exchange between two actors that results i
 ### Interaction
 
 - **Name** — name of the interaction. **Ground in domain:** Every epic, story, scenario, and step must be grounded in domain language — either in the name or in the statement — using `**Concept**` (double stars, capitalization). Domain concepts must appear in `**Concept**` format so the domain conditions are described.
-- **Statement** — one-sentence initiation and response; include domain concepts where appropriate.
+- **Statement** — one-sentence trigger and response; include domain concepts where appropriate.
 
-**Name and statement (all nodes):** Use active verb language. Short name first, longer statement in brackets. Format: `Node: Short Name (Longer statement.)` — e.g. `Step 1: Browse Country for Payment (When **User** browses countries; Then **System** displays...)`. Name is always verb-noun or subject-qualifier; statement is always the longer sentence. **Epic statement:** Describe the scope of the epic (broad flows), not a single interaction. **Story/Step statement:** One initiation and response.
+**Name and statement (all nodes):** Use active verb language. Short name first, longer statement in brackets. Format: `Node: Short Name (Longer statement.)` — e.g. `Step 1: Browse Country for Payment (When **User** browses countries; Then **System** displays...)`. Name is always verb-noun or subject-qualifier; statement is always the longer sentence. **Epic statement:** Describe the scope of the epic (broad flows), not a single interaction. **Story/Step statement:** One trigger and response.
 - **Impacts** — zero or more (see Impact below)
-- **Constraints** — zero or more. Qualitative instructions on how this interaction is shaped. A constraint may be a sentence, a reference to a collection of files, or (most commonly) a reference to a markdown file. Constraints are inherited from high to low (parent → child).
+- **Constraints** — zero or more. Qualitative instructions on how this interaction is structured. A constraint may be a sentence, a reference to a collection of files, or (most commonly) a reference to a markdown file. Constraints are inherited from high to low (parent → child).
 - **Pre-Condition** — label only. What must be true before. State qualifies through the label. Use `**Concept**` to reference domain concepts; each must exist in the Domain Model.
-- **Initiation** — Initiating-Actor, Behavior (label), Initiating-State. Initiating-State is any state that qualifies the interaction (e.g. selecting an option of a certain type). Labels reference domain concepts; examples live on the interaction.
+- **Trigger** — Triggering-Actor, Behavior (label), Triggering-State. Triggering-State is any state that qualifies the interaction (e.g. selecting an option of a certain type). Labels reference domain concepts; examples live on the interaction.
 - **Response** — Responding-Actor, Behavior (label), Resulting-State. Resulting-State is the state that results from the interaction. Labels reference domain concepts; examples live on the interaction.
-- **Examples** — collection of tables at the interaction level. One per concept referenced in labels. Pre-Condition, Initiation, and Response reference these through their labels; examples live on the interaction.
+- **Examples** — collection of tables at the interaction level. One per concept referenced in labels. Pre-Condition, Trigger, and Response reference these through their labels; examples live on the interaction.
 - **Failure-Modes** — up to three; how the exchange can fail (rule/state based only)
 - **Children** — child interactions of this interaction.
 
@@ -39,33 +41,44 @@ An interaction is a single meaningful exchange between two actors that results i
 - Epic - Can nest to have epic children or story children. An epic whose parent is an epic is sometimes called a sub-epic. Names are typically simple verb-noun.  
 - Story - Smallest unit of testable value that is independently delivered. Names are typically simple verb-noun.  
 - Scenario - Groups steps; optional container for a story. Names describe the primary conditions tested in the scenario.  
-- Step - Atomic interaction within a scenario. Steps are interactions: often in the form of **Initiation** (When) and **Response** (Then). 
+- Step - Atomic interaction within a scenario. Steps are interactions: often in the form of **Trigger** (When) and **Response** (Then). 
 
 Epic → children (Epics, Stories)  
 Story → Scenarios OR Steps
 Scenario → Steps  
 Step --> lowest interaction for now
 
+#### The Story as Backbone
+
+The **story** is the backbone of all the work above and below it. It is the central unit that everything connects to.
+
+- **Above the story:** Epics and sub-epics exist only to **group stories together**. They are organizational structure, not the primary unit of value.
+- **Below the story:** All steps, examples, and scenarios **belong to the story**. The story is the central spoke — everything below it hangs off the story.
+
+**What a story is:** A story is something we can reasonably discuss as a valuable tactical interaction between the user and the system (or between systems). It is something that can be developed in a small amount of time — typically a couple of days for a developer (or a couple of hours for AI :). It is the smallest unit that is both valuable and independently deliverable. It needs to be testable, which means it must have a recognizable behavior that a user or stakeholder would recognize. Not necessarily always user-facing, but at least recognizable as a tangible business state that's changed or logic has been executed here.
+
+**Stopping point:** The story is typically the stopping point **for Shaping and Discovery**. For Exploration, Walkthrough, and Specification, we go below the story (to steps, examples, scenarios). With slices and runs, *we have explicit control on the stopping point*: a run on a slice of a couple of epics can have criteria to only identify other epics and not stories. The stopping point is configurable. See Impact below for the Impact data model (types, status, evidence linking).
+
 **Commonly Generated Fields Vary By Node Type:** 
 Any node level can use any field. Exceptions are always possible. The table below lists what we commonly generate for each node.
 
 | Node | Commonly generated | Case By Case Generated |
 |------|--------------------|------------------------|
-| Epic | Initiating-Actor, Responding-Actor, Name (Verb Noun), Impact, Constraints | Pre-Condition, Initiating-State, Resulting-State, Examples, Failure-Modes|
-| Story | Initiation , Response ; Name (Verb Noun), Examples, Pre-Condition (eg BDD backgroun, Given, And); Failure-Modes, Constraints |
-| Scenario | Initiation, Response, Pre-Condition (eg BDD Given, And); Examples |
-| Step | Initiation, Response,(When, And, Then, And); Examples; Constraints (when step-specific) |
+| Epic | Triggering-Actor, Responding-Actor, Name (Verb Noun), Impact, Constraints | Pre-Condition, Triggering-State, Resulting-State, Examples, Failure-Modes|
+| Story | Trigger , Response ; Name (Verb Noun), Examples, Pre-Condition (eg BDD backgroun, Given, And); Failure-Modes, Constraints |
+| Scenario | Trigger, Response, Pre-Condition (eg BDD Given, And); Examples |
+| Step | Trigger, Response,(When, And, Then, And); Examples; Constraints (when step-specific) |
 
 **Nodes inherit attributes from their parents.** 
-Child nodes inherit state, examples, pre-conditions, actors, domain concepts, and constraints. You can show inherited attributes explicitly in square brackets (e.g. `Initiating-Actor: [User]`, `Examples: [Logged In User, Active Session]`) so readers see which values came from the parent. When you use brackets, update them if the parent changes. **Inheritance applies either way** — even when you don't show brackets, the inherited values still apply to the child. See Hierarchy Inheritance for conventions.
+Child nodes inherit state, examples, pre-conditions, actors, domain concepts, and constraints. You can show inherited attributes explicitly in square brackets (e.g. `Triggering-Actor: [User]`, `Examples: [Logged In User, Active Session]`) so readers see which values came from the parent. When you use brackets, update them if the parent changes. **Inheritance applies either way** — even when you don't show brackets, the inherited values still apply to the child. See Hierarchy Inheritance for conventions.
 
 **Inheritance that we often want to call out explicitly through the [inherited thing] notation**
 - **Epic from Epic:** Domain concepts. Lower-level epics (sub-epics) often use the inherited domain concepts from their parent epic.
-- **Story from Epic:** Initiating-Actor, Responding-Actor, Pre-Condition, Examples based on Pre-Condition, domain concepts.
+- **Story from Epic:** Triggering-Actor, Responding-Actor, Pre-Condition, Examples based on Pre-Condition, domain concepts.
 - **Scenario from Story:** Almost nothing needs to be explicitly stated.
-- **Step from Story:** Initiating-Actor and Responding-Actor are often used, eg [User] and [System] from the story or higher. Exception: when a step is system-initiated (e.g. "When **System** receives payment type selection"), that step may override Initiating-Actor.
+- **Step from Story:** Triggering-Actor and Responding-Actor are often used, eg [User] and [System] from the story or higher. Exception: when a step is system-triggered (e.g. "When **System** receives payment type selection"), that step may override Triggering-Actor.
 
-**Domain grounding:** Every epic, story, scenario, and step must be grounded in domain language. This primarily comes from the interactions (e.g., initiation and response) if they have been defined, but if they have not been defined, then it would come from the  the name or  the statement. When When initiation and response have been defined, the name is based on those, but sometimes we don't define these for a node, and just define the name at first. In either case, all of the above need to be grounded using `**Concept**` (double stars on both sides, capitalization). Avoid generic terms; use `**Country**`, `**PaymentType**`, etc., not "country" or "payment type". Concepts must come from the Domain Model here. Concept identified as part of exploring the interaction tree should be added to the Domain Model and vice versa. When we add things to the Domain Model, we should explore which interactions require those and update accordingly.
+**Domain grounding:** Every epic, story, scenario, and step must be grounded in domain language. This primarily comes from the interactions (e.g., trigger and response) if they have been defined, but if they have not been defined, then it would come from the  the name or  the statement. When When trigger and response have been defined, the name is based on those, but sometimes we don't define these for a node, and just define the name at first. In either case, all of the above need to be grounded using `**Concept**` (double stars on both sides, capitalization). Avoid generic terms; use `**Country**`, `**PaymentType**`, etc., not "country" or "payment type". Concepts must come from the Domain Model here. Concept identified as part of exploring the interaction tree should be added to the Domain Model and vice versa. When we add things to the Domain Model, we should explore which interactions require those and update accordingly.
 
 Concepts are placed at the level of the interaction hierarchy where they apply to all descendants. Every `**Concept**` must exist in the Domain Model — no drift.
 
@@ -74,32 +87,44 @@ Concepts are placed at the level of the interaction hierarchy where they apply t
 State qualifies an interaction through its **label** — a description of the condition. The interaction's **Examples** (tables) live on the interaction; example and label reference the domain concepts that correspond to those tables.
 
 ### Pre-Condition
- What must be true before the interaction. Label only (may use Given/And BDD format). Examples live on the interaction.
 
-### Initiation 
+State that must be present before an interaction starts. What must be true before the interaction. Label only (may use Given/And BDD format). Examples live on the interaction.
+
+### Trigger
 
 Who starts the interaction and what they do.
 
-- **Initiating-Actor** — who starts the interaction
+- **Triggering-Actor** — who starts the interaction
 - **Behavior** — the label. Describes the action. Use When/And for steps, Given/When/Then for BDD, or verb-noun as appropriate.
-- **Initiating-State** — state that qualifies the interaction (e.g. selecting an option of a certain type). Labels reference domain concepts; examples live on the interaction.
+- **Triggering-State** — state that qualifies the interaction (e.g. selecting an option of a certain type). Labels reference domain concepts; examples live on the interaction.
 
 ### Response (Then)
 
-Who responds and what they do.
+Resulting state after an interaction has finished. Who responds and what they do.
 
 - **Responding-Actor** — who responds (typically system, subsystem, or component)
 - **Behavior** — the label. Describes the response. Use Given/When/Then for BDD, or verb-noun as appropriate.
 - **Resulting-State** — the state that results from the interaction. Labels reference domain concepts; examples live on the interaction.
 
+### Step format
+
+When steps are in scope, specify the format for step text:
+
+- **When/Then** — strict BDD: Trigger as When, Response as Then (e.g. `When **User** browses countries; Then **System** displays list of **Country** options`).
+- **Vanilla steps** — verb-noun: short labels (e.g. `User submits form`, `System validates payment`).
+
+These are artificial distinctions — we can say any of these elements. The strategy specifies which mode(s) apply and what is in scope.
+
 ### Impact
 
-Applies to Epic, Story. An interaction may have an impact; a known result can provide evidence for another impact (tie a hypothesis to a result).
+An interaction may have an **impact**. Impacts apply at any level of the hierarchy. A known result can provide evidence for another impact (tie a hypothesis to a result).
 
 - **Type** — user | economic | feasibility
 - **Status** — hypothesis (we don't know yet) | result (measured outcome for an existing system)
 - **Description**
 - **Evidence-Ref** — optional; links to another impact that is a result
+
+**Example:** Epic "User checks out" has impact hypothesis: "Reduces cart abandonment by 15%." Story "Apply discount code" has result: "In pilot, 12% of users who applied a code completed checkout." The result becomes evidence for the hypothesis.
 
 ### Constraints
 
@@ -108,11 +133,11 @@ Any node at any level can have one or more **constraints** — qualitative instr
 - A reference to a collection of files that describe the constraint
 - Most commonly: a reference to a markdown file
 
-Constraints are inherited from high to low (parent → child). Typically appear at epic or story level; may appear at step level when step-specific.
+Constraints are inherited from high to low (parent → child). Typically at epic or story level; may appear in steps.
 
 ## Domain Model
 
-The Domain Model holds **modules** (groupings of tightly related concepts) and **domain concepts** — the things that have state and can be operated on. Concepts are referenced in interactions via `**Concept**` in Pre-Condition, Initiation, Response, and Failure-Modes. Every `**Concept**` must exist in the Domain Model; concepts must be placed at the right level in the hierarchy. No drift between tree and model. Use source entity data, not aggregated/calculated values.
+The Domain Model holds **modules** (groupings of tightly related concepts) and **domain concepts** — the things that have state and can be operated on. Concepts are referenced in interactions via `**Concept**` in Pre-Condition, Trigger, Response, and Failure-Modes. Every `**Concept**` must exist in the Domain Model; concepts must be placed at the right level in the hierarchy. No drift between tree and model. Use source entity data, not aggregated/calculated values.
 
 ### Module
 
@@ -124,33 +149,50 @@ Grouping of tightly related concepts.
 <!-- section: story_synthesizer.core.domain_concept -->
 ### Domain Concept
 
-A domain concept that holds state and can be operated on. Referenced in interactions via `**Concept**` in labels. Examples live on the interaction.
+A domain concept that holds state and can be operated on. Referenced in interactions via `**Concept**` in labels. Examples live on the interaction. The Domain Model connects what concepts know and do to interactions — concepts participate as callers, receivers, and collaborators; state flows through Pre-Condition, Triggering-State, and Resulting-State.
 
 - **Name**
 - **Module** — optional; grouping of tightly related concepts
 - **Base-Concept** — optional
-- **Properties** — with optional collaborating concepts and invariants
-- **Operations** — with optional collaborating concepts and invariants  ; It should be easy to reverse engineer the interactions in the interaction diagram to at least some level of operations on the Domain Model.
+- **Properties** — with optional collaborating concepts and invariants. Use standard types: String, Number, Boolean, List, Dictionary, UniqueID, Instant. Use `List<T>` or `Dictionary<K,V>` when element types matter.
+- **Operations** — with optional collaborating concepts and invariants. It should be easy to reverse engineer the interactions in the interaction diagram to at least some level of operations on the Domain Model.
+ 
+**Concept relationships:** When a concept "has" another concept, use composition (strong has-a; part cannot exist without whole) or aggregation (weak has-a; whole has no meaning without multiple instances of the same part — e.g. crowd, flock, mob). Prefer composition/aggregation over inheritance.
+
+### Domain Model Example (from Interaction Tree)
+
+The following concepts correspond to the Complete Example hierarchy (Make **Country**-specific **PaymentType**). Each `**Concept**` referenced in the interaction tree must exist here.
+
+**Module: payment**
+
+- **User** — Properties: user_name (String), user_role (String). Operations: browse_countries(), select_country(**Country**), select_payment_type(**PaymentType**), enter_payment_details(**PaymentDetails**), submit(). Examples: Logged In User.
+- **Session** — Properties: session_id (String), user_name (String), expires_at (Instant). Operations: is_active(). Examples: Active User Session.
+- **Country** — Properties: country_code (String), country_name (String). Operations: get_payment_types(). Examples: Selected Country.
+- **PaymentType** — Properties: payment_type (String). Operations: get_field_types(). Examples: PaymentType, Selected PaymentType.
+- **UserPaymentAccess** — Properties: user_name (String), country_code (String), payment_type (String), available (Boolean). Operations: has_access(**User**, **Country**, **PaymentType**). Examples: User Payment Type Access.
+- **PaymentTypeFieldTypes** — Properties: payment_type (String), fields (List&lt;String&gt;). Examples: Payment Type Field Types.
+- **PaymentDetails** — Properties: payment_type (String), amount (Number), currency (String), beneficiary_id (String), swift_code (String), routing_number (String), account_number (String). Operations: validate(). Examples: PaymentDetails (wire).
+
 ---
 
-## Hierarchy Inheritance
+## Interaction Tree Inheritance
 
 Attributes from a parent node are inherited by child nodes. **Brackets indicate inherited values.** Use `[value]` or `[inherited]` so readers see what applies at each level; if the parent changes, update bracketed values in children.
 
 **Inherited attributes:** Examples, actors. Place concepts at the lowest level where they apply to all descendants. Concepts are indicated by `**Concept**` in labels — no separate list.
 
-**Convention:** `Initiating-Actor: [User]`, `Responding-Actor: [System]` — brackets mean "from parent." Unbracketed values are defined on this node. Use Title Case for field names; hyphens for compound terms (e.g. Pre-Condition); no dot notation.
+**Convention:** `Triggering-Actor: [User]`, `Responding-Actor: [System]` — brackets mean "from parent." Unbracketed values are defined on this node. Use Title Case for field names; hyphens for compound terms (e.g. Pre-Condition); no dot notation.
 
 **Guidelines for inherited values:**
-- **Statement by level:** Epic statement describes the *scope* of the epic — the broad flows it encompasses — not a single interaction. Use `**Concept**` to ground in domain. Good: (**User** initiates **PaymentType** flows that vary by **Country**; **System** validates and executes per **Country**.) Bad: (**User** selects **Country** and **PaymentType**; **System** validates.) — that describes one story, not an epic. Story statement: one initiation and response. Step statement: When/Then for that step.
+- **Statement by level:** Epic statement describes the *scope* of the epic — the broad flows it encompasses — not a single interaction. Use `**Concept**` to ground in domain. Good: (**User** triggers **PaymentType** flows that vary by **Country**; **System** validates and executes per **Country**.) Bad: (**User** selects **Country** and **PaymentType**; **System** validates.) — that describes one story, not an epic. Story statement: one trigger and response. Step statement: When/Then for that step.
 - **Pre-Condition:** Never use `Pre-Condition: [inherited]` alone. Always include the label (bracketed) so readers see what applies.
-- **Initiating-Actor / Responding-Actor:** Use `[User]` or `[System]` at every initiation/response so the actor is visible without looking up. Use Title Case; no dot notation (e.g. `Initiating-Actor`, not `initiation.actor`).
+- **Triggering-Actor / Responding-Actor:** Use `[User]` or `[System]` at every trigger/response so the actor is visible without looking up. Use Title Case; no dot notation (e.g. `Triggering-Actor`, not `trigger.actor`).
 - **Examples:** Live on the interaction. Use `[inherited]` when tables come from parent; list the qualitative names (e.g. `[Logged In User, Active User Session, User Payment Type Access]`). Include step-specific or story-specific examples unbracketed.
 - **Example table names:** When you have data, you need a label. Name by state or condition — "Selected Country", "Selected PaymentType", "Approved Payment" — not generic labels like "Payment" or "Country". For mapping tables use descriptive names (e.g. "Payment Type Field Types"). When data varies by type, include the type (e.g. "PaymentDetails (wire)"). When multiple tables for the same concept appear in one step, add a qualifier in parentheses (e.g. "Selected PaymentType (selected, not available for country)"). When inherited, list those names: `examples: [Logged In User, Active User Session, User Payment Type Access]`.
 - **Example scenario column:** Use a scenario column to map example rows to outcomes. Use kebab-case consistently (e.g. success, invalid-payment-details, payment-type-not-available).
 - **Example block format:** Use `===` between tables. No blank lines between tables. Tables require a header separator row (`|---|---|`). Pattern: `Name:\n| col1 | col2 |\n|---|---|\n| data | data |\n===\nNext name:\n| table |`.
 
-**Rule:** Put shared concepts at the epic level; only add story-specific concepts at the story level. Epic holds initiation state for rules that apply to all children (e.g. user access to payment types by country). Epics (including epic children of epics) group; they do not add initiation/response state. Stories inherit Pre-Condition, Initiating-Actor, and Responding-Actor from Epic.
+**Rule:** Put shared concepts at the epic level; only add story-specific concepts at the story level. Epic holds trigger state for rules that apply to all children (e.g. user access to payment types by country). Epics (including epic children of epics) group; they do not add trigger/response state. Stories inherit Pre-Condition, Triggering-Actor, and Responding-Actor from Epic.
 
 **Placement rule:** Only put something at a level if it applies to every descendant. If a failure mode, concept, or rule applies only to specific scenarios or stories, place it on those nodes — not at the Epic.
 
@@ -158,7 +200,7 @@ Attributes from a parent node are inherited by child nodes. **Brackets indicate 
 
 ## Complete Example
 
-A typical reference hierarchy for making a country-specific payment (initiate, make transaction, fulfill). **Concepts** are referenced via `**Concept**` in labels. **Examples** live on the interaction. Pre-Condition, Initiation, and Response qualify through their labels. Epic holds rules that apply to all children (e.g. user access to payment types by country). Epics group; they do not add initiation/response state. Stories inherit from Epic. One story is taken to full detail with scenario and steps. (Other epics and stories not yet filled out.)
+A typical reference hierarchy for making a country-specific payment (trigger, make transaction, fulfill). **Concepts** are referenced via `**Concept**` in labels. **Examples** live on the interaction. Pre-Condition, Trigger, and Response qualify through their labels. Epic holds rules that apply to all children (e.g. user access to payment types by country). Epics group; they do not add trigger/response state. Stories inherit from Epic. One story is taken to full detail with scenario and steps. (Other epics and stories not yet filled out.)
 
 **Hierarchy levels:** Epic → Story → Scenario → Step (epics can nest; an epic child of an epic is sometimes called a sub-epic)
 
@@ -166,8 +208,8 @@ A typical reference hierarchy for making a country-specific payment (initiate, m
 
 ### Hierarchy
 
-#### Epic: Make **Country**-specific **PaymentType** (**User** initiates **PaymentType** flows that vary by **Country**; **System** validates and executes per **Country**.)
-- Initiating-Actor: User
+#### Epic: Make **Country**-specific **PaymentType** (**User** triggers **PaymentType** flows that vary by **Country**; **System** validates and executes per **Country**.)
+- Triggering-Actor: User
 - Responding-Actor: System
 - Pre-Condition: Given **User** is logged in; And **User** has an active **Session**; And **User** has access to **PaymentType** in **Country** (see **UserPaymentAccess**)
 - Examples:
@@ -196,13 +238,13 @@ A typical reference hierarchy for making a country-specific payment (initiate, m
   | wire         | amount, currency, beneficiary_id, swift_code |
   | ach          | amount, currency, beneficiary_id, routing_number, account_number |
 
-  #### Story: **User** Initiates **Country**-Specific **PaymentType** (**User** determines **Country** and **PaymentType**; **System** validates and confirms.)
+  #### Story: **User** Triggers **Country**-Specific **PaymentType** (**User** determines **Country** and **PaymentType**; **System** validates and confirms.)
   - Pre-Condition: [Given **User** is logged in; And **User** has an active **Session**; And **User** has access to **PaymentType** in **Country** (see **UserPaymentAccess**)]
   - Failure-Modes:
     - validation errors (invalid **PaymentDetails**)
     - payment type not available for **Country** (see **UserPaymentAccess**)
-  - Initiation:
-    - Initiating-Actor: [User]
+  - Trigger:
+    - Triggering-Actor: [User]
     - Behavior: **User** determines **Country** and **PaymentType**
   - Response:
     - Responding-Actor: [System]
@@ -213,16 +255,16 @@ A typical reference hierarchy for making a country-specific payment (initiate, m
   ###### Steps
 
   - Step 1: Browse Country for Payment (When **User** browses countries; Then **System** displays list of **Country** options available for **PaymentType**)
-    - Initiation:
-      - Initiating-Actor: [User]
+    - Trigger:
+      - Triggering-Actor: [User]
       - Behavior: browses countries
     - Response:
       - Responding-Actor: [System]
       - Behavior: displays list of **Country** options available for payment
 
   - Step 2: Select Country and Display Payment Types (When **User** selects **Country**; Then **System** displays all available **PaymentType** options for that country)
-    - Initiation:
-      - Initiating-Actor: [User]
+    - Trigger:
+      - Triggering-Actor: [User]
       - Behavior: selects **Country**
     - Response:
       - Responding-Actor: [System]
@@ -243,8 +285,8 @@ A typical reference hierarchy for making a country-specific payment (initiate, m
       | success  | US           | ach          |
 
   - Step 3: Select Payment Type and Start Payment (When **User** selects **PaymentType** and clicks start payment; Then **System** prepares payment form for that **PaymentType**)
-    - Initiation:
-      - Initiating-Actor: [User]
+    - Trigger:
+      - Triggering-Actor: [User]
       - Behavior: selects **PaymentType** and clicks start payment
     - Response:
       - Responding-Actor: [System]
@@ -257,16 +299,16 @@ A typical reference hierarchy for making a country-specific payment (initiate, m
       | success  | wire         |
 
   - Step 4: Display Payment Details Based on Payment Type (When **System** receives payment type selection; Then **System** displays **PaymentDetails** with fields appropriate to the selected **PaymentType**)
-    - Initiation:
-      - Initiating-Actor: [System]
+    - Trigger:
+      - Triggering-Actor: [System]
       - Behavior: receives payment type selection
     - Response:
       - Responding-Actor: [System]
       - Behavior: displays **PaymentDetails** with fields from **PaymentTypeFieldTypes** for the selected **PaymentType**
 
   - Step 5: Make Payment and Successfully Validate It (When **User** enters valid **PaymentDetails** and submits; Then **System** validates the payment and confirms success)
-    - Initiation:
-      - Initiating-Actor: [User]
+    - Trigger:
+      - Triggering-Actor: [User]
       - Behavior: enters valid **PaymentDetails** and submits
     - Response:
       - Responding-Actor: [System]
@@ -279,8 +321,8 @@ A typical reference hierarchy for making a country-specific payment (initiate, m
       | success  | wire         | 1000.00 | USD      | ben-001        | SWIFT123   |
 
   - Step 6: Make Payment and Validation Fails (When **User** enters invalid **PaymentDetails** and submits; Then **System** validates and returns validation errors)
-    - Initiation:
-      - Initiating-Actor: [User]
+    - Trigger:
+      - Triggering-Actor: [User]
       - Behavior: enters invalid **PaymentDetails** and submits
     - Response:
       - Responding-Actor: [System]
@@ -297,16 +339,16 @@ A typical reference hierarchy for making a country-specific payment (initiate, m
   ###### Steps
 
   - Step 1: Browse Country for Payment (When **User** browses countries; Then **System** displays list of **Country** options available for payment)
-    - Initiation:
-      - Initiating-Actor: [User]
+    - Trigger:
+      - Triggering-Actor: [User]
       - Behavior: browses countries
     - Response:
       - Responding-Actor: [System]
       - Behavior: displays list of **Country** options available for payment
 
   - Step 2: Select Country and Attempt Unavailable Payment Type (When **User** selects **Country** where a **PaymentType** is not available; And **User** selects that **PaymentType** and clicks start payment; Then **System** indicates payment type not available for that country)
-    - Initiation:
-      - Initiating-Actor: [User]
+    - Trigger:
+      - Triggering-Actor: [User]
       - Behavior: selects **Country**; then selects **PaymentType** and clicks start payment
     - Response:
       - Responding-Actor: [System]
@@ -328,258 +370,122 @@ A typical reference hierarchy for making a country-specific payment (initiate, m
   #### Epic: Submit **PaymentDetails** for **PaymentType**
     - Pre-Condition: [Given **User** is logged in; And **User** has an active **Session**; And **User** has access to **PaymentType** in **Country** (see **UserPaymentAccess**)]
     - Examples: [Logged In User, Active User Session, User Payment Type Access]
-    - Initiating-Actor: [User]
+    - Triggering-Actor: [User]
     - Responding-Actor: [System]
 
   #### Story: **User** submits **PaymentDetails** for **Country**-specific **PaymentType**
     - Pre-Condition: [Given **User** is logged in; And **User** has an active **Session**; And **User** has access to **PaymentType** in **Country** (see **UserPaymentAccess**)]
     - Examples: [Logged In User, Active User Session, User Payment Type Access]
-    - Initiating-Actor: [User]
+    - Triggering-Actor: [User]
     - Responding-Actor: [System]
 
   #### Epic: Fulfill **Payment** settlement
     - Pre-Condition: [Given **User** is logged in; And **User** has an active **Session**; And **User** has access to **PaymentType** in **Country** (see **UserPaymentAccess**)]
     - Examples: [Logged In User, Active User Session, User Payment Type Access]
-    - Initiating-Actor: [User]
+    - Triggering-Actor: [User]
     - Responding-Actor: [System]
 
   #### Story: **User** completes **Payment** settlement
     - Pre-Condition: [Given **User** is logged in; And **User** has an active **Session**; And **User** has access to **PaymentType** in **Country** (see **UserPaymentAccess**)]
     - Examples: [Logged In User, Active User Session, User Payment Type Access]
-    - Initiating-Actor: [User]
+    - Triggering-Actor: [User]
     - Responding-Actor: [System]
 
 ---
 
 # Process Overview
 
-<!-- section: story_synthesizer.process.intro -->
-Your task is to **synthesize** context into an **Interaction Tree** and **Domain Model** — a hierarchical structure of meaningful exchanges between actors, plus the domain concepts and state that support them. In Agile terminology, this translates to a **story map** and **domain model**. The hierarchy goes from larger, coarser-grain business outcomes (*Epics*) down to **Stories** — tangible user and system interactions. Synthesis can stop at the story level; details are flushed out later.
+Your task is to **synthesize** context into an **Interaction Tree** and **Domain Model** — a hierarchical structure of meaningful exchanges between actors, plus the domain concepts and state that support them.
 
-Each rule has a DO with example and a DO NOT with example.
+**You MUST follow this process.** When the user says "create the story map," "proceed," "build it," "build a strategy," "generate the output," "start a session," or similar, you **MUST** call `python scripts/build.py get_instructions <operation>` and inject its output before producing any synthesis output. Do not rely on AGENTS.md alone.
 
-**You MUST follow this process.**
-When the user says "create the story map," "proceed," "build it," "build a strategy," "generate the output," or similar, you **MUST** call `python scripts/build.py get_instructions <operation>` (e.g. `create_strategy` for strategy phase, `run_slice` for runs) and inject its output before producing any shaping output. Do not rely on AGENTS.md alone.
+| User says | Operation |
+|-----------|-----------|
+| "start a session", "create a session" | `create_strategy` |
+| "build a strategy", "create the strategy", "propose slices" | `create_strategy` |
+| "proceed", "build it", "run slice 1", "next run" | `run_slice` |
+| "validate our run", "check what we just did" | `validate_run` |
+| "validate the slice", "validate slice 1" | `validate_slice` |
 
-1. **Strategy Phase first** — Analyze the source, propose Epic/Story breakdown and slice order, save the strategy. Do not produce an interaction tree until the strategy is approved.
-2. **Work in runs** — Each run produces output for a slice (4–7 stories typical). A run may require **multiple iterations**: user reviews, finds mistakes, you add corrections to the **run log**, re-run. Repeat until the user approves. Only then proceed to the next run.
-3. **No full output in one go** — Do not produce a complete interaction tree in a single pass. Iterate run by run.
-4. **Review and Adjust** - Once all runs are done, have the AI review all corrections collected in the **run log** and determine what needs to change in the rules and/or instructions. Promote those that apply across projects  to the skill's rules.
+**Usage:** From the skill directory, run `python scripts/build.py get_instructions <operation>`. See **Script Invocation** for paths, validate, and full details.
+
+Within each phase: **Human** → **AI** invokes script → **Script** returns instructions → **AI** produces output → **Human** updates and adjusts → **AI** incorporates changes.
+
+### 1. Start Session
+
+
+| Human                                        | AI / Script                                       | AI                                             | Human → AI                                 |
+| -------------------------------------------- | ------------------------------------------------- | ---------------------------------------------- | ------------------------------------------ |
+| Says "start a session" or "create a session" | Invokes script `get_instructions create_strategy` | Produces session file with strategy and slices | Updates and adjusts → incorporates changes |
+
+
+Create, open, or continue an existing session. Name it (user-provided or AI-derived from context). The session file stores strategy: Level of Detail, Scope, Variation Analysis, and slices. Option: carry slices over from a previous session (e.g. Exploration reuses Discovery slices) or create new slices.  
+Please *see Sessiions,md* for further details
+
+### 2. Execute A Run
+
+
+| Human                                                             | AI / Script                                 | AI                                | Human → AI                                 |
+| ----------------------------------------------------------------- | ------------------------------------------- | --------------------------------- | ------------------------------------------ |
+| Says "proceed," "build it," "run slice", "next run", "next slice" | Invokes script `get_instructions run_slice` | Produces run output for the slice | Updates and adjusts → incorporates changes |
+
+
+Slices are completed through a run. Run 1 = slice 1, run 2 = slice 2, etc. A run may require multiple iterations (user reviews → corrections to run log → re-run) until approved. We use slices and runs to prevent produceing a complete interaction tree or domain model in one pass — iterate slice by slice. Corrections carry forward: run 2 applies corrections from run 1; run 3 applies corrections from runs 1 and 2.  
+Please *see Sessiions,md* for further details
+
+### 3. Correct
+
+
+| Human                                | AI / Script                                    | AI                                          | Human → AI                                 |
+| ------------------------------------ | ---------------------------------------------- | ------------------------------------------- | ------------------------------------------ |
+| Reviews output and gives corrections | Invokes script `get_instructions validate_run` | Applies corrections to run log (may re-run) | Updates and adjusts → incorporates changes |
+
+
+**Description:** Human reviews the run output and identifies mistakes. Corrections go to the run's  Corrections section in the the run log. Each correction must include a DO or DO NOT rule, an example of what was wrong, and the fix. AI may re-run the slice with corrections applied.
+
+### 4. Adjust
+
+
+| Human                                        | AI / Script                                        | AI                                          | Human → AI                                 |
+| -------------------------------------------- | -------------------------------------------------- | ------------------------------------------- | ------------------------------------------ |
+| Reviews corrections, decides what to promote | Invokes script `get_instructions improve_strategy` | Updates session strategy and/or skill rules | Updates and adjusts → incorporates changes |
+
+
+**Description:** After all runs (or when the user wants), review corrections collected in run logs. Determine what needs to change. Incorporate into the session strategy and/or promote to the skill's rules those that apply across projects. The session file is the source of truth
 
 ## Output Paths (default)
 
-- **Strategy:** `<skill-space>/story-synthesizer/strategy.md`
+- **Session:** `<skill-space>/story-synthesizer/sessions/<session-name>.md` — Strategy (Level of Detail, Scope, Variation Analysis), **slices** (list with tick when run done), and session metadata
 - **Output:** `<skill-space>/story-synthesizer/` — Interaction Tree and Domain Model (format in `output/interaction-tree-output.md` and `output/domain-model-output.md`)
-- **Runs:** `<skill-space>/story-synthesizer/runs/` — run logs (one file per run, e.g. `run-1.md`)
+- **Runs:** `<skill-space>/story-synthesizer/sessions/<session-name>/runs/` — run logs (one file per run, e.g. `run-1.md`)
 
-**Runs** — Each run is a purposeful loop: it defines how much detail to synthesize, where to stop (epics vs stories vs steps), and produces output. We track runs, not slices. Each run writes a run log. **Corrections go to the run log** (the run's Corrections section), not to the strategy. See `run-output.md` for format;
-
-## Slices and Runs
-
-- **Slice** — A collection of context we want to further refine, ranging from no structure to a set of example stories. Each slice defines *what* we are synthesizing. A slice can be scoped to epics only (not down to stories), or it can go all the way to stories, steps, or examples — the slice defines the scope.
-- **Run** — A purposeful loop to perform the next increment of our strategy. Each run defines in how much detail we will be synthesizing, where we stop (e.g., at epics or at stories), tracks the output of the step in the process, is used to track progress, and produces a slice of output. A run can stop at epics and not stories — we have explicit control over the stopping point.
-
-### Run Log
-
-Each run writes a **run log** to its own file. The log records Before, After, and Corrections. See `run-output.md` for structure and format.
-
-This gives better granularity for improving things over time — run logs can be fed into an agent, analyzed for patterns, or used to refine the strategy.
+These paths can be configured under the skill-space config (`abd-config.json`) so the user can choose where files go and what they are named.
 
 ### Running Slices
 
-1. **Run the first slice** — Produce output for Slice 1 according to the run's stopping point (e.g., 4–7 stories if stopping at stories; epics and sub-epics only if stopping at sub-epics). Write the run log. User reviews.
-2. **Corrections → run log** — When a mistake is found, add a **DO** or **DO NOT** to the **run log** (the run's Corrections section). Each correction must include:
-   - The **DO** or **DO NOT** rule
-   - **Example (wrong):** What was done incorrectly
-   - **Example (correct):** What it should be after the fix
-   - If it is the second (or later) time failing on the same guidance, add an extra example to the existing DO/DO NOT block
-   - Re-run the slice; update the run log with the new Before/After and any additional corrections; repeat until the user approves
-3. **Next slice** — Proceed to the next slice. Same pattern: produce → review → corrections to run log → re-run until approved.
-4. **Slice ordering** — At any point, you may change the slice order; update the strategy and continue.
-5. **Progressive expansion** — Slice size may increase as the user prefers.
+**Slices** are units of context to synthesize (e.g. a chunk range, an epic, a set of stories). **Runs** produce output for one slice each: run 1 = slice 1, run 2 = slice 2. Each run writes a log; corrections go to the log and carry forward to later runs.  
+Please *see Sessiions,md* for further details
 
-These paths can be configured under the skill-space config (`abd-config.json` or equivalent) so the user can choose where files go and what they are named.
+1. **Run the first slice** — Produce output for Slice 1 according to the session's level of detail (e.g., 4–7 stories if stopping at stories; epics and sub-epics only if stopping at sub-epics). Write the run log. User reviews.
+2. **Corrections → run log** — When a mistake is found, add a **DO** or **DO NOT** to the **run log** (the run's Corrections section). Each correction must include:
+  - The **DO** or **DO NOT** rule
+  - **Example (wrong):** What was done incorrectly
+  - **Example (correct):** What it should be after the fix
+  - If it is the second (or later) time failing on the same guidance, add an extra example to the existing DO/DO NOT block
+  - Re-run the slice; update the run log with the new Before/After and any additional corrections; repeat until the user approves
+3. **Next slice** — Proceed to the next slice. Apply corrections from previous runs. Same pattern: produce → review → corrections to run log → re-run until approved.
+4. **Slice ordering** — At any point, you may change the slice order; update the session and continue.
+5. **Progressive expansion** — Slice size may increase as the user prefers.
 
 ## Process Checklist
 
-- [ ] **Strategy Phase complete** — Source analyzed; Epic/Story breakdown proposed; strategy saved to `<skill-space>/story-synthesizer/strategy.md`
-- [ ] **Strategy approved by user** — Do not produce an interaction tree until then
-- [ ] **Run 1 produced** — Output for first slice; run log written to `runs/run-1.md`
-- [ ] **Run 1 iterated to approval** — User reviews; when mistakes are found, add DO/DO NOT to the **run log** Corrections section (with wrong/correct examples); re-run taking corrections into account; repeat until user approves
-- [ ] **Post-synthesis review** — Review all corrections collected in run log; determine what needs to change in rules/instructions; promote reusable corrections to strategy and/or skill
-- [ ] **Next run** — Proceed to next slice;or conduct another run to go deeper on same slice; same iteration pattern (produce → review → corrections to run log → re-run until approved)
+**Each session needs the following flow:**
 
----
-
-# Strategy Phase
-
-<!-- section: story_synthesizer.strategy.phase -->
-## Purpose
-
-The synthesizer skill helps you take context and synthesize it into **stories** that explain how a user engages with a solution or system(s) to create value. Stories are about **interaction**, but also about **structure**, **state**, and **rules**.
-
-## Process
-
-1. **Analyze the source** to determine where complexity lives.
-2. **Present the strategy** to the user. Include: complexity areas identified, proposed initial breakdown, assumptions, **comprehensiveness criteria**, **identification criteria**, **proposed traversal order criteria(slices)**.
-3. **Validate until reasonable** — User reviews; refine until approved. Do not produce an interaction tree until then.
-4. **Save the strategy** to `<skill-space>/story-synthesizer/strategy.md`.
-
-## Interaction Hierarchy
-
-Interactions exist at **all levels** of the hierarchy. **Hierarchy:** Epic → Story → Scenario → Step. Epics can nest (an epic whose parent is an epic is sometimes called a sub-epic). The hierarchy goes from high-level epic (coarse interaction) down through nested epics to stories, and below stories to scenarios and steps. Domain concepts are often inherited: sub-epics use inherited concepts from their parent epic; stories very rarely define domain concepts — they inherit from the epic. See `core.md` for inheritance patterns and Initiating-State / Resulting-State.
-
-### The Story as Backbone
-
-The **story** is the backbone of all the work above and below it. It is the central unit that everything connects to.
-
-- **Above the story:** Epics and sub-epics exist only to **group stories together**. They are organizational structure, not the primary unit of value.
-- **Below the story:** All steps, examples, and scenarios **belong to the story**. The story is the central spoke — everything below it hangs off the story.
-
-**What a story is:** A story is something we can reasonably discuss as a valuable tactical interaction between the user and the system (or between systems). It is something that can be developed in a small amount of time — typically a couple of days for a developer (or a couple of hours for AI :). It is the smallest unit that is both valuable and independently deliverable. It needs to be testable, which means it must have a recognizable behavior that a user or stakeholder would recognize. Not necessarily always user-facing, but at least recognizable as a tangible business state that's changed or logic has been executed here.
-
-**Stopping point:** The story is typically the stopping point **for Shaping and Discovery**. For Exploration, Walkthrough, and Specification, we go below the story (to steps, examples, scenarios). With slices and runs, *we have explicit control on the stopping point*: a run on a slice of a couple of epics can have criteria to only identify other epics and not stories. The stopping point is configurable.
-
-## Impacts
-
-An interaction may have an **impact**. Impacts apply at any level of the hierarchy. See `core.md` for the full Impact data model (types, status, evidence linking).
-
-**Example:** Epic "User checks out" has impact hypothesis: "Reduces cart abandonment by 15%." Story "Apply discount code" has result: "In pilot, 12% of users who applied a code completed checkout." The result becomes evidence for the hypothesis.
-
-## Strategy Criteria
-
-<!-- section: story_synthesizer.strategy.criteria -->
-### 1 - Comprehensiveness Criteria and Tags in Scope
-
-**What are we synthesizing context into?** Be specific about the typical criteria for each mode. Criteria must match the node types at each level — see `core.md` and `output/interaction-tree-output.md` for field definitions.
-
-| Mode | Node levels | Fields per node |
-|------|-------------|-----------------|
-| **Shaping** | Epics (can nest), Stories. Stopping point: story. | Epic: Name (verb-noun), Initiating-Actor, Responding-Actor, Constraints. Story: same. Short names and actor only. **When identifying patterns and slices:** use Discovery-level detail. |
-| **Discovery** | Epics, Stories. Same levels as Shaping; stopping point: story. | Epic: Shaping fields + domain concepts (`**Concept**`), Pre-Condition, Initiating-State, Resulting-State, Initiation (Behavior, Initiating-Actor), Response (Behavior, Responding-Actor), Constraints. Story: same. Domain Model with concepts. |
-| **Exploration** | Steps (below story). | Step: Initiation, Response, Constraints (when step-specific). Steps not grouped into scenarios. No error conditions or edge cases. Straight and linear. |
-| **Walkthrough** | Stories. | Domain walkthrough on stories — no new node fields. |
-| **Specification** | Steps, Scenarios (below story). | Step: Initiation, Response, Examples, Constraints (when step-specific). Steps grouped into scenarios. Failure-Modes (failure conditions). |
-
-**Constraints:** Any node can have one or more constraints (sentence, file reference, or markdown reference). Inherited high to low. Typically at epic or story level; may appear in steps.
-
-**Step format:** When steps are in scope, specify the format for step text:
-- **When/Then** — strict BDD: Initiation as When, Response as Then (e.g. `When **User** browses countries; Then **System** displays list of **Country** options`).
-- **Vanilla steps** — verb-noun: short labels (e.g. `User submits form`, `System validates payment`).
-
-These are artificial distinctions — we can say any of these elements. The strategy must state which mode(s) apply and what is in scope.
-
-**How rules align:** Tags map this comprehensiveness to rule filtering. Strategy declares tags in scope; include a rule if any of its tags matches. Tags: `shaping`, `discovery`, `exploration`, `walkthrough`, `specification`, `interaction_tree`, `story`, `domain`, `step`, `step_edge_case`, `example`, `scenario`. Default when no strategy: `tags: [shaping, discovery, interaction_tree, story, domain]`.
-
-### 1 - Identification Criteria
-
-**How do we identify anything in the model?** Come up with criteria ahead of time for what parts of the context map to what we want to build. State your identification criteria and reasoning so the user can adjust. Include examples of wrong vs right identification.
-
-#### Epics vs Stories
-
-An **epic** groups related stories; a **story** is the smallest independently deliverable unit of value. Identify separate stories when any of these differ:
-
-| Discriminator | Meaning | Example |
-|---------------|---------|---------|
-| **Data structure of the concept** | The domain concept has different attributes, lifecycle, or relationships. | "Configure Physical Product" vs "Configure Digital Product" — different attributes (shipping, weight vs download, license). "Drive Car" vs "Drive Bicycle" vs "Ride Motorcycle" — different operational structure (engine, gears, fuel vs pedals, chain vs throttle, balance). |
-| **Different business rules** | The logic, validation, or constraints differ. | "Validate payment legality in U.S." vs "Validate payment legality in Canada" — same outcome (legal payment) but rules, regulations, and laws differ so much by jurisdiction that separate stories are needed. |
-| **Different underlying workflow** | The sequence of actions, approvals, or state transitions differs. | "Submit for approval" vs "Auto-approve under threshold" — different workflow paths. |
-| **Different channels** | The touchpoint or interface differs (web, mobile, API, batch, etc.). Identify when channel affects behavior or constraints, or when built at different times or by different teams. | "Checkout via web" vs "Checkout via mobile app" — identify if channel affects behavior or constraints, or if web and mobile are delivered in different increments or by separate teams. |
-| **Different systems / crossing boundaries** | The interaction crosses a system boundary or involves a different backend. | "Sync inventory from warehouse" vs "Update local stock" — one crosses systems, one is local. |
-| **Different resulting state** | The outcome or state change is distinct. | "Successfully process payment" vs "Forward payment to manual intervention" — same initiation (process payment) but the logic differs so much by outcome that separate stories are needed. |
-| **Different user roles** | Different actors or authorization levels change the interaction. | "Manager performs transaction" vs "Executive performs transaction" — same transaction type, but Manager requires approval while Executive does not; the role changes the flow. |
-| **Different failure modes** | The ways the interaction can fail are distinct. | "Submit claim — rejected for missing docs" vs "Submit claim — rejected for policy exclusion" — same initiation, but failure handling differs so much (upload flow vs no remediation) that separate stories are needed. |
-| **Expand distinct outcomes** | Same initiation, but resulting state and logic differ so much that one story would be too coarse. | "Successfully process payment" and "Forward payment to manual intervention" from "process payment." |
-
-#### Steps
-
-A **step** is one atomic initiation and response. Identify separate steps when:
-
-| Discriminator | Meaning | Example |
-|---------------|---------|---------|
-| **Explicit action-reaction** | One discrete event — a single initiation and its response. | One step = one user action + one system response. Not "User enters details and submits" when validation and submission are separate events. |
-| **Actor or response changes** | The initiating or responding actor changes, or a different user action or system response occurs. | **Wrong:** One step "User enters details and submits" when validation and submission are separate system responses. **Correct:** Step 1: "User enters details" (Then system validates). Step 2: "User submits" (Then system confirms). |
-| **Enumerate all permutations** | List all validation paths, calculation branches, and edge cases. Cover happy path, error path, and boundary conditions. | **Right:** When valid rank → calculates modifier; When invalid rank → shows error; When boundary rank → handles edge case. **Wrong:** Only "When user enters rank → system saves" (missing validation error, boundary). |
-
-
-#### Scenarios
-
-A **scenario** groups steps that share a path through the story. Split scenarios when:
-- Pre-conditions differ (e.g. new user vs returning user)
-- Success vs failure paths
-- Different branches of the same workflow
-
-#### Domain Concepts
-
-Concepts are the things that hold state and get operated on. Identify concepts when:
-- Different lifecycle (e.g. Draft vs Submitted Order)
-- Different ownership or responsibility
-- Different persistence or scope
-- Different properties or operations
-
-#### Examples
-
-Examples are concrete state tables that illustrate a concept. Identify from:
-- Boundary values (min, max, empty)
-- Distinct scenarios (success, invalid, not-available)
-- Representative combinations from the steps and state
-
-### 3 - Traversal Order (Slices)
-
-The order in which you work through slices is **not** necessarily epic-by-epic. Slices are units of work that may cut across epics.
-
-**Ideas for prioritizing slices:**
-- Architectural slice — Stories that establish the architecture
-- Domain slice — Stories aligned by common business logic
-- Integration slice — Stories across integration points
-- Workflow slice — End-to-end workflow for a particular use case
-- Value slice — Stories that provide the most value if done first
-- Risk slice — Stories that de-risk some aspect of the solution
-
-Favour slicing vertically, often by a common theme or category of complexity. Consider required-state dependencies (creators before consumers), where complexity is concentrated, and what makes a coherent slice for review.
-
-<!-- section: story_synthesizer.strategy.slices.running -->
-
-<!-- section: story_synthesizer.strategy.corrections -->
-## When User Gives a Correction
-
-**Trigger phrases:** "wrong", "correction", "this is wrong", "strategy is wrong", "too superficial", "fix this", "redo", "try again"
-
-**You MUST:**
-1. **Add to run log** — Create or append to `runs/run-N.md` (use `run-0.md` for strategy-phase corrections). Format:
-   - **DO** or **DO NOT:** [the rule]
-   - **Example (wrong):** [what was done incorrectly]
-   - **Example (correct):** [what it should be]
-2. **Apply the correction** — Refine strategy or re-run with corrections as input.
-3. **Proactively confirm** — Say: "I've added this to the run log. Correction: [brief summary]. I've applied it."
-
-**Strategy-phase corrections:** Use `runs/run-0.md` to capture corrections to the strategy. Same format. The run log feeds future runs.
-
-## Corrections Format
-
-When adding corrections to the run log (Corrections section), each **DO** or **DO NOT** must include:
-- The **DO** or **DO NOT** rule
-- **Example (wrong):** What was done incorrectly
-- **Example (correct):** What it should be after the fix
-- If it is the second (or later) time failing on the same guidance, add an extra example to the existing DO/DO NOT block
-
-Re-run the slice until the user approves. Corrections stay in the run log; the post-synthesis review promotes reusable ones to strategy or rules.
-
-When analyzing **existing content**, review and follow the strategy.
-
-### Object Model Correction
-
-**DO** — Inject the Engine (or context provider) into components that need it. Use properties over getters. Encapsulate over passing parameters — components pull context from injected dependencies instead of receiving it as method arguments.
-
-- **Example (wrong):** `AbdSkill.get_instructions_for(operation, context)` — context passed as parameter.
-- **Example (correct):** AbdSkill has `Engine engine` (injected); `instructions` property; assembles using `engine.workspace`, `engine.strategy_path` when needed.
-
-### Skill Update Workflow
-
-**DO** — Update the abd-story-synthesizer skill in `agilebydesign-skills/skills/abd-story-synthesizer/` first (core); then copy those updates to test installations as needed.
-
-- **Example (wrong):** Editing the skill only in a test project; creating standalone scripts in test without updating core; core and test copies drift.
-- **Example (correct):** Edit `agilebydesign-skills/skills/abd-story-synthesizer/`; run build; copy updated files to the test project's copy.
+- **Session created and approved** — Session file created at `sessions/<session-name>.md` with strategy (Level of Detail, Scope, Variation Analysis, slices); user approves before runs start
+- **Run 1 produced** — Output for first slice; run log written to `sessions/<session-name>/runs/run-1.md`
+- **Run 1 approved** — User reviews; when mistakes are found, add DO/DO NOT to the **run log** Corrections section (with wrong/correct examples); re-run taking corrections into account; repeat until user approves
+- **Run 2 … Run N** — For each remaining slice: produce → review → corrections to run log → re-run until approved. To go deeper on a slice (e.g. add steps), start a new session with a different focus.
+- **Review and Adjust** — When all runs are done (or when user wants): review all corrections in run logs; incorporate into session strategy and/or promote to skill rules
 
 ---
 
@@ -599,7 +505,7 @@ The tree view: Epic → Epic/Story children. Each node shows name, actors, and i
 # Epic (filled out — has Examples)
 
 - Heading: `# Epic: <name using **Domain Concepts**> (<statement>)`
-- `- Initiating-Actor:` value
+- `- Triggering-Actor:` value
 - `- Responding-Actor:` value
 - `- Constraints:` collection (sentence, file path, or markdown reference; inherited high to low)
 - `- Pre-Condition:` full label (Given/And)
@@ -611,15 +517,15 @@ The tree view: Epic → Epic/Story children. Each node shows name, actors, and i
 - `- Constraints:` [inherited] or own collection
 - `- Pre-Condition:` [full inherited label]
 - `- Examples:` [list of inherited state table names]
-- `- Initiating-Actor:` [User] (or other actor)
+- `- Triggering-Actor:` [User] (or other actor)
 - `- Responding-Actor:` [System] (or other actor)
 
-### Story (filled out — has Initiation, Response, Failure-Modes, Scenarios)
+### Story (filled out — has Trigger, Response, Failure-Modes, Scenarios)
 
 - Heading: `### Story: <name using **Domain Concepts**> (<statement>)` — same pattern as Epic
 - `- Pre-Condition:` [inherited]
 - `- Failure-Modes:` bullet list (up to 3)
-- `- Initiation:` sub-bullets Initiating-Actor, Behavior
+- `- Trigger:` sub-bullets Triggering-Actor, Behavior
 - `- Response:` sub-bullets Responding-Actor, Behavior
 - `###### Scenario:` name
 - `####### Steps`
@@ -631,20 +537,20 @@ The tree view: Epic → Epic/Story children. Each node shows name, actors, and i
 - `- Constraints:` [inherited] or own collection
 - `- Pre-Condition:` [inherited]
 - `- Examples:` [inherited table names]
-- `- Initiating-Actor:` [inherited]
+- `- Triggering-Actor:` [inherited]
 - `- Responding-Actor:` [inherited]
 
 ---
 
 # Story Details View (Drill-down)
 
-When a story is expanded: Scenarios, Steps, and per-step Initiation/Response/Examples.
+When a story is expanded: Scenarios, Steps, and per-step Trigger/Response/Examples.
 
 ## Step (no Examples)
 
 - `- Step N: <name using **Domain Concepts**> (When/Then <statement>)`
 - `- Constraints:` [inherited] or own (when step-specific)
-- `- Initiation:` [inherited], Behavior
+- `- Trigger:` [inherited], Behavior
 - `- Response:` [inherited], Behavior
 
 ## Step (with Examples)
@@ -653,9 +559,9 @@ When a story is expanded: Scenarios, Steps, and per-step Initiation/Response/Exa
 - Each table: label, blank line, header row, separator row, data rows
 - Each table is a separate block; blank line between tables
 
-## Step (system-initiated)
+## Step (system-triggered)
 
-- Initiating-Actor overridden to [System] when the step is system-initiated (e.g. "When **System** receives...")
+- Triggering-Actor overridden to [System] when the step is system-triggered (e.g. "When **System** receives...")
 
 ## Example table
 
@@ -719,7 +625,7 @@ Concept : <Base Concept if any>
 
 Each run writes a run log to its own file. A run may require **multiple iterations** (user reviews → corrections added → re-run). The run log is updated on each iteration; corrections accumulate in the Corrections section.
 
-**Path (default):** `<skill-space>/story-synthesizer/runs/run-N.md` (N = run number). Configurable via skill-space config.
+**Path (default):** `<skill-space>/story-synthesizer/sessions/<session-name>/runs/run-N.md` (N = run number). Configurable via skill-space config.
 
 ## Structure
 
@@ -739,13 +645,13 @@ What we had at the start (e.g., raw context, stories, steps). Summary or snippet
 What we had afterwards (e.g., context → stories, stories → steps). Summary or snippet.
 
 ## Corrections
-The DOs and DON'Ts added during this run. Each time the user finds a mistake, add a new correction here (do not add to strategy). Each correction includes:
+The DOs and DON'Ts added during this run. Each time the user finds a mistake, add a new correction here (do not add to session file directly). Each correction includes:
 - The rule
 - Example (wrong)
 - Example (correct)
 ```
 
-Run logs are used to track progress, feed into agents, analyze patterns, or refine the strategy. The post-synthesis review promotes reusable corrections from run logs to the strategy or skill rules.
+Run logs are used to track progress, feed into agents, analyze patterns, or refine the session strategy. The post-synthesis review promotes reusable corrections from run logs to the session or skill rules.
 
 ---
 
@@ -773,11 +679,11 @@ When the user **explicitly asks to validate** (e.g. "validate", "run validation"
 <!-- section: story_synthesizer.validation.checklist -->
 ## Validation Checklist
 
-After generating interactions and concepts, verify against the output format in `output/interaction-tree-output.md` and `output/domain-model-output.md`.
+After generating interactions and concepts, verify against the output format in `output/interaction-tree-output.md` and `output/state-model-output.md`.
 
-**Run scanners:** Execute `python scripts/build.py validate` (or `validate <path>`) to run rule-based scanners on the interaction tree and Domain Model. Scanners use regex and native Python only (or grammar/AST when available). When in a build phase (run_slice, validate_run, validate_slice), fix any reported violations before considering the run complete. When the user explicitly asks to validate outside a build phase, report violations only — do not fix.
+**Run scanners:** Execute `python scripts/build.py validate` (or `validate <path>`) to run rule-based scanners on the interaction tree and state model. Scanners use regex and native Python only (or grammar/AST when available). When in a build phase (run_slice, validate_run, validate_slice), fix any reported violations before considering the run complete. When the user explicitly asks to validate outside a build phase, report violations only — do not fix.
 
-**Strategy alignment:** Check that nodes include the fields specified by the strategy's **Comprehensiveness Criteria** for the current mode (Shaping, Discovery, Exploration, Walkthrough, Specification). The strategy states which mode(s) apply and what is in scope — e.g. Discovery expects Pre-Condition, Initiating-State, Resulting-State, Initiation, Response; Specification expects Examples, scenarios, failure conditions. Do not require fields that are out of scope for the run.
+**Strategy alignment:** Check that nodes include the fields specified by the strategy's **Comprehensiveness Criteria** for the current mode (Discovery, Exploration, Specification). The strategy states which mode(s) apply and what is in scope — e.g. Discovery expects Pre-Condition, Triggering-State, Resulting-State, Trigger, Response; Specification expects Examples, scenarios, failure conditions. Do not require fields that are out of scope for the run.
 
 ---
 
@@ -785,21 +691,21 @@ After generating interactions and concepts, verify against the output format in 
 
 **Epic**
 - [ ] Heading: `# Epic: <name using **Domain Concepts**> (<statement>)`
-- [ ] Initiating-Actor, Responding-Actor, Pre-Condition, Examples present (or inherited)
+- [ ] Triggering-Actor, Responding-Actor, Pre-Condition, Examples present (or inherited)
 - [ ] Pre-Condition on parent only when shared; children list only new or specialized state
 - [ ] Examples: state table block or `Examples: [Table Name 1, ...]` when inherited
 
 **Story**
 - [ ] Heading: `### Story: <name using **Domain Concepts**> (<statement>)`
-- [ ] Pre-Condition, Failure-Modes (max 3), Initiation, Response present
-- [ ] Initiation: sub-bullets Initiating-Actor, Behavior (no state language in Behavior)
+- [ ] Pre-Condition, Failure-Modes (max 3), Trigger, Response present
+- [ ] Trigger: sub-bullets Triggering-Actor, Behavior (no state language in Behavior)
 - [ ] Response: sub-bullets Responding-Actor, Behavior (no action language in outcome)
 - [ ] Scenario and Steps when in scope
 
 **Step**
 - [ ] `- Step N: <name using **Domain Concepts**> (When/Then <statement>)`
-- [ ] Initiation and Response with [inherited] when from parent
-- [ ] System-initiated steps override Initiating-Actor to [System]
+- [ ] Trigger and Response with [inherited] when from parent
+- [ ] System-triggered steps override Triggering-Actor to [System]
 
 **Example tables**
 - [ ] Qualifier in parentheses: `ConceptName (qualifier):`
@@ -813,12 +719,12 @@ After generating interactions and concepts, verify against the output format in 
 
 ---
 
-## Domain Model
+## State Model
 
 **Concept**
 - [ ] Format: `Concept : <Base Concept if any>`
 - [ ] Properties, operations, collaborating concepts listed
-- [ ] `examples:` list of domain concept tables from interaction tree
+- [ ] `examples:` list of state concept tables from interaction tree
 - [ ] Each concept referenced via `**Concept**` in interaction tree must exist here
 - [ ] Concepts scoped to Epic/Story that owns it (lowest common ancestor of all interactions that use it)
 - [ ] Stories rarely define domain concepts — they inherit from epic
@@ -857,28 +763,43 @@ If failing on the same guidance again, add an extra example to the existing DO/D
 
 # Script Invocation
 
-AI guidance for calling abd-story-synthesizer scripts.
+AI guidance for calling abd-story-synthesizer scripts. **Process** requires you to call `get_instructions` before producing synthesis output — use the operations below to select the correct one.
 
-## Two-phase flow
+## Get paths (engine_root, skill_space_path)
 
-1. **Create strategy** — Analyze source, propose Epic/Story breakdown and **slices**, save to `strategy.md`. Do not produce output until approved.
-2. **Perform runs** — Each run produces output for a slice. Runs iterate (user reviews → corrections to run log → re-run) until approved. Then next slice.
+When you need to know where the skill lives or where output goes, run:
+
+```bash
+cd skills/abd-story-synthesizer
+python scripts/build.py get_config
+```
+
+**Output:** JSON with `engine_root`, `skill_space_path` (and `skill_path` as shorthand), `config_path`, and optionally `strategy_path`, `context_paths`. Use this instead of hunting through docs — the script returns the resolved paths from `conf/abd-config.json`.
+
+**To set `skill_space_path`:** Edit `conf/abd-config.json` and set `"skill_space_path": "/path/to/workspace"` (e.g. mm3e). Output goes to `<skill_space_path>/story-synthesizer/`.
+
+## Strategy and runs
+
+1. **Iterative Strategy** — Strategy runs through every run. First run: create strategy document, build tree and Domain Model, spot patterns. Create output as you go — do not wait for approval before producing tree and Domain Model.
+2. **Perform runs** — Each run produces output for a slice. Runs iterate (user reviews → corrections to run log → re-run) until approved. Then next slice. Every run examines all runs for new patterns; if found, add to strategy.
 
 ## Strategy passed into API
 
-The strategy is **passed into the API** (not just embedded in markdown). The strategy declares a **collection of components** to render: `epic`, `story`, `step`, `scenario`, `examples`, `domain`. The engine uses those components to filter rules — only rules tagged for in-scope components are included. See `content/rules-tagging-proposal.md` for component-based filtering.
+The strategy is **passed into the API** (not just embedded in markdown). The session/strategy declares **tags in scope** — e.g. `discovery`, `interaction_tree`, `stories`, `domain`, `steps`, etc. The engine filters rules by tags: include a rule if any of its tags matches any in-scope tag. Session type determines scope; see `content/strategy.md` and `rules/README.md`.
 
 **Bespoke strategies:** A custom strategy can mix components (e.g. discovery + mapping to stories + domain concepts + examples at sub-epic level). Examples can be scoped at different levels — the strategy defines where.
 
 ## build.py get_instructions
 
-Gets the assembled prompt for an operation from the Engine. **You MUST call this before producing any shaping output.** Do not rely on AGENTS.md alone — run the command and inject its output. The strategy (path or content) is passed in; the engine parses it for components and filters rules accordingly.
+Gets the assembled prompt for an operation from the Engine. **You MUST call this before producing any synthesis output.** Do not rely on AGENTS.md alone — run the command and inject its output. The strategy (path or content) is passed in; the engine parses it for components and filters rules accordingly.
+
+**Rules injection:** Operations that include `story_synthesizer.validation.rules` (create_strategy, run_slice, generate_slice, validate_run, validate_slice) inject rules from `rules/*.md` **filtered by tags in scope**. All runs get validated, but validation uses different rules depending on what you synthesize — domain rules for domain output, step rules for steps, example rules for examples, etc. Rules are injected based on the strategy's declared tags. Each rule must have YAML frontmatter with `tags: [discovery, interaction_tree, story, domain, ...]`. See `rules/README.md` for the full tag set.
 
 **When to call:**
 
 | Operation | User says | Notes |
 |-----------|-----------|-------|
-| `create_strategy` | "build a strategy", "create the strategy", "analyze and propose breakdown", "propose slices" | Produces strategy with slices. No output until approved. |
+| `create_strategy` | "build a strategy", "create the strategy", "analyze and propose breakdown", "propose slices" | Produces strategy with slices and builds tree/state model. Injects discovery rules (`rules/`) so the agent applies them. Creates output as you go. |
 | `run_slice` | "do slice 1", "run slice 2", "proceed with slice 1", "re-run slice 1" | Performs a run on a slice. Strategy passed in; components drive rule filtering. Use `generate_slice` if that alias is configured. |
 | `validate_run` | "validate our run", "check what we just did" | Validate only the output of the current run. Ignores previous work. |
 | `validate_slice` | "validate the slice", "validate slice 1", "check the slice" | Validate everything in the slice — all accumulated output for that slice. |
@@ -931,9 +852,5 @@ python scripts/build.py
 **Output:** Writes `AGENTS.md` with merged content in order: core, process, strategy, output, validation.
 
 ---
-
-## Script change recommendations
-
-See `content/script-changes.md` for full analysis of where scripts need to change.
 
 ---
