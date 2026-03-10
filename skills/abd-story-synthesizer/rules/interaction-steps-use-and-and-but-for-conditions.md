@@ -2,6 +2,7 @@
 title: Use And and But for conditions
 impact: MEDIUM
 tags: [exploration, specification, step, scenario]
+scanner: and_but_conditions
 ---
 
 ## Use And and But for conditions

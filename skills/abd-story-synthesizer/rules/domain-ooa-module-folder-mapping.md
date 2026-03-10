@@ -2,6 +2,7 @@
 title: State Model — Module Folder Mapping
 impact: LOW
 tags: []
+scanner: domain_module_mapping
 ---
 
 ## When Mapping to Code

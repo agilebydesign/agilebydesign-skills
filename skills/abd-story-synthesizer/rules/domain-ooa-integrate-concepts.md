@@ -2,6 +2,7 @@
 title: State Model — Integrate Concepts
 impact: HIGH
 tags: discovery, domain
+scanner: domain_integrate
 ---
 
 ## Nest Related Capabilities Under Parent

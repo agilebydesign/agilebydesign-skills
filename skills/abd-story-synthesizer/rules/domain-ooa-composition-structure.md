@@ -2,6 +2,7 @@
 title: State Model — Composition and Aggregation
 impact: HIGH
 tags: discovery, domain
+scanner: domain_composition
 ---
 
 ## Composition vs Aggregation

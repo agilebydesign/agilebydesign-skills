@@ -2,6 +2,7 @@
 title: State Model — Standard Types for Properties
 impact: HIGH
 tags: discovery, domain
+scanner: domain_property_types
 ---
 
 ## Standard Types for Properties

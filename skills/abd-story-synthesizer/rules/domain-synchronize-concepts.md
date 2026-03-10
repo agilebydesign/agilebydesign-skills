@@ -2,6 +2,7 @@
 title: Synchronize Domain Model with Interaction
 impact: HIGH
 tags: [discovery, domain]
+scanner: domain_sync
 ---
 
 ## Domain Model With Interactions — Synchronize the Domain Model with interactions in a slice before completing a run

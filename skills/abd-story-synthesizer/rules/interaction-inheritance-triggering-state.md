@@ -2,6 +2,7 @@
 title: Interactions inheritance — Triggering-State
 impact: MEDIUM-HIGH
 tags: [discovery, interaction_tree, story]
+scanner: inheritance_triggering_state
 ---
 
 ## Triggering-State inheritance

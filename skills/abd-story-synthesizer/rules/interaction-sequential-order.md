@@ -2,6 +2,7 @@
 title: Sequential order
 impact: HIGH
 tags: [discovery, interaction_tree, epic, story]
+scanner: sequential_order
 ---
 
 ## Sequential order

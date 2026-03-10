@@ -2,6 +2,7 @@
 title: Hierarchy and parent granularity
 impact: HIGH
 tags: [discovery, interaction_tree, epic, story]
+scanner: parent_granularity
 ---
 
 ## Hierarchy and parent granularity

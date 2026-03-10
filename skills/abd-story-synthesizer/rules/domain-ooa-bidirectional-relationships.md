@@ -2,6 +2,7 @@
 title: State Model — Bidirectional Relationships
 impact: MEDIUM
 tags: discovery, domain
+scanner: domain_bidirectional
 ---
 
 ## When A References B, B Should Reference A

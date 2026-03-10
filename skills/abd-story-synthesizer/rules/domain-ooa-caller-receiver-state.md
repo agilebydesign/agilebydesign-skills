@@ -2,6 +2,7 @@
 title: State Model — Caller, Receiver, State Mapping
 impact: HIGH
 tags: discovery, exploration, specification
+scanner: domain_caller_receiver
 ---
 
 ## Caller, Receiver, Message → Trigger and Response

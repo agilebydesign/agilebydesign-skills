@@ -2,6 +2,7 @@
 title: Interactions inheritance — actors
 impact: HIGH
 tags: [discovery, exploration, interaction_tree, story, step]
+scanner: inheritance_actors
 ---
 
 ## Actors inheritance

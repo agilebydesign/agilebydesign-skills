@@ -2,6 +2,7 @@
 title: State Model — Domain Language
 impact: HIGH
 tags: discovery, domain
+scanner: domain_naming
 ---
 
 ## Use Domain Language from Source

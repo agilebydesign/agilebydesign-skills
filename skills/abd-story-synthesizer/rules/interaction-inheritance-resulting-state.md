@@ -2,6 +2,7 @@
 title: Interactions inheritance — Resulting-State
 impact: HIGH
 tags: [discovery, interaction_tree, story]
+scanner: inheritance_resulting_state
 ---
 
 ## Resulting-State inheritance

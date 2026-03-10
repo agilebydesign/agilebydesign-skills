@@ -2,6 +2,7 @@
 title: Interactions inheritance — domain concepts
 impact: HIGH
 tags: [discovery, interaction_tree, story, domain]
+scanner: inheritance_domain_concepts
 ---
 
 ## Domain concepts inheritance

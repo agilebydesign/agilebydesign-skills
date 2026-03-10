@@ -2,6 +2,7 @@
 title: State Model — Resource Concept Naming
 impact: HIGH
 tags: discovery, domain
+scanner: domain_resource_naming
 ---
 
 ## Concepts as Resources

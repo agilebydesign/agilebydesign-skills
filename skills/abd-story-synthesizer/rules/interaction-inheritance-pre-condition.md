@@ -2,6 +2,7 @@
 title: Interactions inheritance — Pre-Condition
 impact: HIGH
 tags: [discovery, interaction_tree, epic, story]
+scanner: inheritance_precondition
 ---
 
 ## Pre-Condition inheritance

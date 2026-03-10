@@ -2,6 +2,7 @@
 title: State Model — Atomic Operations
 impact: HIGH
 tags: discovery, domain
+scanner: domain_atomic_ops
 ---
 
 ## One Operation = One Behavior

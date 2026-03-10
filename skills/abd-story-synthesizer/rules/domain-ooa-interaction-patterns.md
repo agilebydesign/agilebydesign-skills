@@ -2,6 +2,7 @@
 title: State Model — Interaction Patterns
 impact: HIGH
 tags: [discovery, exploration, specification, interaction_tree, story, step]
+scanner: domain_interaction_patterns
 ---
 
 ## Interaction Patterns

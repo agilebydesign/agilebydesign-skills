@@ -2,6 +2,7 @@
 title: State Model — Code Representation
 impact: MEDIUM
 tags: discovery, domain
+scanner: domain_code_representation
 ---
 
 ## Align to Implementation

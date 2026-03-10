@@ -29,6 +29,34 @@ from .given_state_scanner import GivenStateScanner
 from .atomic_steps_scanner import AtomicStepsScanner
 from .step_permutations_scanner import StepPermutationsScanner
 from .consistent_steps_scanner import ConsistentStepsScanner
+from .hierarchy_sizing_scanner import HierarchySizingScanner
+from .parent_granularity_scanner import ParentGranularityScanner
+from .sequential_order_scanner import SequentialOrderScanner
+from .story_granularity_scanner import StoryGranularityScanner
+from .vertical_slice_scanner import VerticalSliceScanner
+from .small_testable_scanner import SmallTestableScanner
+from .actor_response_scanner import ActorResponseScanner
+from .domain_structure_scanner import (
+    DomainCompositionScanner, DomainConceptRolesScanner,
+    DomainIntegrateConceptsScanner, DomainModuleMappingScanner,
+)
+from .domain_language_scanner import (
+    DomainPropertyTypesScanner, DomainNamingScanner, DomainResourceNamingScanner,
+)
+from .domain_ooa_scanner import (
+    DomainAtomicOpsScanner, DomainBidirectionalScanner,
+    DomainCallerReceiverScanner, DomainInteractionPatternsScanner,
+    DomainCodeRepresentationScanner,
+)
+from .domain_sync_scanner import DomainSyncScanner
+from .inheritance_scanner import (
+    InheritanceActorsScanner, InheritancePreConditionScanner,
+    InheritanceResultingStateScanner, InheritanceTriggeringStateScanner,
+    InheritanceDomainConceptsScanner, InheritanceExamplesScanner,
+)
+from .steps_language_scanner import (
+    AndButConditionsScanner, OutcomeLanguageScanner, BackgroundSetupScanner,
+)
 
 
 SCANNER_BY_NAME: dict[str, type[BaseScanner]] = {
@@ -40,6 +68,35 @@ SCANNER_BY_NAME: dict[str, type[BaseScanner]] = {
     "atomic_steps": AtomicStepsScanner,
     "step_permutations": StepPermutationsScanner,
     "consistent_steps": ConsistentStepsScanner,
+    "hierarchy_sizing": HierarchySizingScanner,
+    "parent_granularity": ParentGranularityScanner,
+    "sequential_order": SequentialOrderScanner,
+    "story_granularity": StoryGranularityScanner,
+    "vertical_slice": VerticalSliceScanner,
+    "small_testable": SmallTestableScanner,
+    "actor_response": ActorResponseScanner,
+    "domain_composition": DomainCompositionScanner,
+    "domain_concept_roles": DomainConceptRolesScanner,
+    "domain_integrate": DomainIntegrateConceptsScanner,
+    "domain_module_mapping": DomainModuleMappingScanner,
+    "domain_property_types": DomainPropertyTypesScanner,
+    "domain_naming": DomainNamingScanner,
+    "domain_resource_naming": DomainResourceNamingScanner,
+    "domain_atomic_ops": DomainAtomicOpsScanner,
+    "domain_bidirectional": DomainBidirectionalScanner,
+    "domain_caller_receiver": DomainCallerReceiverScanner,
+    "domain_interaction_patterns": DomainInteractionPatternsScanner,
+    "domain_code_representation": DomainCodeRepresentationScanner,
+    "domain_sync": DomainSyncScanner,
+    "inheritance_actors": InheritanceActorsScanner,
+    "inheritance_precondition": InheritancePreConditionScanner,
+    "inheritance_resulting_state": InheritanceResultingStateScanner,
+    "inheritance_triggering_state": InheritanceTriggeringStateScanner,
+    "inheritance_domain_concepts": InheritanceDomainConceptsScanner,
+    "inheritance_examples": InheritanceExamplesScanner,
+    "and_but_conditions": AndButConditionsScanner,
+    "outcome_language": OutcomeLanguageScanner,
+    "background_setup": BackgroundSetupScanner,
 }
 
 RULE_TO_SCANNER: dict[str, str] = {
@@ -51,6 +108,35 @@ RULE_TO_SCANNER: dict[str, str] = {
     "interaction-atomic-steps": "atomic_steps",
     "interaction-enumerate-step-permutations": "step_permutations",
     "interaction-consistent-steps-across-domains": "consistent_steps",
+    "interaction-approximately-4-to-9-children": "hierarchy_sizing",
+    "interaction-parent-granularity": "parent_granularity",
+    "interaction-sequential-order": "sequential_order",
+    "interaction-story-granularity": "story_granularity",
+    "interaction-ensure-vertical-slices": "vertical_slice",
+    "interaction-story-small-and-testable": "small_testable",
+    "interaction-supporting-actor-response": "actor_response",
+    "domain-ooa-composition-structure": "domain_composition",
+    "domain-ooa-concept-roles": "domain_concept_roles",
+    "domain-ooa-integrate-concepts": "domain_integrate",
+    "domain-ooa-module-folder-mapping": "domain_module_mapping",
+    "domain-ooa-property-types": "domain_property_types",
+    "domain-ooa-domain-language": "domain_naming",
+    "domain-ooa-resource-concept-naming": "domain_resource_naming",
+    "domain-ooa-atomic-operations": "domain_atomic_ops",
+    "domain-ooa-bidirectional-relationships": "domain_bidirectional",
+    "domain-ooa-caller-receiver-state": "domain_caller_receiver",
+    "domain-ooa-interaction-patterns": "domain_interaction_patterns",
+    "domain-ooa-code-representation": "domain_code_representation",
+    "domain-synchronize-concepts": "domain_sync",
+    "interaction-inheritance-actors": "inheritance_actors",
+    "interaction-inheritance-pre-condition": "inheritance_precondition",
+    "interaction-inheritance-resulting-state": "inheritance_resulting_state",
+    "interaction-inheritance-triggering-state": "inheritance_triggering_state",
+    "interaction-inheritance-domain-concepts": "inheritance_domain_concepts",
+    "interaction-inheritance-examples": "inheritance_examples",
+    "interaction-steps-use-and-and-but-for-conditions": "and_but_conditions",
+    "interaction-outcome-oriented-language": "outcome_language",
+    "interaction-examples-background-vs-scenario-setup": "background_setup",
 }
 
 

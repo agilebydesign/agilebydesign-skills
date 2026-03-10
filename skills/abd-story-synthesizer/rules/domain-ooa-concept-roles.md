@@ -2,6 +2,7 @@
 title: State Model — Wirfs-Brock Role Stereotypes
 impact: MEDIUM
 tags: discovery, domain
+scanner: domain_concept_roles
 ---
 
 ## Concept Roles (Optional)

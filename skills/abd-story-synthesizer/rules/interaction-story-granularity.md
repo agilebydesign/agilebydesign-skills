@@ -2,6 +2,7 @@
 title: Story granularity
 impact: MEDIUM-HIGH
 tags: [discovery, interaction_tree, epic, story]
+scanner: story_granularity
 ---
 
 ## Story granularity

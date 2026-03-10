@@ -2,6 +2,7 @@
 title: Small and testable
 impact: HIGH
 tags: [discovery, exploration, story, step]
+scanner: small_testable
 ---
 
 ## Small and testable

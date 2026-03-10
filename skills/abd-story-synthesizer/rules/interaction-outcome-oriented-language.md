@@ -2,6 +2,7 @@
 title: Outcome-oriented language
 impact: HIGH
 tags: [interaction_tree, story, step]
+scanner: outcome_language
 ---
 
 ## Outcome-oriented language
