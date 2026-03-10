@@ -61,14 +61,16 @@ Re-run the slice until the user approves. Corrections stay in the run log; the p
 
 **You MUST:**
 
-1. **Add to run log** — Create or append to `runs/run-N.md` (use `run-0.md` for corrections during session start / strategy creation). Format:
+1. **Add to run log** — Create or append to the appropriate run log. Format:
   - **DO** or **DO NOT:** [the rule]
   - **Example (wrong):** [what was done incorrectly]
   - **Example (correct):** [what it should be]
-2. **Apply the correction** — Refine session strategy or re-run with corrections as input.
+2. **Apply the correction** — Refine session strategy, update output files, or re-run with corrections as input.
 3. **Proactively confirm** — Say: "I've added this to the run log. Correction: [brief summary]. I've applied it."
 
-**First-run corrections:** Use `runs/run-0.md` to capture corrections during session start and initial tree/model building. Same format. The run log feeds future runs.
+**Which run log:**
+- **During session creation (before any runs):** Use `runs/run-0.md`. Session creation is iterative — the user will correct strategy, variation analysis, and first-cut output files. All corrections go in `run-0.md`. These corrections feed into run 1.
+- **During a run:** Use `runs/run-N.md` (N = current run number).
 
 <!-- section: story_synthesizer.runs.patterns -->
 ## Patterns (from Runs)

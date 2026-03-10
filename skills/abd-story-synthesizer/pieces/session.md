@@ -67,6 +67,8 @@ Identify differences in the scope that allow you to synthesize the elements that
 
 **Go over all context in enough detail** to understand how to identify all items. For instance, if doing Discovery and the context is a game rulebook, go chapter by chapter and examine the rulebook for every different rule: is it more of the same (part of same story), or different (new story)?
 
+**CRITICAL: Do NOT trust the source document's own categories as your groupings.** Read actual item content — not just headings — and identify shared mechanics, shared domain objects, and shared resolution patterns. Group by what the data actually shares, not by how the source organizes it. See rule `context-deep-mechanical-analysis` for detailed guidance.
+
 **The AI is empowered to create a more detailed interaction tree and domain model at whatever detail it needs to identify a pattern.** Once it has done so, it can create the rest of stories using that pattern without detailing everything. The same holds for other session types: e.g. a Specification session might go through a couple of stories and attached domain to see how to write good examples, then not need to create the rest to know what examples stories would have — just name them.
 
 #### Variation Analysis Structure
@@ -93,28 +95,32 @@ The session's Variation Analysis section should follow this structure (with more
 **4. Scaffold — Interaction Model**
 
 - Epic/Sub-epic/Story breakdown
-- A few stories per epic in full detail; then "X more stories based on pattern" (e.g. "24 more Configure Effect stories grouped by structural similarity")
+- MUST detail 2-3 stories per epic in full (with Trigger, Response, Pre-Condition, domain concepts). List remaining stories by name only: "N more stories following this pattern based on [specific items]."
 - Pattern-change boundaries (when does the pattern change? new epic? new sub-epic?)
+- The scaffold MUST NOT enumerate every story with full detail — that is the job of runs.
 
 **5. Scaffold — Domain Model**
 
 - Module per major concept (Character, Power, Effect, etc.)
-- State model scaffolding per concept
+- State model scaffolding per concept — properties, operations, collaborating concepts
+- Use `Dictionary<K,V>` for named collections accessed by key; `List<T>` only when order matters.
 
-**Scaffold completeness:** The scaffold does not need to enumerate every story. A few stories per epic, then "X more stories based on each [power, effect, etc.]" is often sufficient. The pattern, once identified, drives the rest.
+**Scaffold completeness:** The scaffold must NOT enumerate every story with full detail. 2-3 stories per epic in full, then "N more stories based on [pattern]." The pattern, once identified, drives the rest. Runs expand the first cut — if the first cut enumerates everything, runs have nothing to do.
 
-### 4 - Scaffold
+### 4 - First-Cut Output Files
 
-Enough of the interaction tree and domain model is synthesized to understand how remaining slices will be processed. Initial structure: epic/sub-epic/story breakdown, a few stories in full detail, then "X more stories based on pattern." Domain concepts with properties, lifecycle, and relationships. The scaffold does not need to enumerate every story — patterns drive the rest.
+The scaffold phase produces the **first cut of the real output files** (`interaction-tree.md`, `domain-model.md`). These are not separate "scaffold files" — they ARE the deliverables at version 1. Runs expand them slice by slice. Scanners validate them at every stage.
 
-#### Scaffold (by Session Type)
+The first cut MUST use pattern+extrapolation: 2-3 stories per epic in full detail, then "N more following this pattern." If the first cut enumerates everything, runs have nothing to do.
+
+#### First Cut (by Session Type)
 
 
-| Session Type      | Scaffolded together                                                                                                                          |
+| Session Type      | First cut produces                                                                                                                           |
 | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Discovery**     | Interaction scaffold (epics, stories) + Domain scaffold. A few stories per epic in full; rest by pattern.                                    |
-| **Exploration**   | Steps (linear). Optionally domain for step context.                                                                                          |
-| **Specification** | Steps + Scenarios + Examples together. May scaffold a couple of stories with full examples to establish pattern, then apply pattern to rest. |
+| **Discovery**     | `interaction-tree.md` (epics, 2-3 stories per epic in full; rest by pattern) + `domain-model.md` (concepts with properties and operations). |
+| **Exploration**   | Steps added to existing stories in `interaction-tree.md`. Optionally domain updates.                                                         |
+| **Specification** | Steps + Scenarios + Examples added to existing stories. May detail a couple of stories fully to establish pattern, then apply to rest.        |
 
 
 ### 6 - Slices

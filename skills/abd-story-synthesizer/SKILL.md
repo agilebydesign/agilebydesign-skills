@@ -13,14 +13,14 @@ Shape source material into an **Interaction Tree** and **State Model** — a sto
 
 ## Config Location (IMPORTANT)
 
-**abd-config.json MUST live in this skill's `conf/` directory, NOT in the skill space (workspace).**
+**Two config files — each owns different concerns.**
 
-| Location | Contains | Config? |
-|----------|----------|---------|
-| `abd-story-synthesizer/conf/abd-config.json` | Engine config (skills, context_paths, skill_space_path) | **YES** |
-| Skill space (e.g. `mm3e/`) | Content to synthesize (goal.md, context/, docs/) | **NO** — never put abd-config in the skill space |
+| Location | Contains | Owns |
+|----------|----------|------|
+| `abd-story-synthesizer/conf/abd-config.json` | Engine config: `skills`, `skills_config`, `skill_space_path` | Which skill space to target |
+| `<skill-space>/conf/abd-config.json` (e.g. `mm3e/conf/abd-config.json`) | Skill space config: `context_paths` | Where context lives in this workspace |
 
-The skill space is the workspace. Set `skill_space_path` in abd-config.json to point to it.
+The synthesizer skill points to the skill space via `skill_space_path`. The skill space owns its own context — the engine reads `context_paths` from the skill space's config. Run `discover_context` to auto-populate `context_paths` in the skill space's config.
 
 ## Source Folder Structure
 

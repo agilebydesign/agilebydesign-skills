@@ -38,14 +38,8 @@ class AgileContextEngine:
         data = json.loads(self.config_path.read_text(encoding="utf-8"))
         config = AbdConfig.model_validate(data)
 
-        # Context paths
+        # Context paths — read from skill space config, not the synthesizer's config
         self.context_paths = []
-        for p in (config.context_paths or []):
-            path = Path(p)
-            if path.is_absolute():
-                self.context_paths.append(path.resolve())
-            else:
-                self.context_paths.append((self.engine_root / p).resolve())
 
         # Skill paths: support absolute (e.g. global skills) or relative
         order = (config.skills_config or {}).get("order", config.skills)
@@ -61,14 +55,31 @@ class AgileContextEngine:
                 self.skills.append(skill)
 
         if self.skills:
-            # Workspace: skill_space_path from config, or infer from skill path
             if config.skill_space_path:
                 self.workspace_path = Path(config.skill_space_path).resolve()
             else:
                 self.workspace_path = self._skill_space_from_path(self.skills[0].path)
+            self._load_skill_space_context_paths()
             self._update_strategy_path()
             self._create_output_dirs()
         return self
+
+    def _load_skill_space_context_paths(self) -> None:
+        """Load context_paths from the skill space's own conf/abd-config.json."""
+        if not self.workspace_path:
+            return
+        ss_config_path = self.workspace_path / "conf" / "abd-config.json"
+        if not ss_config_path.exists():
+            return
+        try:
+            ss_data = json.loads(ss_config_path.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError):
+            return
+        for p in ss_data.get("context_paths", []):
+            path = Path(p)
+            resolved = path.resolve() if path.is_absolute() else (self.workspace_path / p).resolve()
+            if resolved not in self.context_paths:
+                self.context_paths.append(resolved)
 
     def _skill_space_from_path(self, skill_path: Path) -> Path:
         """Skill space = parent of .agents/skills (or parent of skills when in engine)."""

@@ -11,7 +11,7 @@ Within each phase: **Human** → **AI** invokes script → **Script** returns in
 
 ---
 
-## Phase 1: Set Work Area
+## Phase 0: Set Work Area
 
 
 | Human                                           | AI / Script                | AI                                           | Human → AI                    |
@@ -21,9 +21,11 @@ Within each phase: **Human** → **AI** invokes script → **Script** returns in
 
 Before starting or continuing work, establish where output goes. **New work:** set `skill_space_path` to point to the workspace. **Continue existing work:** get the current path and verify.
 
-**Set path for new work area:** Edit `conf/abd-config.json` and set `"skill_space_path": "/path/to/workspace"` (e.g. mm3e). Output goes to `<skill_space_path>/story-synthesizer/`.
+**Set path for new work area:** Edit the synthesizer's `conf/abd-config.json` and set `"skill_space_path": "/path/to/workspace"` (e.g. mm3e). Output goes to `<skill_space_path>/story-synthesizer/`. Context paths are owned by the skill space (see Phase 1).
 
 **Get path to continue:** Run `get_config` to see where the skill is currently pointed.
+
+**After setting or verifying the path, run Phase 1** to discover context automatically.
 
 **Script:**
 
@@ -32,7 +34,36 @@ cd skills/abd-story-synthesizer
 python scripts/build.py get_config
 ```
 
-**Output:** JSON with `engine_root`, `skill_space_path` (and `skill_path` as shorthand), `config_path`, and optionally `strategy_path`, `context_paths`. The script returns resolved paths from `conf/abd-config.json`.
+**Output:** JSON with `engine_root`, `skill_space_path` (and `skill_path` as shorthand), `config_path`, and optionally `strategy_path`, `context_paths`. The engine resolves `skill_space_path` from the synthesizer's config and `context_paths` from the skill space's `conf/abd-config.json`.
+
+---
+
+## Phase 1: Discover Context
+
+
+| Human                                                        | AI / Script                        | AI                                              | Human → AI                                  |
+| ------------------------------------------------------------ | ---------------------------------- | ------------------------------------------------ | ------------------------------------------- |
+| Says "discover context" or proceeds after setting work area  | Runs `build.py discover_context`   | Reports discovered and manual context paths      | Confirms or adds manual paths               |
+
+
+After `skill_space_path` is set (Phase 0), **run `discover_context` to scan the skill space for context.** The script searches the entire skill space folder recursively for anything matching `context*`:
+
+- Folders named `context/` (e.g. `mm3e/context/`, `mm3e/context/rules/`)
+- Files named `context.*` (e.g. `context.md`, `context.json`, `context.zip`)
+
+The script collects all matches and writes `context_paths` to the **skill space's** `conf/abd-config.json` (e.g. `mm3e/conf/abd-config.json`). Context belongs to the skill space, not the synthesizer skill.
+
+**Manual context is also valid.** The user can manually add paths to `context_paths` in the skill space's `conf/abd-config.json` — these are preserved alongside any auto-discovered paths. Auto-discovery supplements manual paths; it does not replace them.
+
+**No context found:** If no `context*` matches are found in the skill space and no manual paths are configured, report it and ask the user where the context is or whether they need to create it.
+
+**Script:**
+
+```bash
+python scripts/build.py discover_context
+```
+
+**Output:** JSON with `skill_space_path`, `manual_paths`, `discovered_paths`, and `total_context_paths`.
 
 ---
 
@@ -46,9 +77,13 @@ python scripts/build.py get_config
 
 Create, open, or continue an existing session. Name it (user-provided or AI-derived from context). The session file stores strategy: Level of Detail, Scope, Variation Analysis, and slices. Option: carry slices over from a previous session (e.g. Exploration reuses Discovery slices) or create new slices.
 
-**Session path:** `<skill-space>/story-synthesizer/sessions/<session-name>.md`
+**Session path:** `<skill-space>/story-synthesizer/<session-name>/<session-name>-session.md`
+
+**Naming convention:** Session files end with `-session.md`. The session folder `<session-name>/` contains the session file, the first-cut output files (`interaction-tree.md`, `domain-model.md`), and a `runs/` folder for run logs.
 
 The session/strategy declares **tags in scope** (e.g. `discovery`, `interaction_tree`, `stories`, `domain`, `steps`). The engine filters rules by tags. See `pieces/session.md` for session content, slices, discriminators, and tag definitions.
+
+**Session creation is iterative.** The user will review and correct the strategy, variation analysis, and first-cut output files before runs begin. Record all corrections during session creation in `runs/run-0.md` using the same DO/DON'T format as run corrections (see `pieces/runs.md`). Corrections during session creation feed into run 1 — they are not lost.
 
 **Script:**
 
@@ -147,7 +182,9 @@ python scripts/build.py get_instructions validate_run
 | Reviews corrections, decides what to promote | Invokes script `get_instructions improve_strategy` | Updates session strategy and/or skill rules | Updates and adjusts → incorporates changes |
 
 
-After all runs (or when the user wants), review corrections collected in run logs. Determine what needs to change. Incorporate into the session strategy and/or promote to the skill's rules those that apply across projects. The session file is the source of truth. 
+After all runs (or when the user wants), review corrections collected in run logs (including `run-0.md` from session creation). Determine what needs to change. Incorporate into the session strategy and/or promote to the skill's rules those that apply across projects. The session file is the source of truth. 
+
+**When promoting corrections to the skill**, record the fix details in the run log's "Promoted to Skill" section — a table with: Correction, Target file, and Change (a from→to snapshot, not the full diff). This creates a traceable history of why each rule or piece was added or changed.
 
 See `pieces/session.md` § Patterns and `pieces/runs.md` § Patterns.
 

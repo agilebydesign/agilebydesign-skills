@@ -1,9 +1,0 @@
-abd-story-synthesizer: Port all scanners — 37 rules, 37 scanners, pure stdlib
-
-- Add domain_model_parser.py (stdlib markdown parser for domain concepts)
-- Add 7 interaction hierarchy scanners: sizing, parent granularity, sequential order, story granularity, vertical slice, small/testable, actor response
-- Add 14 domain model scanners across 4 files: structure (composition, roles, integrate, modules), language (property types, naming, resource naming), OOA (atomic ops, bidirectional, caller/receiver, interaction patterns, code representation), sync
-- Add 8 inheritance/steps scanners across 2 files: actors, pre-condition, resulting state, triggering state, domain concepts, examples, and/but conditions, outcome language, background setup
-- Register all 37 scanners in registry.py with rule-to-scanner mapping
-- Add scanner: field to all 29 rule frontmatter files (excluding 2 context rules)
-- All scanners regex-only (nerfed mode) — no external libraries

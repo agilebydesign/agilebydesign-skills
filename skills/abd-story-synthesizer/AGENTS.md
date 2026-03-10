@@ -458,10 +458,9 @@ Entity table (scenario + fields):
 
 ---
 
-<!-- section: story_synthesizer.domain.model -->
 # Domain Model
 
-The Domain Model holds **modules** (groupings of tightly related concepts) and **domain concepts** — the things that have state and can be operated on. Concepts are referenced in interactions via `**Concept**` in Pre-Condition, Trigger, Response, and Failure-Modes. Every `**Concept**` must exist in the Domain Model; concepts must be placed at the right level in the hierarchy. No drift between tree and model. Use source entity data, not aggregated/calculated values.
+The Domain Model holds **modules** (groupings of tightly related concepts) and **domain concepts** — the things that have state and can be operated on. Concepts are referenced in interactions via `**Concept`** in Pre-Condition, Trigger, Response, and Failure-Modes. Every `**Concept**` must exist in the Domain Model; concepts must be placed at the right level in the hierarchy. No drift between tree and model. Use source entity data, not aggregated/calculated values.
 
 ## Module
 
@@ -472,19 +471,21 @@ Grouping of tightly related concepts.
 
 ## Domain Concept
 
-A domain concept that holds state and can be operated on. Referenced in interactions via `**Concept**` in labels. Examples live on the interaction. The Domain Model connects what concepts know and do to interactions — concepts participate as callers, receivers, and collaborators; state flows through Pre-Condition, Triggering-State, and Resulting-State.
+A domain concept that holds state and can be operated on. Referenced in interactions via `**Concept`** in labels. Examples live on the interaction. The Domain Model connects what concepts know and do to interactions — concepts participate as callers, receivers, and collaborators; state flows through Pre-Condition, Triggering-State, and Resulting-State.
 
 - **Name**
 - **Module** — optional; grouping of tightly related concepts
 - **Base-Concept** — optional
-- **Properties** — with optional collaborating concepts and invariants. Use standard types: String, Number, Boolean, List, Dictionary, UniqueID, Instant. Use `List<T>` or `Dictionary<K,V>` when element types matter.
+- **Properties** — with optional collaborating concepts and invariants. Use standard types: String, Number, Boolean, List, Dictionary, UniqueID, Instant. Use `List<T>` or `Dictionary<K,V>` when element types matter. 
+- **type selection:** Use `Dictionary<K,V>` when items are accessed by a key (name, type, id) — this applies to most "has many" relationships where you look up by name (e.g. abilities by type, skills by name, features by name). Use `List<T>` only when order matters and items are accessed by position (e.g. turn order, degree progression, sequential steps). Default to `Dictionary` for named domain collections.
 - **Operations** — with optional collaborating concepts and invariants. It should be easy to reverse engineer the interactions in the interaction diagram to at least some level of operations on the Domain Model.
 
 **Concept relationships:** When a concept "has" another concept, use composition (strong has-a; part cannot exist without whole) or aggregation (weak has-a; whole has no meaning without multiple instances of the same part — e.g. crowd, flock, mob). Prefer composition/aggregation over inheritance.
 
 ---
 
-<!-- section: story_synthesizer.domain.example -->
+
+
 ## Example: Domain Model for Country-Specific Payment (from Interaction Tree)
 
 Based on the Complete Example in the Interaction Tree (Make **Country**-specific **PaymentType**), here are the corresponding domain concepts:
@@ -492,16 +493,19 @@ Based on the Complete Example in the Interaction Tree (Make **Country**-specific
 ### Module: Payment
 
 **Country**
+
 - String country_code
 - String country_name
 - Operations: lookup by code, list available for user
 
 **PaymentType**
+
 - String payment_type (e.g. wire, ach)
-- List<String> fields (from PaymentTypeFieldTypes)
+- List fields (from PaymentTypeFieldTypes)
 - Operations: get fields for type, validate availability for country
 
 **UserPaymentAccess**
+
 - String user_name
 - String country_code
 - String payment_type
@@ -509,6 +513,7 @@ Based on the Complete Example in the Interaction Tree (Make **Country**-specific
 - Operations: check(user, country, payment_type) → available
 
 **PaymentDetails**
+
 - String payment_type
 - Number amount
 - String currency
@@ -517,25 +522,29 @@ Based on the Complete Example in the Interaction Tree (Make **Country**-specific
 - Operations: validate(), submit()
 
 **User**
+
 - String user_name
 - String user_role
 - Operations: has_session(), has_access(country, payment_type)
 
 **Session**
+
 - String session_id
 - Instant expires_at
 - Operations: is_active(), extend()
 
 **PaymentTypeFieldTypes**
+
 - String payment_type
-- List<String> fields
+- List fields
 - Operations: get_fields(payment_type) → fields
 
-These concepts are referenced in the Interaction Tree via `**Concept**` in Pre-Condition, Trigger, Response, and Examples. The interaction tree tables (Logged In User, Active User Session, User Payment Type Access, Selected Country, PaymentDetails (wire), etc.) are example data for these concepts.
+These concepts are referenced in the Interaction Tree via `**Concept`** in Pre-Condition, Trigger, Response, and Examples. The interaction tree tables (Logged In User, Active User Session, User Payment Type Access, Selected Country, PaymentDetails (wire), etc.) are example data for these concepts.
 
 ---
 
-<!-- section: story_synthesizer.domain.output -->
+
+
 ## Output Format
 
 Format specification for the Domain Model output. Separate from the Interaction Tree. Concepts referenced via `**Concept**` in labels. See the Example above and the Complete Example in the Interaction piece for a full reference.
@@ -565,7 +574,7 @@ Within each phase: **Human** → **AI** invokes script → **Script** returns in
 
 ---
 
-## Phase 1: Set Work Area
+## Phase 0: Set Work Area
 
 
 | Human                                           | AI / Script                | AI                                           | Human → AI                    |
@@ -575,9 +584,11 @@ Within each phase: **Human** → **AI** invokes script → **Script** returns in
 
 Before starting or continuing work, establish where output goes. **New work:** set `skill_space_path` to point to the workspace. **Continue existing work:** get the current path and verify.
 
-**Set path for new work area:** Edit `conf/abd-config.json` and set `"skill_space_path": "/path/to/workspace"` (e.g. mm3e). Output goes to `<skill_space_path>/story-synthesizer/`.
+**Set path for new work area:** Edit the synthesizer's `conf/abd-config.json` and set `"skill_space_path": "/path/to/workspace"` (e.g. mm3e). Output goes to `<skill_space_path>/story-synthesizer/`. Context paths are owned by the skill space (see Phase 1).
 
 **Get path to continue:** Run `get_config` to see where the skill is currently pointed.
+
+**After setting or verifying the path, run Phase 1** to discover context automatically.
 
 **Script:**
 
@@ -586,7 +597,36 @@ cd skills/abd-story-synthesizer
 python scripts/build.py get_config
 ```
 
-**Output:** JSON with `engine_root`, `skill_space_path` (and `skill_path` as shorthand), `config_path`, and optionally `strategy_path`, `context_paths`. The script returns resolved paths from `conf/abd-config.json`.
+**Output:** JSON with `engine_root`, `skill_space_path` (and `skill_path` as shorthand), `config_path`, and optionally `strategy_path`, `context_paths`. The engine resolves `skill_space_path` from the synthesizer's config and `context_paths` from the skill space's `conf/abd-config.json`.
+
+---
+
+## Phase 1: Discover Context
+
+
+| Human                                                        | AI / Script                        | AI                                              | Human → AI                                  |
+| ------------------------------------------------------------ | ---------------------------------- | ------------------------------------------------ | ------------------------------------------- |
+| Says "discover context" or proceeds after setting work area  | Runs `build.py discover_context`   | Reports discovered and manual context paths      | Confirms or adds manual paths               |
+
+
+After `skill_space_path` is set (Phase 0), **run `discover_context` to scan the skill space for context.** The script searches the entire skill space folder recursively for anything matching `context*`:
+
+- Folders named `context/` (e.g. `mm3e/context/`, `mm3e/context/rules/`)
+- Files named `context.*` (e.g. `context.md`, `context.json`, `context.zip`)
+
+The script collects all matches and writes `context_paths` to the **skill space's** `conf/abd-config.json` (e.g. `mm3e/conf/abd-config.json`). Context belongs to the skill space, not the synthesizer skill.
+
+**Manual context is also valid.** The user can manually add paths to `context_paths` in the skill space's `conf/abd-config.json` — these are preserved alongside any auto-discovered paths. Auto-discovery supplements manual paths; it does not replace them.
+
+**No context found:** If no `context*` matches are found in the skill space and no manual paths are configured, report it and ask the user where the context is or whether they need to create it.
+
+**Script:**
+
+```bash
+python scripts/build.py discover_context
+```
+
+**Output:** JSON with `skill_space_path`, `manual_paths`, `discovered_paths`, and `total_context_paths`.
 
 ---
 
@@ -600,9 +640,13 @@ python scripts/build.py get_config
 
 Create, open, or continue an existing session. Name it (user-provided or AI-derived from context). The session file stores strategy: Level of Detail, Scope, Variation Analysis, and slices. Option: carry slices over from a previous session (e.g. Exploration reuses Discovery slices) or create new slices.
 
-**Session path:** `<skill-space>/story-synthesizer/sessions/<session-name>.md`
+**Session path:** `<skill-space>/story-synthesizer/<session-name>/<session-name>-session.md`
+
+**Naming convention:** Session files end with `-session.md`. The session folder `<session-name>/` contains the session file, the first-cut output files (`interaction-tree.md`, `domain-model.md`), and a `runs/` folder for run logs.
 
 The session/strategy declares **tags in scope** (e.g. `discovery`, `interaction_tree`, `stories`, `domain`, `steps`). The engine filters rules by tags. See `pieces/session.md` for session content, slices, discriminators, and tag definitions.
+
+**Session creation is iterative.** The user will review and correct the strategy, variation analysis, and first-cut output files before runs begin. Record all corrections during session creation in `runs/run-0.md` using the same DO/DON'T format as run corrections (see `pieces/runs.md`). Corrections during session creation feed into run 1 — they are not lost.
 
 **Script:**
 
@@ -701,7 +745,9 @@ python scripts/build.py get_instructions validate_run
 | Reviews corrections, decides what to promote | Invokes script `get_instructions improve_strategy` | Updates session strategy and/or skill rules | Updates and adjusts → incorporates changes |
 
 
-After all runs (or when the user wants), review corrections collected in run logs. Determine what needs to change. Incorporate into the session strategy and/or promote to the skill's rules those that apply across projects. The session file is the source of truth. 
+After all runs (or when the user wants), review corrections collected in run logs (including `run-0.md` from session creation). Determine what needs to change. Incorporate into the session strategy and/or promote to the skill's rules those that apply across projects. The session file is the source of truth. 
+
+**When promoting corrections to the skill**, record the fix details in the run log's "Promoted to Skill" section — a table with: Correction, Target file, and Change (a from→to snapshot, not the full diff). This creates a traceable history of why each rule or piece was added or changed.
 
 See `pieces/session.md` § Patterns and `pieces/runs.md` § Patterns.
 
@@ -792,6 +838,8 @@ Identify differences in the scope that allow you to synthesize the elements that
 
 **Go over all context in enough detail** to understand how to identify all items. For instance, if doing Discovery and the context is a game rulebook, go chapter by chapter and examine the rulebook for every different rule: is it more of the same (part of same story), or different (new story)?
 
+**CRITICAL: Do NOT trust the source document's own categories as your groupings.** Read actual item content — not just headings — and identify shared mechanics, shared domain objects, and shared resolution patterns. Group by what the data actually shares, not by how the source organizes it. See rule `context-deep-mechanical-analysis` for detailed guidance.
+
 **The AI is empowered to create a more detailed interaction tree and domain model at whatever detail it needs to identify a pattern.** Once it has done so, it can create the rest of stories using that pattern without detailing everything. The same holds for other session types: e.g. a Specification session might go through a couple of stories and attached domain to see how to write good examples, then not need to create the rest to know what examples stories would have — just name them.
 
 #### Variation Analysis Structure
@@ -818,28 +866,32 @@ The session's Variation Analysis section should follow this structure (with more
 **4. Scaffold — Interaction Model**
 
 - Epic/Sub-epic/Story breakdown
-- A few stories per epic in full detail; then "X more stories based on pattern" (e.g. "24 more Configure Effect stories grouped by structural similarity")
+- MUST detail 2-3 stories per epic in full (with Trigger, Response, Pre-Condition, domain concepts). List remaining stories by name only: "N more stories following this pattern based on [specific items]."
 - Pattern-change boundaries (when does the pattern change? new epic? new sub-epic?)
+- The scaffold MUST NOT enumerate every story with full detail — that is the job of runs.
 
 **5. Scaffold — Domain Model**
 
 - Module per major concept (Character, Power, Effect, etc.)
-- State model scaffolding per concept
+- State model scaffolding per concept — properties, operations, collaborating concepts
+- Use `Dictionary<K,V>` for named collections accessed by key; `List<T>` only when order matters.
 
-**Scaffold completeness:** The scaffold does not need to enumerate every story. A few stories per epic, then "X more stories based on each [power, effect, etc.]" is often sufficient. The pattern, once identified, drives the rest.
+**Scaffold completeness:** The scaffold must NOT enumerate every story with full detail. 2-3 stories per epic in full, then "N more stories based on [pattern]." The pattern, once identified, drives the rest. Runs expand the first cut — if the first cut enumerates everything, runs have nothing to do.
 
-### 4 - Scaffold
+### 4 - First-Cut Output Files
 
-Enough of the interaction tree and domain model is synthesized to understand how remaining slices will be processed. Initial structure: epic/sub-epic/story breakdown, a few stories in full detail, then "X more stories based on pattern." Domain concepts with properties, lifecycle, and relationships. The scaffold does not need to enumerate every story — patterns drive the rest.
+The scaffold phase produces the **first cut of the real output files** (`interaction-tree.md`, `domain-model.md`). These are not separate "scaffold files" — they ARE the deliverables at version 1. Runs expand them slice by slice. Scanners validate them at every stage.
 
-#### Scaffold (by Session Type)
+The first cut MUST use pattern+extrapolation: 2-3 stories per epic in full detail, then "N more following this pattern." If the first cut enumerates everything, runs have nothing to do.
+
+#### First Cut (by Session Type)
 
 
-| Session Type      | Scaffolded together                                                                                                                          |
+| Session Type      | First cut produces                                                                                                                           |
 | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Discovery**     | Interaction scaffold (epics, stories) + Domain scaffold. A few stories per epic in full; rest by pattern.                                    |
-| **Exploration**   | Steps (linear). Optionally domain for step context.                                                                                          |
-| **Specification** | Steps + Scenarios + Examples together. May scaffold a couple of stories with full examples to establish pattern, then apply pattern to rest. |
+| **Discovery**     | `interaction-tree.md` (epics, 2-3 stories per epic in full; rest by pattern) + `domain-model.md` (concepts with properties and operations). |
+| **Exploration**   | Steps added to existing stories in `interaction-tree.md`. Optionally domain updates.                                                         |
+| **Specification** | Steps + Scenarios + Examples added to existing stories. May detail a couple of stories fully to establish pattern, then apply to rest.        |
 
 
 ### 6 - Slices
@@ -921,14 +973,16 @@ Re-run the slice until the user approves. Corrections stay in the run log; the p
 
 **You MUST:**
 
-1. **Add to run log** — Create or append to `runs/run-N.md` (use `run-0.md` for corrections during session start / strategy creation). Format:
+1. **Add to run log** — Create or append to the appropriate run log. Format:
   - **DO** or **DO NOT:** [the rule]
   - **Example (wrong):** [what was done incorrectly]
   - **Example (correct):** [what it should be]
-2. **Apply the correction** — Refine session strategy or re-run with corrections as input.
+2. **Apply the correction** — Refine session strategy, update output files, or re-run with corrections as input.
 3. **Proactively confirm** — Say: "I've added this to the run log. Correction: [brief summary]. I've applied it."
 
-**First-run corrections:** Use `runs/run-0.md` to capture corrections during session start and initial tree/model building. Same format. The run log feeds future runs.
+**Which run log:**
+- **During session creation (before any runs):** Use `runs/run-0.md`. Session creation is iterative — the user will correct strategy, variation analysis, and first-cut output files. All corrections go in `run-0.md`. These corrections feed into run 1.
+- **During a run:** Use `runs/run-N.md` (N = current run number).
 
 <!-- section: story_synthesizer.runs.patterns -->
 ## Patterns (from Runs)

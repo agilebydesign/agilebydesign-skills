@@ -58,6 +58,61 @@ def _run_validate(target_path: Path | None = None) -> None:
         print("Validation passed: no violations")
 
 
+def _discover_context() -> None:
+    """Scan skill_space_path for context* files/folders and update the skill space's abd-config.json."""
+    engine_root = _skill_dir
+    config_path = engine_root / "conf" / "abd-config.json"
+    if not config_path.exists():
+        print("ERROR: conf/abd-config.json not found. Set work area first.", file=sys.stderr)
+        sys.exit(1)
+
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    skill_space = config.get("skill_space_path")
+    if not skill_space:
+        print("ERROR: skill_space_path not set in conf/abd-config.json. Set work area first.", file=sys.stderr)
+        sys.exit(1)
+
+    skill_space_path = Path(skill_space).resolve()
+    if not skill_space_path.exists():
+        print(f"ERROR: skill_space_path does not exist: {skill_space_path}", file=sys.stderr)
+        sys.exit(1)
+
+    discovered = []
+    for item in skill_space_path.rglob("context*"):
+        if any(part.startswith(".") for part in item.parts):
+            continue
+        if "node_modules" in item.parts or "__pycache__" in item.parts:
+            continue
+        if item.is_dir() and item.name == "context":
+            discovered.append(str(item.resolve()))
+        elif item.is_file() and item.stem == "context":
+            discovered.append(str(item.resolve()))
+
+    ss_config_path = skill_space_path / "conf" / "abd-config.json"
+    ss_config_path.parent.mkdir(parents=True, exist_ok=True)
+    ss_config = {}
+    if ss_config_path.exists():
+        try:
+            ss_config = json.loads(ss_config_path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            ss_config = {}
+
+    discovered_resolved = {str(Path(p).resolve()) for p in discovered}
+    manual = [p for p in ss_config.get("context_paths", []) if str(Path(p).resolve()) not in discovered_resolved]
+    merged = discovered + manual
+
+    ss_config["context_paths"] = merged
+    ss_config_path.write_text(json.dumps(ss_config, indent=2), encoding="utf-8")
+
+    print(json.dumps({
+        "skill_space_path": str(skill_space_path),
+        "config_written_to": str(ss_config_path),
+        "manual_paths": manual,
+        "discovered_paths": discovered,
+        "total_context_paths": len(merged),
+    }, indent=2))
+
+
 def _get_config() -> None:
     """Print engine_root, skill_space_path, config_path as JSON. Use when agent needs to know paths."""
     engine_root = _skill_dir
@@ -108,7 +163,9 @@ def _get_instructions(operation: str, strategy_path: Path | None = None) -> None
 if __name__ == "__main__":
     args = sys.argv[1:]
 
-    if args and args[0] == "get_config":
+    if args and args[0] == "discover_context":
+        _discover_context()
+    elif args and args[0] == "get_config":
         _get_config()
     elif args and args[0] == "get_instructions":
         if len(args) < 2:
