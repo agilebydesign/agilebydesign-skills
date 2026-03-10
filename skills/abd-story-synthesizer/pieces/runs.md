@@ -61,16 +61,22 @@ Re-run the slice until the user approves. Corrections stay in the run log; the p
 
 **You MUST:**
 
-1. **Add to run log** — Create or append to the appropriate run log. Format:
+1. **Apply the correction** — Refine session strategy, update output files, or re-run with corrections as input.
+2. **Add to run log** — Create or append to the appropriate run log. Format:
   - **DO** or **DO NOT:** [the rule]
   - **Example (wrong):** [what was done incorrectly]
   - **Example (correct):** [what it should be]
-2. **Apply the correction** — Refine session strategy, update output files, or re-run with corrections as input.
 3. **Proactively confirm** — Say: "I've added this to the run log. Correction: [brief summary]. I've applied it."
+
+**A change is not complete until the correction is recorded.** Making the fix without recording the correction means the pattern is lost — it won't carry forward to future runs or sessions. Both the fix AND the correction are required.
 
 **Which run log:**
 - **During session creation (before any runs):** Use `runs/run-0.md`. Session creation is iterative — the user will correct strategy, variation analysis, and first-cut output files. All corrections go in `run-0.md`. These corrections feed into run 1.
 - **During a run:** Use `runs/run-N.md` (N = current run number).
+
+## Checking for Missed Corrections
+
+Run `python scripts/build.py get_instructions correct_run` to review the chat for unrecorded corrections. Use `correct_session` to incorporate corrections into the session strategy. Use `correct_skill` to promote corrections to skill rules. Use `correct_all` to run all three in sequence. The `run_slice` operation reminds you to check before proceeding.
 
 <!-- section: story_synthesizer.runs.patterns -->
 ## Patterns (from Runs)

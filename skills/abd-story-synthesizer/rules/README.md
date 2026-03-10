@@ -37,6 +37,10 @@ python scripts/build.py get_instructions run_slice [--strategy path/to/strategy.
 | `create_strategy` | Strategy phase, identification criteria | Yes            |
 | `run_slice`       | Runs, slice output                   | Yes            |
 | `generate_slice`  | Alias for run_slice                   | Yes            |
+| `correct_run`     | Record missed corrections to run log  | No             |
+| `correct_session` | Incorporate corrections into strategy | No             |
+| `correct_skill`   | Promote corrections to skill rules    | No             |
+| `correct_all`     | All three correction layers in sequence | No           |
 | `validate_run`    | Validate current run output           | Yes            |
 | `validate_slice`  | Validate slice output                 | Yes            |
 

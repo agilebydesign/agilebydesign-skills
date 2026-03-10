@@ -70,6 +70,22 @@ class AbdSkill:
                 "story_synthesizer.core.interaction",
                 "story_synthesizer.core.state_concept",
             ],
+            "correct_run": [
+                "story_synthesizer.correct.run",
+                "story_synthesizer.runs.corrections",
+            ],
+            "correct_session": [
+                "story_synthesizer.correct.session",
+            ],
+            "correct_skill": [
+                "story_synthesizer.correct.skill",
+            ],
+            "correct_all": [
+                "story_synthesizer.correct.run",
+                "story_synthesizer.runs.corrections",
+                "story_synthesizer.correct.session",
+                "story_synthesizer.correct.skill",
+            ],
             "improve_strategy": [
                 "story_synthesizer.strategy.corrections",
                 "story_synthesizer.validation.checklist",

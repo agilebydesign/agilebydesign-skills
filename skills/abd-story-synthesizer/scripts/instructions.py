@@ -80,6 +80,7 @@ class Instructions:
             "session": "session.md",
             "runs": "runs.md",
             "validation": "validation.md",
+            "correct": "correct.md",
         }
         fpath = file_map.get(piece_name)
         if not fpath:

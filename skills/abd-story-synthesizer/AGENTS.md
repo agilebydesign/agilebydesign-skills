@@ -678,6 +678,8 @@ python scripts/build.py get_instructions run_slice [--strategy path/to/strategy.
 
 **You MUST call `get_instructions` before producing any synthesis output.** The Engine assembles the correct sections, strategy, and paths. Never proceed without calling it first.
 
+**Before starting a run:** Check for unrecorded corrections from session creation or previous runs. If unsure, run `python scripts/build.py get_instructions correct_run` to review the chat for missed corrections.
+
 **Build phase validation:** After producing output, run `build.py validate`. Fix any violations before marking the run complete — validation is part of the build phase. See Phase 4 and `pieces/validation.md`.
 
 ---
@@ -729,10 +731,14 @@ Human reviews the run output and identifies mistakes. Corrections go to the run'
 
 See `pieces/runs.md` § Corrections Format and § When User Gives a Correction.
 
+**Checking for missed corrections:** Run `get_instructions correct_run` to review the chat for unrecorded changes. Run `correct_all` to do the full correction pipeline (run → session → skill) in one shot.
+
 **Script:**
 
 ```bash
 python scripts/build.py get_instructions validate_run
+python scripts/build.py get_instructions correct_run
+python scripts/build.py get_instructions correct_all
 ```
 
 ---
@@ -745,7 +751,7 @@ python scripts/build.py get_instructions validate_run
 | Reviews corrections, decides what to promote | Invokes script `get_instructions improve_strategy` | Updates session strategy and/or skill rules | Updates and adjusts → incorporates changes |
 
 
-After all runs (or when the user wants), review corrections collected in run logs (including `run-0.md` from session creation). Determine what needs to change. Incorporate into the session strategy and/or promote to the skill's rules those that apply across projects. The session file is the source of truth. 
+After all runs (or when the user wants), review corrections collected in run logs (including `run-0.md` from session creation). Determine what needs to change. Incorporate into the session strategy and/or promote to the skill's rules those that apply across projects. The session file is the source of truth.
 
 **When promoting corrections to the skill**, record the fix details in the run log's "Promoted to Skill" section — a table with: Correction, Target file, and Change (a from→to snapshot, not the full diff). This creates a traceable history of why each rule or piece was added or changed.
 
@@ -756,6 +762,19 @@ See `pieces/session.md` § Patterns and `pieces/runs.md` § Patterns.
 ```bash
 python scripts/build.py get_instructions improve_strategy
 ```
+
+### Three layers of correction
+
+Corrections flow through three layers. Each layer builds on the previous — don't skip ahead, but don't stop at recording either. Be aggressive about suggesting what should change at each layer.
+
+| Layer | Operation | Where | What happens |
+|-------|-----------|-------|-------------|
+| **1. Record** | `correct_run` | Run log (`runs/run-N.md`) | DO/DO NOT captured with wrong/correct examples. The fix is applied to the output files. |
+| **2. Strategy** | `correct_session` | Session file (`*-session.md`) | Correction incorporated into session strategy so future runs in this session follow it. |
+| **3. Skill** | `correct_skill` | Skill rules/pieces (`rules/*.md`, `pieces/*.md`) | Correction promoted to a skill rule or process piece. Recorded in "Promoted to Skill" table in run log. |
+| **All** | `correct_all` | All three in sequence | Runs all three layers: record → strategy → skill. |
+
+**Don't give up on making changes.** Each layer builds on the previous. Be aggressive in suggestions at every layer — propose the change, let the user decide.
 
 ---
 
@@ -973,16 +992,22 @@ Re-run the slice until the user approves. Corrections stay in the run log; the p
 
 **You MUST:**
 
-1. **Add to run log** — Create or append to the appropriate run log. Format:
+1. **Apply the correction** — Refine session strategy, update output files, or re-run with corrections as input.
+2. **Add to run log** — Create or append to the appropriate run log. Format:
   - **DO** or **DO NOT:** [the rule]
   - **Example (wrong):** [what was done incorrectly]
   - **Example (correct):** [what it should be]
-2. **Apply the correction** — Refine session strategy, update output files, or re-run with corrections as input.
 3. **Proactively confirm** — Say: "I've added this to the run log. Correction: [brief summary]. I've applied it."
+
+**A change is not complete until the correction is recorded.** Making the fix without recording the correction means the pattern is lost — it won't carry forward to future runs or sessions. Both the fix AND the correction are required.
 
 **Which run log:**
 - **During session creation (before any runs):** Use `runs/run-0.md`. Session creation is iterative — the user will correct strategy, variation analysis, and first-cut output files. All corrections go in `run-0.md`. These corrections feed into run 1.
 - **During a run:** Use `runs/run-N.md` (N = current run number).
+
+## Checking for Missed Corrections
+
+Run `python scripts/build.py get_instructions correct_run` to review the chat for unrecorded corrections. Use `correct_session` to incorporate corrections into the session strategy. Use `correct_skill` to promote corrections to skill rules. Use `correct_all` to run all three in sequence. The `run_slice` operation reminds you to check before proceeding.
 
 <!-- section: story_synthesizer.runs.patterns -->
 ## Patterns (from Runs)
@@ -996,6 +1021,84 @@ Re-run the slice until the user approves. Corrections stay in the run log; the p
 
 
 **Example:** Run 2 built steps and examples for "Configure Power Effect" stories. Pattern: "Effect-type stories share same step structure — Configure, Validate, Apply." Applicable to: other effect types under the same epic.
+
+---
+
+<!-- section: story_synthesizer.correct.run -->
+# Correct Run
+
+Review this chat for changes made to session files that are not recorded as corrections in the current run log.
+
+**For each change you made during this session:**
+
+1. Was it a user-requested fix, restructuring, or improvement? (Skip trivial changes: typo fixes, formatting, count updates that follow from other changes)
+2. Does a corresponding DO or DO NOT correction exist in the run log?
+3. If not — propose the correction to the user before writing it.
+
+**For each candidate correction, present to the user:**
+
+- **Change:** Brief description of what was changed
+- **Proposed correction:** The DO or DO NOT rule
+- **Record this?** (yes / skip)
+
+Only skip trivial changes (formatting, typos, mechanical count updates). Everything else is a candidate — changes that reflect a pattern about how to structure stories, domain models, scaffolds, variation analysis, or the process itself.
+
+**Write corrections in domain-neutral language.** Corrections must apply across any domain — payments, retail, games, healthcare, whatever. Use terms like "business rules", "workflow", "validation", "data variants", "cross-cutting concepts" — not the current skill space's domain terms. The examples can reference the current domain to illustrate, but the rule itself must be generic.
+
+**After review, write approved corrections to the run log** using the standard format:
+- **DO** or **DO NOT:** [the rule]
+- **Example (wrong):** [what was done incorrectly]
+- **Example (correct):** [what it should be]
+
+<!-- section: story_synthesizer.correct.session -->
+# Correct Session
+
+Review the corrections in the current run log and determine which should be incorporated into the session strategy.
+
+**For each correction in the run log:**
+
+1. Does this correction affect how the session's variation analysis, slices, or scaffold should be structured?
+2. Is it specific to this session's context (not a universal rule)?
+3. If yes to both — propose incorporating it into the session strategy.
+
+**For each candidate, present to the user:**
+
+- **Correction:** The DO or DO NOT from the run log
+- **Strategy impact:** What would change in the session file (variation analysis section, slice scope, scaffold structure)
+- **Proposed change:** The specific edit to the session file
+- **Apply this?** (yes / skip)
+
+Be aggressive in suggestions. If a correction reveals a pattern that should change the variation analysis, slice ordering, or scaffold structure — propose it. Don't wait for the user to ask.
+
+**After review, apply approved changes to the session file** and note in the run log which corrections were incorporated into strategy.
+
+<!-- section: story_synthesizer.correct.skill -->
+# Correct Skill
+
+Review the corrections in the current run log and determine which should be promoted to the skill's rules or process pieces.
+
+**For each correction in the run log:**
+
+1. Is this correction reusable across projects — not specific to this session's domain?
+2. Does an existing skill rule already cover it? (If so, does the rule need strengthening?)
+3. If reusable and not covered — propose promoting it to a new or existing rule.
+
+**For each candidate, present to the user:**
+
+- **Correction:** The DO or DO NOT from the run log
+- **Target:** New rule, strengthen existing rule, or update process piece
+- **Target file:** The specific file path (e.g. `rules/interaction-data-vs-logic-story-split.md`)
+- **Proposed change:** What to add or modify
+- **Promote this?** (yes / skip)
+
+Be aggressive in suggestions. If a correction applies beyond this project's domain, it belongs in the skill. Don't hold back — propose the change, let the user decide.
+
+**After review, apply approved changes to the skill** and record in the run log's "Promoted to Skill" table:
+
+| Correction | Target file | Change |
+|-----------|-------------|--------|
+
+Then rebuild AGENTS.md: `python scripts/build.py`
 
 ---
 

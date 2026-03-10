@@ -115,6 +115,8 @@ python scripts/build.py get_instructions run_slice [--strategy path/to/strategy.
 
 **You MUST call `get_instructions` before producing any synthesis output.** The Engine assembles the correct sections, strategy, and paths. Never proceed without calling it first.
 
+**Before starting a run:** Check for unrecorded corrections from session creation or previous runs. If unsure, run `python scripts/build.py get_instructions correct_run` to review the chat for missed corrections.
+
 **Build phase validation:** After producing output, run `build.py validate`. Fix any violations before marking the run complete — validation is part of the build phase. See Phase 4 and `pieces/validation.md`.
 
 ---
@@ -166,10 +168,14 @@ Human reviews the run output and identifies mistakes. Corrections go to the run'
 
 See `pieces/runs.md` § Corrections Format and § When User Gives a Correction.
 
+**Checking for missed corrections:** Run `get_instructions correct_run` to review the chat for unrecorded changes. Run `correct_all` to do the full correction pipeline (run → session → skill) in one shot.
+
 **Script:**
 
 ```bash
 python scripts/build.py get_instructions validate_run
+python scripts/build.py get_instructions correct_run
+python scripts/build.py get_instructions correct_all
 ```
 
 ---
@@ -182,7 +188,7 @@ python scripts/build.py get_instructions validate_run
 | Reviews corrections, decides what to promote | Invokes script `get_instructions improve_strategy` | Updates session strategy and/or skill rules | Updates and adjusts → incorporates changes |
 
 
-After all runs (or when the user wants), review corrections collected in run logs (including `run-0.md` from session creation). Determine what needs to change. Incorporate into the session strategy and/or promote to the skill's rules those that apply across projects. The session file is the source of truth. 
+After all runs (or when the user wants), review corrections collected in run logs (including `run-0.md` from session creation). Determine what needs to change. Incorporate into the session strategy and/or promote to the skill's rules those that apply across projects. The session file is the source of truth.
 
 **When promoting corrections to the skill**, record the fix details in the run log's "Promoted to Skill" section — a table with: Correction, Target file, and Change (a from→to snapshot, not the full diff). This creates a traceable history of why each rule or piece was added or changed.
 
@@ -193,6 +199,19 @@ See `pieces/session.md` § Patterns and `pieces/runs.md` § Patterns.
 ```bash
 python scripts/build.py get_instructions improve_strategy
 ```
+
+### Three layers of correction
+
+Corrections flow through three layers. Each layer builds on the previous — don't skip ahead, but don't stop at recording either. Be aggressive about suggesting what should change at each layer.
+
+| Layer | Operation | Where | What happens |
+|-------|-----------|-------|-------------|
+| **1. Record** | `correct_run` | Run log (`runs/run-N.md`) | DO/DO NOT captured with wrong/correct examples. The fix is applied to the output files. |
+| **2. Strategy** | `correct_session` | Session file (`*-session.md`) | Correction incorporated into session strategy so future runs in this session follow it. |
+| **3. Skill** | `correct_skill` | Skill rules/pieces (`rules/*.md`, `pieces/*.md`) | Correction promoted to a skill rule or process piece. Recorded in "Promoted to Skill" table in run log. |
+| **All** | `correct_all` | All three in sequence | Runs all three layers: record → strategy → skill. |
+
+**Don't give up on making changes.** Each layer builds on the previous. Be aggressive in suggestions at every layer — propose the change, let the user decide.
 
 ---
 
