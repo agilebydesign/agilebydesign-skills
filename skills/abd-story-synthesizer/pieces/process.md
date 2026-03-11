@@ -37,6 +37,8 @@ After setting the work area, the engine automatically checks context readiness. 
 
 **3. Concept Deep Analysis** — Has the concept report been reviewed with deep reads of source chunks? If not → for each high-frequency term cluster, read 3–5 representative chunks, extract mechanically distinct categories.
 
+**4. Variation Analysis** — Per model from deep analysis: what's consistent, what varies, what's a story vs example. Saved to `context_analysis.json` under each model's `variation` key.
+
 Each step is run once per workspace. Skip if already done and context hasn't changed.
 
 ---
@@ -49,7 +51,7 @@ Each step is run once per workspace. Skip if already done and context hasn't cha
 | Says "start a session" or "create a session" | Invokes script `get_instructions create_strategy` | Produces session file with strategy and slices | Updates and adjusts → incorporates changes |
 
 
-Create, open, or continue an existing session. Name it (user-provided or AI-derived from context). The session file stores strategy: Level of Detail, Scope, Context Inventory, Foundational Object Models, Variation Analysis, Interactions, and slices. Option: carry slices over from a previous session (e.g. Exploration reuses Discovery slices) or create new slices.
+Create, open, or continue an existing session. Name it (user-provided or AI-derived from context). The session file stores strategy: Level of Detail, Scope, Foundational Object Models, Interaction Scaffold, and slices. Variation analysis lives in `context_analysis.json` (from context preparation). Option: carry slices over from a previous session (e.g. Exploration reuses Discovery slices) or create new slices.
 
 **Session path:** `<skill-space>/story-synthesizer/<session-name>/<session-name>-session.md`
 

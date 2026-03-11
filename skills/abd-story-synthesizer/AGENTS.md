@@ -16,24 +16,6 @@ In Agile terminology, this translates to a **story map** and **domain model**. T
 <!-- section: story_synthesizer.interaction.model -->
 # Interaction Model
 
-## Variation Analysis
-
-With the foundational models established (see `pieces/domain.md`), analyze what varies within each. The models are the lens — variation analysis asks: "for this model, what specializes it? What's the same base, what's different?"
-
-- **Per foundational model:** What consumers extend it with new behavior (stories) vs add only new data (examples)?
-- **Business rules** — distinct rules or conditions that change behavior within the model.
-- **Workflows** — different sequences or paths that change steps, actors, or outcomes.
-- **State** — different state transitions or preconditions that change required or resulting state.
-
-This is where the interaction verbs and nouns become structured:
-- **Verbs** — User/System actions, organized by which foundational model they operate on.
-- **Nouns** — Domain concepts, placed within their foundational model.
-- **What is consistent, what is different** — within each model, not across the whole context.
-
-**Output location:** Write to `<session>/interaction-tree.md` between `<!-- section: variation_analysis -->` and `<!-- /section: variation_analysis -->` markers.
-
----
-
 An interaction is a single meaningful exchange between two actors that results in either a retrieval of state or a change of state.
 
 ## Interaction
@@ -649,6 +631,8 @@ After setting the work area, the engine automatically checks context readiness. 
 
 **3. Concept Deep Analysis** — Has the concept report been reviewed with deep reads of source chunks? If not → for each high-frequency term cluster, read 3–5 representative chunks, extract mechanically distinct categories.
 
+**4. Variation Analysis** — Per model from deep analysis: what's consistent, what varies, what's a story vs example. Saved to `context_analysis.json` under each model's `variation` key.
+
 Each step is run once per workspace. Skip if already done and context hasn't changed.
 
 ---
@@ -661,7 +645,7 @@ Each step is run once per workspace. Skip if already done and context hasn't cha
 | Says "start a session" or "create a session" | Invokes script `get_instructions create_strategy` | Produces session file with strategy and slices | Updates and adjusts → incorporates changes |
 
 
-Create, open, or continue an existing session. Name it (user-provided or AI-derived from context). The session file stores strategy: Level of Detail, Scope, Context Inventory, Foundational Object Models, Variation Analysis, Interactions, and slices. Option: carry slices over from a previous session (e.g. Exploration reuses Discovery slices) or create new slices.
+Create, open, or continue an existing session. Name it (user-provided or AI-derived from context). The session file stores strategy: Level of Detail, Scope, Foundational Object Models, Interaction Scaffold, and slices. Variation analysis lives in `context_analysis.json` (from context preparation). Option: carry slices over from a previous session (e.g. Exploration reuses Discovery slices) or create new slices.
 
 **Session path:** `<skill-space>/story-synthesizer/<session-name>/<session-name>-session.md`
 
@@ -868,21 +852,15 @@ What portion of the analyzed context this session works with. Context must alrea
 
 If no scope is set, ask the user. The AI can suggest scope based on the analyzed context (concept report, chunk categories). Default is "all."
 
-**Context readiness check:** Before setting scope, verify context is prepared (chunked, scanned, deep-read). If context is missing or stale, ask the user to prepare it first — same flow as when setting the skill space (see `pieces/context.md`).
+**Context readiness check:** Before setting scope, verify context is prepared (chunked, scanned, deep-read, vara). If context is missing or stale, ask the user to prepare it first — same flow as when setting the skill space (see `pieces/context.md`).
 
 ### 4 - Foundational Object Models
 
-Using the concept tracker report and deep read pass (§3b), identify foundational models via OOAD (find objects, find collaborations, find repetition — see `pieces/domain.md` § Foundational Object Models for full process). Each model: State Model (typed concepts with properties, operations, collaborators) + Extensions (names only). Each model becomes a module in the domain model.
+Using the context analysis (see `pieces/context.md`), identify foundational models via OOAD (find objects, find collaborations, find repetition — see `pieces/domain.md` § Foundational Object Models for full process). Each model: State Model (typed concepts with properties, operations, collaborators) + Extensions (names only). Each model becomes a module in the domain model.
 
 **Output:** Write to `<session>/domain-model.md` § Foundational Object Models (between `<!-- section: foundational_models -->` markers). Session §4 references the output file — do not duplicate models here. Auto-injected into `create_strategy` prompt.
 
-### 5 - Variation Analysis
-
-Per foundational model from §4, analyze what varies: what's consistent, what differs, what extends with new behavior (→ story) vs adds data to same behavior (→ example). Identify business rules, workflow differences, and state variations. See `pieces/interaction.md` § Variation Analysis for full process.
-
-**Output:** Write to `<session>/interaction-tree.md` § Variation Analysis (between `<!-- section: variation_analysis -->` markers). Session §5 references the output file — do not duplicate analysis here. Auto-injected into `create_strategy` prompt.
-
-### 6 - Interaction Scaffold
+### 5 - Interaction Scaffold
 
 **Story vs Example rule:** Functionality that extends a foundational model with NEW BEHAVIOR requires a story (new operations, new state transitions, new validation rules). Adding DATA to the same behavior is just an example on an existing story. This is how you decide what becomes a story and what becomes an example.
 
@@ -894,9 +872,9 @@ Build the interaction tree on top of the foundational models:
 - Pattern-change boundaries (when does the pattern change? new epic? new sub-epic?)
 - The scaffold lists names only — no Trigger, Response, Pre-Condition, or other fields. Those belong in the interaction-tree.md output file.
 
-**Scaffold format:** Lean — epic name, story names with parenthetical examples, variation analysis rationale. List ALL story names so slices can be properly designed (you need the full picture to build vertical slices). 
+**Scaffold format:** Lean — epic name, story names with parenthetical examples, variation analysis rationale from `context_analysis.json`. List ALL story names so slices can be properly designed (you need the full picture to build vertical slices).
 
-### 7 - First-Cut Output Files
+### 6 - First-Cut Output Files
 
 The scaffold phase produces the **first cut of the real output files** (`interaction-tree.md`, `domain-model.md`). These are not separate "scaffold files" — they ARE the deliverables at version 1. Runs expand them slice by slice.
 
@@ -914,7 +892,7 @@ The first cut uses pattern+extrapolation: 2-3 stories per epic in full detail (T
 | **Specification** | Steps + Scenarios + Examples added to existing stories. May detail a couple of stories fully to establish pattern, then apply to rest.        |
 
 
-### 8 - Slices
+### 7 - Slices
 
 The order in which you work through slices is **not** necessarily epic-by-epic. Slices are units of work that may cut across epics.
 

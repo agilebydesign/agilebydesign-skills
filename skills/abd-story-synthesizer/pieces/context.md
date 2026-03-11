@@ -82,4 +82,22 @@ The concept tracker finds *what terms exist* and *where they co-occur*, but does
 }
 ```
 
+## Variation Analysis
+
+The deep analysis categories already identify what varies within each model. This step formalizes it: per model, what's consistent, what differs, what extends with new behavior (→ story) vs adds data to same behavior (→ example).
+
+Save to `context_analysis.json` under `deep_analysis.models[].variation`:
+
+```json
+{
+  "name": "Effect System",
+  "categories": [ "..." ],
+  "variation": {
+    "consistent": "All effects share action, range, duration, cost_per_rank, extras, flaws",
+    "story_vs_example": "Each mechanically distinct category is a story. Specific effects within a category are examples.",
+    "business_rules": ["Alternate Effects share a slot", "Linked effects trigger together"]
+  }
+}
+```
+
 **Validation pass on "examples" annotations:** After drafting the scaffold, for every annotation that says "X are examples (same flow)," verify from source chunks that all items share the same interaction flow. The test: does the item change who rolls, what DC, what triggers the check, or what the outcome does? If yes — separate story, not example.

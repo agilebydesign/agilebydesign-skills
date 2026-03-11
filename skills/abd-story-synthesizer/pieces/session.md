@@ -53,21 +53,15 @@ What portion of the analyzed context this session works with. Context must alrea
 
 If no scope is set, ask the user. The AI can suggest scope based on the analyzed context (concept report, chunk categories). Default is "all."
 
-**Context readiness check:** Before setting scope, verify context is prepared (chunked, scanned, deep-read). If context is missing or stale, ask the user to prepare it first — same flow as when setting the skill space (see `pieces/context.md`).
+**Context readiness check:** Before setting scope, verify context is prepared (chunked, scanned, deep-read, vara). If context is missing or stale, ask the user to prepare it first — same flow as when setting the skill space (see `pieces/context.md`).
 
 ### 4 - Foundational Object Models
 
-Using the concept tracker report and deep read pass (§3b), identify foundational models via OOAD (find objects, find collaborations, find repetition — see `pieces/domain.md` § Foundational Object Models for full process). Each model: State Model (typed concepts with properties, operations, collaborators) + Extensions (names only). Each model becomes a module in the domain model.
+Using the context analysis (see `pieces/context.md`), identify foundational models via OOAD (find objects, find collaborations, find repetition — see `pieces/domain.md` § Foundational Object Models for full process). Each model: State Model (typed concepts with properties, operations, collaborators) + Extensions (names only). Each model becomes a module in the domain model.
 
 **Output:** Write to `<session>/domain-model.md` § Foundational Object Models (between `<!-- section: foundational_models -->` markers). Session §4 references the output file — do not duplicate models here. Auto-injected into `create_strategy` prompt.
 
-### 5 - Variation Analysis
-
-Per foundational model from §4, analyze what varies: what's consistent, what differs, what extends with new behavior (→ story) vs adds data to same behavior (→ example). Identify business rules, workflow differences, and state variations. See `pieces/interaction.md` § Variation Analysis for full process.
-
-**Output:** Write to `<session>/interaction-tree.md` § Variation Analysis (between `<!-- section: variation_analysis -->` markers). Session §5 references the output file — do not duplicate analysis here. Auto-injected into `create_strategy` prompt.
-
-### 6 - Interaction Scaffold
+### 5 - Interaction Scaffold
 
 **Story vs Example rule:** Functionality that extends a foundational model with NEW BEHAVIOR requires a story (new operations, new state transitions, new validation rules). Adding DATA to the same behavior is just an example on an existing story. This is how you decide what becomes a story and what becomes an example.
 
@@ -79,9 +73,9 @@ Build the interaction tree on top of the foundational models:
 - Pattern-change boundaries (when does the pattern change? new epic? new sub-epic?)
 - The scaffold lists names only — no Trigger, Response, Pre-Condition, or other fields. Those belong in the interaction-tree.md output file.
 
-**Scaffold format:** Lean — epic name, story names with parenthetical examples, variation analysis rationale. List ALL story names so slices can be properly designed (you need the full picture to build vertical slices). 
+**Scaffold format:** Lean — epic name, story names with parenthetical examples, variation analysis rationale from `context_analysis.json`. List ALL story names so slices can be properly designed (you need the full picture to build vertical slices).
 
-### 7 - First-Cut Output Files
+### 6 - First-Cut Output Files
 
 The scaffold phase produces the **first cut of the real output files** (`interaction-tree.md`, `domain-model.md`). These are not separate "scaffold files" — they ARE the deliverables at version 1. Runs expand them slice by slice.
 
@@ -99,7 +93,7 @@ The first cut uses pattern+extrapolation: 2-3 stories per epic in full detail (T
 | **Specification** | Steps + Scenarios + Examples added to existing stories. May detail a couple of stories fully to establish pattern, then apply to rest.        |
 
 
-### 8 - Slices
+### 7 - Slices
 
 The order in which you work through slices is **not** necessarily epic-by-epic. Slices are units of work that may cut across epics.
 

@@ -1,24 +1,6 @@
 <!-- section: story_synthesizer.interaction.model -->
 # Interaction Model
 
-## Variation Analysis
-
-With the foundational models established (see `pieces/domain.md`), analyze what varies within each. The models are the lens — variation analysis asks: "for this model, what specializes it? What's the same base, what's different?"
-
-- **Per foundational model:** What consumers extend it with new behavior (stories) vs add only new data (examples)?
-- **Business rules** — distinct rules or conditions that change behavior within the model.
-- **Workflows** — different sequences or paths that change steps, actors, or outcomes.
-- **State** — different state transitions or preconditions that change required or resulting state.
-
-This is where the interaction verbs and nouns become structured:
-- **Verbs** — User/System actions, organized by which foundational model they operate on.
-- **Nouns** — Domain concepts, placed within their foundational model.
-- **What is consistent, what is different** — within each model, not across the whole context.
-
-**Output location:** Write to `<session>/interaction-tree.md` between `<!-- section: variation_analysis -->` and `<!-- /section: variation_analysis -->` markers.
-
----
-
 An interaction is a single meaningful exchange between two actors that results in either a retrieval of state or a change of state.
 
 ## Interaction
