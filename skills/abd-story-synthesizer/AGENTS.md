@@ -856,7 +856,7 @@ The concept tracker identifies *what terms exist* and *where they co-occur*, but
 **Validation pass on "examples" annotations:**
 After drafting the scaffold, for every place that says "X are examples (same flow)," go back to the source and verify all items in that group actually share the same interaction flow. The test: does the item change who rolls, what DC, what triggers the check, or what the outcome does? If yes — it's not an example, it's a separate story.
 
-### 4 - Foundational Object Models
+### 4 - Foundational Object Models (→ domain-model.md)
 
 A **foundational object model** are a subset of the domain model — with a descrete set of objects, and their logic,relationships, interactions,  and state transitions — that serve as the base for the rest of the model. These models appear repeatedly across the system. Different parts of the system extend foundational objects but specialize it with different data or rules. When you see the same objects doing the same things in multiple places, that's one foundational model.
 
@@ -881,7 +881,9 @@ Use `concept_tracker.py report` to validate and find things you missed — terms
 - **State Model** — Complete typed concept(s) with properties, operations, collaborators, invariants. Same format as domain-model.md concepts. Use `Dictionary<K,V>` for named collections accessed by key; `List<T>` only when order matters.
 - **Extensions** — List of objects that extend or specialize this model. Names only — how they differ is the job of variation analysis.
 
-### 5 - Variation Analysis
+Foundational models are written to `domain-model.md` § Foundational Object Models (marked with `<!-- section: foundational_models -->`). The session references the file. The `create_strategy` operation injects this section into the prompt automatically.
+
+### 5 - Variation Analysis (→ interaction-tree.md)
 
 With the foundational models established, analyze what varies within each. The models are the lens — variation analysis asks: "for this model, what specializes it? What's the same base, what's different?"
 
@@ -889,6 +891,8 @@ With the foundational models established, analyze what varies within each. The m
 - **Business rules** — distinct rules or conditions change behavior within the model.
 - **Workflows** — different sequences or paths change steps, actors, or outcomes.
 - **State** — different state transitions or preconditions change required or resulting state.
+
+Variation analysis is written to `interaction-tree.md` § Variation Analysis (marked with `<!-- section: variation_analysis -->`). The session references the file. The `create_strategy` operation injects this section into the prompt automatically.
 
 This is where the interaction verbs and nouns become structured:
 - **Verbs** — User/System actions, but now organized by which foundational model they operate on.

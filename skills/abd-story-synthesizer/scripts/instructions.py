@@ -49,7 +49,51 @@ class Instructions:
                 parts.append(strategy_content)
                 parts.append("\n\n---\n\n")
 
+        if operation == "create_strategy":
+            self._inject_output_sections(parts)
+
         return "".join(parts).rstrip() + "\n"
+
+    def _inject_output_sections(self, parts: list[str]) -> None:
+        """Inject foundational models and variation analysis from output files into create_strategy prompt."""
+        if not self.engine.workspace_path:
+            return
+
+        ws = Path(self.engine.workspace_path)
+        session_dirs = sorted(ws.glob("story-synthesizer/*/"), key=lambda p: p.stat().st_mtime, reverse=True) if (ws / "story-synthesizer").exists() else []
+
+        for session_dir in session_dirs:
+            domain_path = session_dir / "domain-model.md"
+            tree_path = session_dir / "interaction-tree.md"
+
+            if domain_path.exists():
+                section = self._extract_section(domain_path, "foundational_models")
+                if section:
+                    parts.append(f"## Existing Foundational Models (from {domain_path.name})\n\n")
+                    parts.append(section)
+                    parts.append("\n\n---\n\n")
+
+            if tree_path.exists():
+                section = self._extract_section(tree_path, "variation_analysis")
+                if section:
+                    parts.append(f"## Existing Variation Analysis (from {tree_path.name})\n\n")
+                    parts.append(section)
+                    parts.append("\n\n---\n\n")
+            break
+
+    @staticmethod
+    def _extract_section(path: Path, section_name: str) -> str | None:
+        """Extract content between <!-- section: name --> and <!-- /section: name --> markers."""
+        content = path.read_text(encoding="utf-8")
+        start_marker = f"<!-- section: {section_name} -->"
+        end_marker = f"<!-- /section: {section_name} -->"
+        if start_marker not in content:
+            return None
+        start = content.index(start_marker) + len(start_marker)
+        if end_marker in content:
+            end = content.index(end_marker)
+            return content[start:end].strip()
+        return content[start:].strip()
 
     def sections_included(self, operation: str) -> list[str]:
         return list(self.operation_sections.get(operation, []))
