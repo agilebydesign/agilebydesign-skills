@@ -35,25 +35,21 @@ python scripts/build.py get_config
 
 ---
 
-## Phase 2: Analyze Concepts
+## Phase 2: Prepare Context
 
-Like Phase 0, this is setup — run once, skip on subsequent sessions if a report already exists.
-
-
-| Human                                      | AI / Script                                                           | AI                                                     | Human → AI     |
-| ------------------------------------------ | --------------------------------------------------------------------- | ------------------------------------------------------ | -------------- |
-| Says "analyze concepts" or "scan concepts" | Runs `concept_tracker.py seed` (optional), then `scan`, then `report` | Reports cross-cutting term clusters and co-occurrences | Reviews report |
+Setup — run once per workspace, skip if context is already chunked and scanned.
 
 
-Run the concept tracker to extract terms from context and build a cross-reference matrix.
+| Human                                                          | AI / Script                                                                          | AI                                                        | Human → AI     |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------ | --------------------------------------------------------- | -------------- |
+| Says "analyze concepts", "prepare context", or "scan concepts" | Validates chunking, runs `concept_tracker.py seed` → `scan` → `report`, deep-reads | Reports chunking status, cross-cutting terms, co-clusters | Reviews report |
 
-```bash
-python scripts/concept_tracker.py seed --source <domain-model-or-wordlist>   # optional: seed glossary
-python scripts/concept_tracker.py scan --context-path <context-path>
-python scripts/concept_tracker.py report <terms_report.json> --min-units 5
-```
 
-**Output:** `terms_report.json` with per-unit terms, term index, cross-references sorted by frequency, and co-occurrence clusters. The `report` command prints a markdown summary of cross-cutting candidates. Use the report to drive foundational object model identification (see `pieces/session.md` § 4 - Foundational Object Models).
+Three steps (see `pieces/session.md` § 2 - Context for details):
+
+1. **Chunking (§2a):** Ensure source documents are chunked to markdown. `get_instructions` validates automatically — warns if unchunked or stale.
+2. **Concept Tracking (§2b):** Run `concept_tracker.py` to scan chunks and build term cross-references.
+3. **Concept Deep Analysis (§2c):** Deep-read 3–5 representative chunks per candidate model to identify mechanically distinct categories from source text.
 
 ---
 

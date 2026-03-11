@@ -44,35 +44,39 @@ The node levels and fields chosen to be generated (e.g. Epics, Stories, Steps, E
 
 **Default when no session:** `tags: [discovery, interaction_tree, epic, story, domain]`.
 
-### 2 - Scope
+### 2 - Context
 
-What portion of the context we are working with. Scope is not just a list — it **categorizes** the context. Scope drives which slices get synthesized.
+Context preparation has three steps: chunk it, scan it, read it. Each step builds on the previous.
 
-- **Raw context** — If we have nothing built yet: all context, or a subset. Categorize it (e.g. index, chunk types, section mapping). Example: "406 sections; Abilities 107–111, Skills 113–129, Powers 143+, Combat 235–251; chunk types: effect definitions, advantage definitions, skill definitions, combat rules."
-- **Existing structure** — If we have built output: "these stories", "all these epics", "Epic 2 and its sub-epics".
+#### 2a - Context Chunking
 
-**Chunking:** Not all context will be chunked, but chunking makes variation analysis much easier. When context is chunked, use the chunk inventory (index, types) to drive scope.
+Source documents (PDF, PPTX, DOCX) must be chunked into markdown before analysis. The `get_instructions` command validates this automatically — if documents are unchunked or stale, it warns with the command to run.
 
-**Bespoke strategies:** A custom strategy can mix components beyond the predefined session types (e.g. discovery + examples at sub-epic level, or exploration + domain concepts). The strategy defines which tags are in scope; the engine filters rules accordingly. Examples can be scoped at different levels — the strategy defines where.
+- **Raw context:** Categorize what you have — source paths, chunk count, chunk types, section mapping. Example: "406 sections; Abilities 107–111, Skills 113–129, Powers 143+, Combat 235–251."
+- **Existing structure:** If output already exists: "these stories", "all these epics", "Epic 2 and its sub-epics".
 
-### 3 - Context Inventory
+#### 2b - Concept Tracking
 
-Inventory the context before any analysis. Source paths, chunk index (if chunked), chunk types, map to structure.
+Run `concept_tracker.py` to extract terms from chunks and build a cross-reference matrix. Required before foundational models — if not available, stop and report the error.
 
-**Concept tracker:** Run `concept_tracker.py scan` then `report` to get cross-cutting term clusters as data input for foundational model identification. The concept tracker is required — if it is not available, stop and report the error.
+```bash
+python scripts/concept_tracker.py seed --source <domain-model-or-wordlist>   # optional: seed glossary
+python scripts/concept_tracker.py scan --context-path <context-path>
+python scripts/concept_tracker.py report <terms_report.json> --min-units 5
+```
 
-### 3b - Deep Read Pass
+**Output:** `terms_report.json` with per-unit terms, term index, cross-references by frequency, and co-occurrence clusters. Use the report to drive foundational model identification (§4).
 
-The concept tracker identifies *what terms exist* and *where they co-occur*, but it does NOT reveal mechanical variation. Before writing foundational models or variation analysis, perform a deep read of source chunks for each candidate model.
+#### 2c - Concept Deep Analysis
 
-**Process:**
+The concept tracker finds *what terms exist* and *where they co-occur*, but does NOT reveal mechanical variation. Before writing foundational models or variation analysis, deep-read the source chunks for each candidate model.
+
 1. Use `term_index` from `terms_report.json` to find which chunks contain each candidate model's key terms
-2. For each candidate model, read 3–5 representative chunks that contain the model's terms
-3. Extract the mechanically distinct categories from the actual source text — not from memory or surface knowledge
+2. For each candidate model, read 3–5 representative chunks
+3. Extract the mechanically distinct categories from the actual source text — not from memory
 4. Record which sections were read and what categories were found
 
-**Validation pass on "examples" annotations:**
-After drafting the scaffold, for every place that says "X are examples (same flow)," go back to the source and verify all items in that group actually share the same interaction flow. The test: does the item change who rolls, what DC, what triggers the check, or what the outcome does? If yes — it's not an example, it's a separate story.
+**Validation pass on "examples" annotations:** After drafting the scaffold, for every annotation that says "X are examples (same flow)," verify from source chunks that all items share the same interaction flow. The test: does the item change who rolls, what DC, what triggers the check, or what the outcome does? If yes — separate story, not example.
 
 ### 4 - Foundational Object Models
 
@@ -86,7 +90,7 @@ Per foundational model from §4, analyze what varies: what's consistent, what di
 
 **Output:** Write to `<session>/interaction-tree.md` § Variation Analysis (between `<!-- section: variation_analysis -->` markers). Session §5 references the output file — do not duplicate analysis here. Auto-injected into `create_strategy` prompt.
 
-### 6 - Interactions
+### 6 - Interaction Scaffold
 
 **Story vs Example rule:** Functionality that extends a foundational model with NEW BEHAVIOR requires a story (new operations, new state transitions, new validation rules). Adding DATA to the same behavior is just an example on an existing story. This is how you decide what becomes a story and what becomes an example.
 
@@ -94,11 +98,11 @@ Build the interaction tree on top of the foundational models:
 
 - Epic/Sub-epic/Story breakdown
 - Each sub-epic references which foundational model(s) it extends
-- List ALL story names (lean format: name + parenthetical examples). The session scaffold identifies every story — this is Discovery's job at the session level.
+- List ALL story names (lean format: name + parenthetical examples). The session scaffold identifies every story.
 - Pattern-change boundaries (when does the pattern change? new epic? new sub-epic?)
 - The scaffold lists names only — no Trigger, Response, Pre-Condition, or other fields. Those belong in the interaction-tree.md output file.
 
-**Scaffold format:** Lean — epic name, story names with parenthetical examples, variation analysis rationale. List ALL story names so slices can be properly designed (you need the full picture to build vertical slices). There is only one scaffold format.
+**Scaffold format:** Lean — epic name, story names with parenthetical examples, variation analysis rationale. List ALL story names so slices can be properly designed (you need the full picture to build vertical slices). 
 
 ### 7 - First-Cut Output Files
 
