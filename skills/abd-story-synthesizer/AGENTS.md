@@ -852,7 +852,7 @@ What portion of the analyzed context this session works with. Context must alrea
 
 If no scope is set, ask the user. The AI can suggest scope based on the analyzed context (concept report, chunk categories). Default is "all."
 
-**Context readiness check:** Before setting scope, verify context is prepared (chunked, scanned, deep-read, vara). If context is missing or stale, ask the user to prepare it first — same flow as when setting the skill space (see `pieces/context.md`).
+**Context readiness check:** Before setting scope, verify context is prepared (chunked, scanned, deep-read, variation analysis). If context is missing or stale, ask the user to prepare it first — same flow as when setting the skill space (see `pieces/context.md`).
 
 ### 4 - Foundational Object Models
 
@@ -873,6 +873,8 @@ Build the interaction tree on top of the foundational models:
 - The scaffold lists names only — no Trigger, Response, Pre-Condition, or other fields. Those belong in the interaction-tree.md output file.
 
 **Scaffold format:** Lean — epic name, story names with parenthetical examples, variation analysis rationale from `context_analysis.json`. List ALL story names so slices can be properly designed (you need the full picture to build vertical slices).
+
+**Validation pass on "examples" annotations:** After drafting the scaffold, for every annotation that says "X are examples (same flow)," verify from source chunks that all items share the same interaction flow. The test: does the item change who rolls, what DC, what triggers the check, or what the outcome does? If yes — separate story, not example.
 
 ### 6 - First-Cut Output Files
 

@@ -99,5 +99,3 @@ Save to `context_analysis.json` under `deep_analysis.models[].variation`:
   }
 }
 ```
-
-**Validation pass on "examples" annotations:** After drafting the scaffold, for every annotation that says "X are examples (same flow)," verify from source chunks that all items share the same interaction flow. The test: does the item change who rolls, what DC, what triggers the check, or what the outcome does? If yes — separate story, not example.
