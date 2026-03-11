@@ -858,30 +858,11 @@ After drafting the scaffold, for every place that says "X are examples (same flo
 
 ### 4 - Foundational Object Models (→ domain-model.md)
 
-A **foundational object model** are a subset of the domain model — with a descrete set of objects, and their logic,relationships, interactions,  and state transitions — that serve as the base for the rest of the model. These models appear repeatedly across the system. Different parts of the system extend foundational objects but specialize it with different data or rules. When you see the same objects doing the same things in multiple places, that's one foundational model.
+Identify foundational models using OOAD: find objects, find collaborations, find repetition. See `pieces/domain.md` for the full process. Use `concept_tracker.py report` to validate — high co-occurrence terms likely belong to the same model.
 
-Example: in a payments system, Account + Transaction + ValidationRule collaborate the same way whether you're processing a wire transfer, ACH, or direct debit. The base collaboration (debit account, validate, settle) is the foundational model. Wire vs ACH vs direct debit are extensions — they add different validation rules and settlement timing, but the objects and operations are the same.
+Each model has a **State Model** (typed concepts with properties, operations, collaborators) and **Extensions** (names only). Each model likely becomes a module in the domain model.
 
-Each foundational model likely becomes a distinct module in the domain model. The set of foundational models + one representative instance each IS the scaffold for the domain model.
-
-**How to identify foundational models (OOAD):**
-
-Read the context and perform object-oriented analysis:
-
-1. **Find the objects.** Read through the context looking for domain nouns — things that hold state and get operated on. Not source document headings — actual things described in the content. What are the entities, what properties do they carry, what are their relationships?
-2. **Find the collaborations.** For each object, what other objects does it work with? What operations do they perform on each other? What state flows between them? Map out who calls whom, who produces what, who consumes what.
-3. **Find the repetition.** Where do you see the same group of objects collaborating the same way in multiple places? That repetition is a foundational model. The objects and operations are the same; only the data or specific rules change per instance.
-4. **Do NOT trust the source document's categories.** Read actual content. Group by shared collaborations, not by chapter headings or document structure. See rule `context-deep-mechanical-analysis`.
-5. **Do NOT group by surface similarity** (e.g. "things that take one parameter"). Group by what objects collaborate and what operations they perform.
-
-Use `concept_tracker.py report` to validate and find things you missed — terms with high co-occurrence across many chunks likely belong to the same foundational model.
-
-**One sub-section per foundational model. Each contains:**
-
-- **State Model** — Complete typed concept(s) with properties, operations, collaborators, invariants. Same format as domain-model.md concepts. Use `Dictionary<K,V>` for named collections accessed by key; `List<T>` only when order matters.
-- **Extensions** — List of objects that extend or specialize this model. Names only — how they differ is the job of variation analysis.
-
-**Output location:** Write foundational models directly to `domain-model.md` § Foundational Object Models (marked with `<!-- section: foundational_models -->` / `<!-- /section: foundational_models -->`). The session §4 references the file — do NOT duplicate the models in the session. The `create_strategy` operation auto-injects this section into the prompt when continuing an existing session.
+**Output:** Write directly to `domain-model.md` § Foundational Object Models (marked with `<!-- section: foundational_models -->` / `<!-- /section: foundational_models -->`). Session §4 references the file only. Auto-injected into `create_strategy` prompt.
 
 ### 5 - Variation Analysis (→ interaction-tree.md)
 
