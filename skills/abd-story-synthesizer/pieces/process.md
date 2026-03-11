@@ -10,46 +10,34 @@ Within each phase: **Human** → **AI** invokes script → **Script** returns in
 
 ---
 
-## Phase 1: Set Work Area
+## Phase 1: Set Work Area and Prepare Context
 
+| Human                                           | AI / Script                                      | AI                                                          | Human → AI                    |
+| ----------------------------------------------- | ------------------------------------------------ | ----------------------------------------------------------- | ----------------------------- |
+| Says "set path", "new workspace", or "continue" | Runs `build.py get_config`, validates context    | Reports paths; checks context readiness; asks if needed     | Confirms or provides new path |
 
-| Human                                           | AI / Script                | AI                                           | Human → AI                    |
-| ----------------------------------------------- | -------------------------- | -------------------------------------------- | ----------------------------- |
-| Says "set path", "new workspace", or "continue" | Runs `build.py get_config` | Reports current paths; sets new if requested | Confirms or provides new path |
+Before starting or continuing work, establish where output goes and ensure context is ready.
 
+**Set path:** Edit `conf/abd-config.json` and set `"skill_space_path": "/path/to/workspace"`. Output goes to `<skill_space_path>/story-synthesizer/`. Context paths are owned by the skill space's `conf/abd-config.json`.
 
-Before starting or continuing work, establish where output goes. **New work:** set `skill_space_path` to point to the workspace. **Continue existing work:** get the current path and verify.
-
-**Set path for new work area:** Edit the synthesizer's `conf/abd-config.json` and set `"skill_space_path": "/path/to/workspace"` (e.g. mm3e). Output goes to `<skill_space_path>/story-synthesizer/`. Context paths are owned by the skill space (see Phase 1).
-
-**Get path to continue:** Run `get_config` to see where the skill is currently pointed.
-
-**Script:**
+**Get path:** Run `get_config` to see where the skill is currently pointed.
 
 ```bash
 cd skills/abd-story-synthesizer
 python scripts/build.py get_config
 ```
 
-**Output:** JSON with `engine_root`, `skill_space_path` (and `skill_path` as shorthand), `config_path`, and optionally `strategy_path`, `context_paths`. The engine resolves `skill_space_path` from the synthesizer's config and `context_paths` from the skill space's `conf/abd-config.json`.
+### Context Readiness
 
----
+After setting the work area, the engine automatically checks context readiness. Each check cascades — if an earlier step is missing, fix it before proceeding. See `pieces/context.md` for full details on each step.
 
-## Phase 2: Prepare Context
+**1. Chunking** — Are source documents (PDF, PPTX, DOCX) chunked to markdown? `get_instructions` validates automatically. If unchunked or stale → ask user: "Context needs chunking. Set it up?" If yes → run `abd-context-to-memory` pipeline.
 
-Setup — run once per workspace, skip if context is already chunked and scanned.
+**2. Concept Tracking** — Does `terms_report.json` exist? If not → run `concept_tracker.py seed` (optional) → `scan` → `report`.
 
+**3. Concept Deep Analysis** — Has the concept report been reviewed with deep reads of source chunks? If not → for each high-frequency term cluster, read 3–5 representative chunks, extract mechanically distinct categories.
 
-| Human                                                          | AI / Script                                                                          | AI                                                        | Human → AI     |
-| -------------------------------------------------------------- | ------------------------------------------------------------------------------------ | --------------------------------------------------------- | -------------- |
-| Says "analyze concepts", "prepare context", or "scan concepts" | Validates chunking, runs `concept_tracker.py seed` → `scan` → `report`, deep-reads | Reports chunking status, cross-cutting terms, co-clusters | Reviews report |
-
-
-Three steps (see `pieces/session.md` § 2 - Context for details):
-
-1. **Chunking (§2a):** Ensure source documents are chunked to markdown. `get_instructions` validates automatically — warns if unchunked or stale.
-2. **Concept Tracking (§2b):** Run `concept_tracker.py` to scan chunks and build term cross-references.
-3. **Concept Deep Analysis (§2c):** Deep-read 3–5 representative chunks per candidate model to identify mechanically distinct categories from source text.
+Each step is run once per workspace. Skip if already done and context hasn't changed.
 
 ---
 

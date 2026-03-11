@@ -145,6 +145,7 @@ CONTENT_ORDER = [
     "introduction.md",
     "interaction.md",
     "domain.md",
+    "context.md",
     "process.md",
     "session.md",
     "runs.md",
