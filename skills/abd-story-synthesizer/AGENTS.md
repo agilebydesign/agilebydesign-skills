@@ -637,7 +637,7 @@ Each step is run once per workspace. Skip if already done and context hasn't cha
 
 ---
 
-## Phase 3: Start Session
+## Phase 2: Start Session
 
 
 | Human                                        | AI / Script                                       | AI                                             | Human → AI                                 |
@@ -645,15 +645,13 @@ Each step is run once per workspace. Skip if already done and context hasn't cha
 | Says "start a session" or "create a session" | Invokes script `get_instructions create_strategy` | Produces session file with strategy and slices | Updates and adjusts → incorporates changes |
 
 
-Create, open, or continue an existing session. Name it (user-provided or AI-derived from context). The session file stores strategy: Level of Detail, Scope, Foundational Object Models, Interaction Scaffold, and slices. Variation analysis lives in `context_analysis.json` (from context preparation). Option: carry slices over from a previous session (e.g. Exploration reuses Discovery slices) or create new slices.
+Create, open, or continue an existing session. Name it (user-provided or AI-derived from context). The session defines: Level of Detail (discovery/exploration/specification), Scope, and Slices. Context analysis (variation, foundational model candidates) is already in `context_analysis.json`.
 
 **Session path:** `<skill-space>/story-synthesizer/<session-name>/<session-name>-session.md`
 
-**Naming convention:** Session files end with `-session.md`. The session folder `<session-name>/` contains the session file, the first-cut output files (`interaction-tree.md`, `domain-model.md`), and a `runs/` folder for run logs.
+**Session folder:** Contains session file, output files (`interaction-tree.md`, `domain-model.md`), and `runs/` folder.
 
-The session/strategy declares **tags in scope** (e.g. `discovery`, `interaction_tree`, `stories`, `domain`, `steps`). The engine filters rules by tags. See `pieces/session.md` for session content, slices, discriminators, and tag definitions.
-
-**Session creation is a run (run-0).** Treat it exactly like any other run: produce output, validate with `build.py validate`, fix violations, record corrections in `runs/run-0.md`. The user reviews and corrects strategy, foundational models, variation analysis, and first-cut output files. Run `build.py validate` on `interaction-tree.md` and `domain-model.md` before session creation is considered done. Corrections feed into run 1 — they are not lost.
+See `pieces/session.md` for session content, slice design by session type, and tag definitions.
 
 **Script:**
 
@@ -663,7 +661,7 @@ python scripts/build.py get_instructions create_strategy
 
 ---
 
-## Phase 4: Execute a Run
+## Phase 3: Execute a Run
 
 
 | Human                                                             | AI / Script                                 | AI                                | Human → AI                                 |
@@ -687,11 +685,11 @@ python scripts/build.py get_instructions run_slice [--strategy path/to/strategy.
 
 **Before starting a run:** Check for unrecorded corrections from session creation or previous runs. If unsure, run `python scripts/build.py get_instructions correct_run` to review the chat for missed corrections.
 
-**Build phase validation:** After producing output, run `build.py validate`. Fix any violations before marking the run complete — validation is part of the build phase. See Phase 3 and `pieces/validation.md`.
+**Build phase validation:** After producing output, run `build.py validate`. Fix any violations before marking the run complete — validation is part of the build phase. See `pieces/validation.md`.
 
 ---
 
-## Phase 5: Validate
+## Phase 4: Validate
 
 
 | Human                                                                    | AI / Script                 | AI                                       | Human → AI                                 |
@@ -726,7 +724,7 @@ python scripts/build.py get_instructions validate_slice
 
 ---
 
-## Phase 6: Correct
+## Phase 5: Correct
 
 
 | Human                                | AI / Script                                    | AI                                          | Human → AI                                 |
@@ -750,7 +748,7 @@ python scripts/build.py get_instructions correct_all
 
 ---
 
-## Phase 7 : Adjust
+## Phase 6: Adjust
 
 
 | Human                                        | AI / Script                                        | AI                                          | Human → AI                                 |
@@ -789,17 +787,18 @@ Corrections flow through three layers. Each layer builds on the previous — don
 
 ## Process Checklist
 
-- **Session created and approved** — session file at `sessions/<session-name>.md` with strategy and slices; user approves before runs start
-- **Run 1 produced** — output for first slice; run log written to `sessions/<session-name>/runs/run-1.md`
+- **Context prepared** — chunked, scanned, deep-analyzed, variation analysis in `context_analysis.json`
+- **Session created** — session file with level of detail, scope, and slices; user approves before runs start
+- **Run 1 produced** — output for first slice; run log written to `runs/run-1.md`
 - **Run 1 approved** — user reviews; corrections to run log; re-run until approved
 - **Run 2 … Run N** — each remaining slice: produce → review → corrections → re-run until approved
-- **Review and Adjust** — review all corrections in run logs; incorporate into session strategy and/or promote to skill rules
+- **Review and Adjust** — review all corrections; incorporate into session strategy and/or promote to skill rules
 
 ---
 
 # Sessions
 
-**A session executes a sequence of runs that follow the same strategy.** Before synthesizing, set up a session (create new or continue existing). Sessions define level of detail, scope, variation analysis, scaffold, slices, and focus; saved as an MD file. One run per slice; runs write logs. See sections below for details.
+**A session executes a sequence of runs that follow the same strategy.** Before synthesizing, set up a session (create new or continue existing). Sessions define level of detail, scope, and slices. Context must be prepared before starting a session (see `pieces/context.md`). One run per slice; runs write logs.
 
 ## Session Content
 
@@ -807,114 +806,79 @@ A session has:
 
 ### 1 - Level of Detail
 
-How deep the synthesis goes for each node. Discovery focuses on epics and stories; Exploration adds steps below stories; Specification adds steps, scenarios, and examples. The predefined session types have predefined node levels and fields (see table below). You can also define a custom level of detail.
+How deep the synthesis goes. Each session type defines what a run produces.
 
-
-| Session Type      | Node levels                                       | Fields per node                                                                                                                                                                                                                                                                   |
-| ----------------- | ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Discovery**     | Epics (can nest), Stories. Stopping point: story. | Epic: Name (verb-noun), Triggering-Actor, Responding-Actor, Constraints, domain concepts (`**Concept`**), Pre-Condition, Triggering-State, Resulting-State, Trigger (Behavior, Triggering-Actor), Response (Behavior, Responding-Actor). Story: same. Domain Model with concepts. |
-| **Exploration**   | Steps (below story).                              | Step: Trigger, Response, Constraints (when step-specific). Steps not grouped into scenarios. No error conditions or edge cases. Straight and linear.                                                                                                                              |
-| **Specification** | Steps, Scenarios (below story).                   | Step: Trigger, Response, Examples, Constraints (when step-specific). Steps grouped into scenarios. Failure-Modes (failure conditions).                                                                                                                                            |
-
-
-See `core.md` for constraints, step format, and full field definitions.  
+| Session Type | What runs produce | Domain Model |
+|---|---|---|
+| **Discovery** | Epics, Stories (Name, Trigger, Response, Pre-Condition, domain concepts). Foundational object models. Epic/story hierarchy. | Foundational models with typed state (properties, operations, collaborators). |
+| **Exploration** | Steps below stories. Remaining domain model fields (full properties, operations, invariants). Remaining story fields not covered in discovery. | Complete domain model. |
+| **Specification** | Steps grouped into scenarios. Examples (tables per concept). Failure-Modes. | Domain model with examples linked to interaction tree. |
 
 #### Validation and Build Rule Tags
 
-The node levels and fields chosen to be generated (e.g. Epics, Stories, Steps, Examples) determine which rules guide the build and validate the output. Tags exist for elements and fields (`epic`, `story`, `step`, `example`, `domain`) and for session types (`discovery`, `exploration`, `specification`). A Discovery session generating epics and stories means all rules tagged with `discovery`, `epic`, `story`, `interaction_tree`, `domain` will be used; a Specification session adds `specification`, `step`, `scenario`, `example`, `step_edge_case`.
+The session type determines which rules guide the build and validate the output.
 
-**How rules are injected:** The session/strategy declares tags in scope. When `get_instructions` is called, the engine filters rules from `rules/*.md` by matching any in-scope tag. Each rule file must have YAML frontmatter with `tags: [discovery, interaction_tree, story, domain, ...]`. Rules apply to both the build phase (guiding synthesis output) and validation (checking output against rules). See `rules/README.md` for the full tag set.
-
-
-| Tag                | Description                                                                             |
-| ------------------ | --------------------------------------------------------------------------------------- |
-| `discovery`        | Story-level detail: Trigger, Response, Pre-Condition, Triggering-State, Resulting-State |
-| `exploration`      | Steps below story; linear, no edge cases                                                |
-| `specification`    | Steps, scenarios, examples, failure modes                                               |
-| `interaction_tree` | Epic/Story hierarchy; names, actors, constraints                                        |
-| `epic`             | Epic-level nodes; hierarchy, granularity                                                |
-| `story`            | Story-level fields: Trigger, Response, Pre-Condition, etc.                              |
-| `domain`           | Domain Model — concepts, Properties, Operations                                         |
-| `step`             | Atomic Trigger/Response; When/Then or verb-noun                                         |
-| `step_edge_case`   | Steps + Failure-Modes; error paths                                                      |
-| `example`          | Example tables per concept                                                              |
-| `scenario`         | Step grouping by path                                                                   |
-
+| Tag | Description |
+|---|---|
+| `discovery` | Story-level: Trigger, Response, Pre-Condition, foundational models |
+| `exploration` | Steps below story; linear, no edge cases |
+| `specification` | Steps, scenarios, examples, failure modes |
+| `interaction_tree` | Epic/Story hierarchy; names, actors, constraints |
+| `epic` | Epic-level nodes; hierarchy, granularity |
+| `story` | Story-level fields |
+| `domain` | Domain Model — concepts, properties, operations |
+| `step` | Atomic Trigger/Response |
+| `step_edge_case` | Steps + Failure-Modes; error paths |
+| `example` | Example tables per concept |
+| `scenario` | Step grouping by path |
 
 **Default when no session:** `tags: [discovery, interaction_tree, epic, story, domain]`.
 
 ### 2 - Scope
 
-What portion of the analyzed context this session works with. Context must already be prepared (see `pieces/context.md` — chunking, concept tracking, deep analysis happen at the skill space level, not per session).
+What portion of the analyzed context this session works with. Context must already be prepared (see `pieces/context.md`).
 
 - **All** (default) — entire analyzed context
-- **Subset** — specific epics, stories, or context categories (e.g., "Payments module only", "User Registration + Authentication")
+- **Subset** — specific context categories (e.g., "Payments module only", "User Registration + Authentication")
 
-If no scope is set, ask the user. The AI can suggest scope based on the analyzed context (concept report, chunk categories). Default is "all."
+If no scope is set, ask the user. The AI can suggest scope based on the context analysis (concept report, variation analysis). Default is "all."
 
-**Context readiness check:** Before setting scope, verify context is prepared (chunked, scanned, deep-read, variation analysis). If context is missing or stale, ask the user to prepare it first — same flow as when setting the skill space (see `pieces/context.md`).
+**Context readiness check:** Before setting scope, verify context is prepared (chunked, scanned, deep-read, variation analysis). If context is missing or stale, ask the user to prepare it first (see `pieces/context.md`).
 
-### 4 - Foundational Object Models
+### 3 - Slices
 
-Using the context analysis (see `pieces/context.md`), identify foundational models via OOAD (find objects, find collaborations, find repetition — see `pieces/domain.md` § Foundational Object Models for full process). Each model: State Model (typed concepts with properties, operations, collaborators) + Extensions (names only). Each model becomes a module in the domain model.
+Slices define the order of work. Each slice scopes one run. Slice design depends on session type.
 
-**Output:** Write to `<session>/domain-model.md` § Foundational Object Models (between `<!-- section: foundational_models -->` markers). Session §4 references the output file — do not duplicate models here. Auto-injected into `create_strategy` prompt.
+**DO NOT slice by epic.** Each slice must build AND use something end-to-end.
 
-### 5 - Interaction Scaffold
+#### Discovery Slices
 
-**Story vs Example rule:** Functionality that extends a foundational model with NEW BEHAVIOR requires a story (new operations, new state transitions, new validation rules). Adding DATA to the same behavior is just an example on an existing story. This is how you decide what becomes a story and what becomes an example.
+Discovery slices are **big** — scoped to a cross-cutting concern or foundational model from `context_analysis.json`. The variation analysis already identifies the models and their categories; each slice covers one model (or related group of models) and produces all the epics and stories that touch it.
 
-Build the interaction tree on top of the foundational models:
+**Slicing by foundational model:** Each model from context analysis becomes a candidate slice. Related models that share state (e.g., Resolution System used by Combat) may be grouped or ordered by dependency.
 
-- Epic/Sub-epic/Story breakdown
-- Each sub-epic references which foundational model(s) it extends
-- List ALL story names (lean format: name + parenthetical examples). The session scaffold identifies every story.
-- Pattern-change boundaries (when does the pattern change? new epic? new sub-epic?)
-- The scaffold lists names only — no Trigger, Response, Pre-Condition, or other fields. Those belong in the interaction-tree.md output file.
+**Slice checklist:**
+- Does the slice cover a complete foundational model or cross-cutting concern?
+- Are state dependencies respected (creators before consumers)?
+- Is the slice big enough to be coherent but small enough to review?
 
-**Scaffold format:** Lean — epic name, story names with parenthetical examples, variation analysis rationale from `context_analysis.json`. List ALL story names so slices can be properly designed (you need the full picture to build vertical slices).
+#### Exploration Slices
 
-**Validation pass on "examples" annotations:** After drafting the scaffold, for every annotation that says "X are examples (same flow)," verify from source chunks that all items share the same interaction flow. The test: does the item change who rolls, what DC, what triggers the check, or what the outcome does? If yes — separate story, not example.
+Exploration slices can reuse discovery slices or define new ones scoped to specific stories that need steps added.
 
-### 6 - First-Cut Output Files
+#### Specification Slices
 
-The scaffold phase produces the **first cut of the real output files** (`interaction-tree.md`, `domain-model.md`). These are not separate "scaffold files" — they ARE the deliverables at version 1. Runs expand them slice by slice.
+Specification slices scope to stories that need scenarios, examples, and failure modes.
 
-The first cut uses pattern+extrapolation: 2-3 stories per epic in full detail (Trigger, Response, Pre-Condition, domain concepts), remaining stories listed by name only. Runs expand the named stories with full detail slice by slice.
-
-**Validate first-cut outputs.** Session creation is run-0 — run `build.py validate` on `interaction-tree.md` and `domain-model.md` before session creation is done. Same rules, same scanners, same fix-before-marking-complete as any run. The session scaffold (§6) also gets the slice scanner (`session-slice-not-epic-by-epic`).
-
-#### First Cut (by Session Type)
-
-
-| Session Type      | First cut produces                                                                                                                           |
-| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Discovery**     | `interaction-tree.md` (epics, 2-3 stories per epic in full; rest by pattern) + `domain-model.md` (concepts with properties and operations). |
-| **Exploration**   | Steps added to existing stories in `interaction-tree.md`. Optionally domain updates.                                                         |
-| **Specification** | Steps + Scenarios + Examples added to existing stories. May detail a couple of stories fully to establish pattern, then apply to rest.        |
-
-
-### 7 - Slices
-
-The order in which you work through slices is **not** necessarily epic-by-epic. Slices are units of work that may cut across epics.
-
-**DO NOT slice by epic.** If your slices map 1:1 to epics, you did it wrong. Each slice must build something AND use it — end-to-end. There is no value in building all of one epic's stories without proving they work by using them. Group build + use into categories and implement that way.
-
-**Slicing checklist:**
-- Does each slice build AND use something?
-- Does any slice build things that aren't used until a later slice? If yes, restructure.
-- Are slices ordered from simple to complex, layering on complexity?
-- Does each slice prove the previous one works before adding the next layer?
-
-A **slice** is a collection of context we want to further refine, ranging from no structure to a set of example stories. Each slice defines *what* we are synthesizing. A slice can be scoped to epics only (not down to stories), or it can go all the way to stories, steps, or examples — the slice defines the scope for the run. Slices are stored in the session file; tick each when a run is done for it.
-
-**Ideas:** Architectural slice, domain slice, integration slice, workflow slice, value slice, risk slice. Favour vertical slicing. Consider required-state dependencies (creators before consumers), where complexity is concentrated, and what makes a coherent slice for review.
-
-**New session:** Slices can be carried over from a previous session (e.g. Exploration reuses Discovery slices) or create new slices.
-
-### 9 - Runs
+### 4 - Runs
 
 One run per slice. See `pieces/runs.md` for run lifecycle, run log structure, corrections format, and patterns.
+
+**Discovery runs produce:** Complete epics and stories for the slice's scope — Name, Trigger, Response, Pre-Condition, domain concepts, foundational model state (properties, operations, collaborators). Written to `interaction-tree.md` and `domain-model.md`.
+
+**Exploration runs produce:** Steps below existing stories. Domain model completion. Written to the same output files.
+
+**Validation pass on "examples" annotations:** After each run, for every annotation that says "X are examples (same flow)," verify from source chunks that all items share the same interaction flow. The test: does the item change who rolls, what DC, what triggers the check, or what the outcome does? If yes — separate story, not example.
 
 ---
 

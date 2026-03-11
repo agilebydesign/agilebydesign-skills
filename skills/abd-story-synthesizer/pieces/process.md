@@ -43,7 +43,7 @@ Each step is run once per workspace. Skip if already done and context hasn't cha
 
 ---
 
-## Phase 3: Start Session
+## Phase 2: Start Session
 
 
 | Human                                        | AI / Script                                       | AI                                             | Human → AI                                 |
@@ -51,15 +51,13 @@ Each step is run once per workspace. Skip if already done and context hasn't cha
 | Says "start a session" or "create a session" | Invokes script `get_instructions create_strategy` | Produces session file with strategy and slices | Updates and adjusts → incorporates changes |
 
 
-Create, open, or continue an existing session. Name it (user-provided or AI-derived from context). The session file stores strategy: Level of Detail, Scope, Foundational Object Models, Interaction Scaffold, and slices. Variation analysis lives in `context_analysis.json` (from context preparation). Option: carry slices over from a previous session (e.g. Exploration reuses Discovery slices) or create new slices.
+Create, open, or continue an existing session. Name it (user-provided or AI-derived from context). The session defines: Level of Detail (discovery/exploration/specification), Scope, and Slices. Context analysis (variation, foundational model candidates) is already in `context_analysis.json`.
 
 **Session path:** `<skill-space>/story-synthesizer/<session-name>/<session-name>-session.md`
 
-**Naming convention:** Session files end with `-session.md`. The session folder `<session-name>/` contains the session file, the first-cut output files (`interaction-tree.md`, `domain-model.md`), and a `runs/` folder for run logs.
+**Session folder:** Contains session file, output files (`interaction-tree.md`, `domain-model.md`), and `runs/` folder.
 
-The session/strategy declares **tags in scope** (e.g. `discovery`, `interaction_tree`, `stories`, `domain`, `steps`). The engine filters rules by tags. See `pieces/session.md` for session content, slices, discriminators, and tag definitions.
-
-**Session creation is a run (run-0).** Treat it exactly like any other run: produce output, validate with `build.py validate`, fix violations, record corrections in `runs/run-0.md`. The user reviews and corrects strategy, foundational models, variation analysis, and first-cut output files. Run `build.py validate` on `interaction-tree.md` and `domain-model.md` before session creation is considered done. Corrections feed into run 1 — they are not lost.
+See `pieces/session.md` for session content, slice design by session type, and tag definitions.
 
 **Script:**
 
@@ -69,7 +67,7 @@ python scripts/build.py get_instructions create_strategy
 
 ---
 
-## Phase 4: Execute a Run
+## Phase 3: Execute a Run
 
 
 | Human                                                             | AI / Script                                 | AI                                | Human → AI                                 |
@@ -93,11 +91,11 @@ python scripts/build.py get_instructions run_slice [--strategy path/to/strategy.
 
 **Before starting a run:** Check for unrecorded corrections from session creation or previous runs. If unsure, run `python scripts/build.py get_instructions correct_run` to review the chat for missed corrections.
 
-**Build phase validation:** After producing output, run `build.py validate`. Fix any violations before marking the run complete — validation is part of the build phase. See Phase 3 and `pieces/validation.md`.
+**Build phase validation:** After producing output, run `build.py validate`. Fix any violations before marking the run complete — validation is part of the build phase. See `pieces/validation.md`.
 
 ---
 
-## Phase 5: Validate
+## Phase 4: Validate
 
 
 | Human                                                                    | AI / Script                 | AI                                       | Human → AI                                 |
@@ -132,7 +130,7 @@ python scripts/build.py get_instructions validate_slice
 
 ---
 
-## Phase 6: Correct
+## Phase 5: Correct
 
 
 | Human                                | AI / Script                                    | AI                                          | Human → AI                                 |
@@ -156,7 +154,7 @@ python scripts/build.py get_instructions correct_all
 
 ---
 
-## Phase 7 : Adjust
+## Phase 6: Adjust
 
 
 | Human                                        | AI / Script                                        | AI                                          | Human → AI                                 |
@@ -195,9 +193,10 @@ Corrections flow through three layers. Each layer builds on the previous — don
 
 ## Process Checklist
 
-- **Session created and approved** — session file at `sessions/<session-name>.md` with strategy and slices; user approves before runs start
-- **Run 1 produced** — output for first slice; run log written to `sessions/<session-name>/runs/run-1.md`
+- **Context prepared** — chunked, scanned, deep-analyzed, variation analysis in `context_analysis.json`
+- **Session created** — session file with level of detail, scope, and slices; user approves before runs start
+- **Run 1 produced** — output for first slice; run log written to `runs/run-1.md`
 - **Run 1 approved** — user reviews; corrections to run log; re-run until approved
 - **Run 2 … Run N** — each remaining slice: produce → review → corrections → re-run until approved
-- **Review and Adjust** — review all corrections in run logs; incorporate into session strategy and/or promote to skill rules
+- **Review and Adjust** — review all corrections; incorporate into session strategy and/or promote to skill rules
 
