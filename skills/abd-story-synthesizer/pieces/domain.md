@@ -2,35 +2,6 @@
 <!-- section: story_synthesizer.domain -->
 # Domain Model
 
-## Foundational Object Models
-
-A **foundational object model** is a subset of the domain model — a discrete set of objects, their logic, relationships, interactions, and state transitions — that serves as the base for the rest of the model. These models appear repeatedly across the system. Different parts of the system extend foundational objects but specialize with different data or rules. When you see the same objects doing the same things in multiple places, that's one foundational model.
-
-Example: in a payments system, Account + Transaction + ValidationRule collaborate the same way whether you're processing a wire transfer, ACH, or direct debit. The base collaboration (debit account, validate, settle) is the foundational model. Wire vs ACH vs direct debit are extensions — they add different validation rules and settlement timing, but the objects and operations are the same.
-
-Each foundational model likely becomes a distinct module in the domain model.
-
-**How to identify foundational models (OOAD):**
-
-1. **Find the objects.** Read through the context looking for domain nouns — things that hold state and get operated on. Not source document headings — actual things described in the content.
-2. **Find the collaborations.** For each object, what other objects does it work with? What operations do they perform on each other? What state flows between them?
-3. **Find the repetition.** Where do you see the same group of objects collaborating the same way in multiple places? That repetition is a foundational model.
-4. **Do NOT trust the source document's categories.** Read actual content. Group by shared collaborations, not by chapter headings.
-5. **Do NOT group by surface similarity.** Group by what objects collaborate and what operations they perform.
-
-Use `concept_tracker.py report` to validate — high co-occurrence terms likely belong to the same foundational model.
-
-**One sub-section per foundational model. Each contains:**
-
-- **State Model** — Complete typed concept(s) with properties, operations, collaborators, invariants. Same format as domain concepts below. Use `Dictionary<K,V>` for named collections; `List<T>` only when order matters.
-- **Extensions** — List of objects that extend or specialize this model. Names only.
-
-**Output location:** Write to `<session>/domain-model.md` between `<!-- section: foundational_models -->` and `<!-- /section: foundational_models -->` markers.
-
----
-
-The Domain Model holds **modules** (groupings of tightly related concepts) and **domain concepts** — the things that have state and can be operated on. Concepts are referenced in interactions via `**Concept`** in Pre-Condition, Trigger, Response, and Failure-Modes. Every `**Concept**` must exist in the Domain Model; concepts must be placed at the right level in the hierarchy. No drift between tree and model. Use source entity data, not aggregated/calculated values.
-
 ## Module
 
 Grouping of tightly related concepts.
@@ -128,3 +99,34 @@ Concept : <Base Concept if any>
 - examples: list of domain concept tables in interaction tree using this concept
 ```
 
+
+
+
+## Foundational Object Models
+
+A **foundational object model** is a subset of the domain model — a discrete set of objects, their logic, relationships, interactions, and state transitions — that serves as the base for the rest of the model. These models appear repeatedly across the system. Different parts of the system extend foundational objects but specialize with different data or rules. When you see the same objects doing the same things in multiple places, that's one foundational model.
+
+Example: in a payments system, Account + Transaction + ValidationRule collaborate the same way whether you're processing a wire transfer, ACH, or direct debit. The base collaboration (debit account, validate, settle) is the foundational model. Wire vs ACH vs direct debit are extensions — they add different validation rules and settlement timing, but the objects and operations are the same.
+
+Each foundational model likely becomes a distinct module in the domain model.
+
+**How to identify foundational models (OOAD):**
+
+1. **Find the objects.** Read through the context looking for domain nouns — things that hold state and get operated on. Not source document headings — actual things described in the content.
+2. **Find the collaborations.** For each object, what other objects does it work with? What operations do they perform on each other? What state flows between them?
+3. **Find the repetition.** Where do you see the same group of objects collaborating the same way in multiple places? That repetition is a foundational model.
+4. **Do NOT trust the source document's categories.** Read actual content. Group by shared collaborations, not by chapter headings.
+5. **Do NOT group by surface similarity.** Group by what objects collaborate and what operations they perform.
+
+Use `concept_tracker.py report` to validate — high co-occurrence terms likely belong to the same foundational model.
+
+**One sub-section per foundational model. Each contains:**
+
+- **Domain Model** — Complete typed concept(s) with properties, operations, collaborators, invariants. Same format as domain concepts below. Use `Dictionary<K,V>` for named collections; `List<T>` only when order matters.
+- **Extensions** — List of objects that extend or specialize this model. Names only.
+
+**Output location:** Write to `<session>/domain-model.md` between `<!-- section: foundational_models -->` and `<!-- /section: foundational_models -->` markers.
+
+---
+
+The Domain Model holds **modules** (groupings of tightly related concepts) and **domain concepts** — the things that have state and can be operated on. Concepts are referenced in interactions via `**Concept`** in Pre-Condition, Trigger, Response, and Failure-Modes. Every `**Concept**` must exist in the Domain Model; concepts must be placed at the right level in the hierarchy. No drift between tree and model. Use source entity data, not aggregated/calculated values.

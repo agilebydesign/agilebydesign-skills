@@ -76,11 +76,15 @@ After drafting the scaffold, for every place that says "X are examples (same flo
 
 ### 4 - Foundational Object Models
 
-Process and format defined in `pieces/domain.md` § Foundational Object Models. Output written to `<session>/domain-model.md`. Session §4 references the output file only. Auto-injected into `create_strategy` prompt.
+Using the concept tracker report and deep read pass (§3b), identify foundational models via OOAD (find objects, find collaborations, find repetition — see `pieces/domain.md` § Foundational Object Models for full process). Each model: State Model (typed concepts with properties, operations, collaborators) + Extensions (names only). Each model becomes a module in the domain model.
+
+**Output:** Write to `<session>/domain-model.md` § Foundational Object Models (between `<!-- section: foundational_models -->` markers). Session §4 references the output file — do not duplicate models here. Auto-injected into `create_strategy` prompt.
 
 ### 5 - Variation Analysis
 
-Process and format defined in `pieces/interaction.md` § Variation Analysis. Output written to `<session>/interaction-tree.md`. Session §5 references the output file only. Auto-injected into `create_strategy` prompt.
+Per foundational model from §4, analyze what varies: what's consistent, what differs, what extends with new behavior (→ story) vs adds data to same behavior (→ example). Identify business rules, workflow differences, and state variations. See `pieces/interaction.md` § Variation Analysis for full process.
+
+**Output:** Write to `<session>/interaction-tree.md` § Variation Analysis (between `<!-- section: variation_analysis -->` markers). Session §5 references the output file — do not duplicate analysis here. Auto-injected into `create_strategy` prompt.
 
 ### 6 - Interactions
 
