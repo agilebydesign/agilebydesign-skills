@@ -41,6 +41,9 @@ class AbdSkill:
 
         skill_config_path = self.path / "skill-config.json"
         default = {
+            "prepare_context": [
+                "story_synthesizer.context",
+            ],
             "create_strategy": [
                 "story_synthesizer.process.intro",
                 "story_synthesizer.strategy.iterative",

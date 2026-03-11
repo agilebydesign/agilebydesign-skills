@@ -120,6 +120,7 @@ class Instructions:
             "introduction": "introduction.md",
             "interaction": "interaction.md",
             "domain": "domain.md",
+            "context": "context.md",
             "process": "process.md",
             "session": "session.md",
             "runs": "runs.md",
