@@ -864,9 +864,11 @@ The node levels and fields chosen to be generated (e.g. Epics, Stories, Steps, E
 What portion of the analyzed context this session works with. Context must already be prepared (see `pieces/context.md` — chunking, concept tracking, deep analysis happen at the skill space level, not per session).
 
 - **All** (default) — entire analyzed context
-- **Subset** — specific epics, stories, or context categories (e.g., "Powers chapter only", "Combat + Conditions")
+- **Subset** — specific epics, stories, or context categories (e.g., "Payments module only", "User Registration + Authentication")
 
 If no scope is set, ask the user. The AI can suggest scope based on the analyzed context (concept report, chunk categories). Default is "all."
+
+**Context readiness check:** Before setting scope, verify context is prepared (chunked, scanned, deep-read). If context is missing or stale, ask the user to prepare it first — same flow as when setting the skill space (see `pieces/context.md`).
 
 ### 4 - Foundational Object Models
 
