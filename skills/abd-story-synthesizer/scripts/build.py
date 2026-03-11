@@ -138,6 +138,57 @@ def _get_config() -> None:
     print(json.dumps(result, indent=2))
 
 
+def _check_context(engine: AgileContextEngine) -> None:
+    """Check if context is chunked and up to date. Warn if chunking needed."""
+    if not engine.context_paths:
+        print("## Context Warning\n", file=sys.stderr)
+        print("No context paths configured. Run `discover_context` or set context_paths in skill space config.\n", file=sys.stderr)
+        return
+
+    memory_skill_path = Path.home() / ".agents" / "skills" / "abd-context-to-memory"
+    has_memory_skill = memory_skill_path.exists()
+
+    for ctx_path in engine.context_paths:
+        if not ctx_path.exists():
+            print(f"## Context Warning\n\nContext path does not exist: `{ctx_path}`\n", file=sys.stderr)
+            continue
+
+        source_files = list(ctx_path.rglob("*"))
+        source_docs = [f for f in source_files if f.is_file() and f.suffix.lower() in (
+            ".pdf", ".pptx", ".docx", ".xlsx",
+        )]
+        chunked_files = [f for f in source_files if f.is_file() and f.suffix.lower() in (".md", ".txt")]
+        large_docs = [f for f in source_docs if f.stat().st_size > 100_000]
+        has_enough_chunks = len(chunked_files) >= max(5, len(large_docs) * 3)
+
+        if source_docs and not has_enough_chunks:
+            print(f"## Context Warning\n", file=sys.stderr)
+            print(f"Context at `{ctx_path}` has {len(source_docs)} unconverted document(s) ({', '.join(set(f.suffix for f in source_docs))}) but no markdown chunks.", file=sys.stderr)
+            if has_memory_skill:
+                print(f"\nRun the memory skill to convert and chunk:", file=sys.stderr)
+                print(f"```", file=sys.stderr)
+                print(f"python {memory_skill_path}/scripts/index_memory.py --path \"{ctx_path}\"", file=sys.stderr)
+                print(f"```\n", file=sys.stderr)
+            else:
+                print(f"\nThe `abd-context-to-memory` skill is not installed. Install it to convert documents to chunks.\n", file=sys.stderr)
+            continue
+
+        if source_docs and chunked_files:
+            newest_source = max(f.stat().st_mtime for f in source_docs)
+            newest_chunk = max(f.stat().st_mtime for f in chunked_files)
+            if newest_source > newest_chunk:
+                stale_docs = [f.name for f in source_docs if f.stat().st_mtime > newest_chunk]
+                print(f"## Context Warning\n", file=sys.stderr)
+                print(f"Context at `{ctx_path}` has {len(stale_docs)} document(s) newer than chunks: {', '.join(stale_docs[:5])}", file=sys.stderr)
+                if has_memory_skill:
+                    print(f"\nRe-chunk to pick up changes:", file=sys.stderr)
+                    print(f"```", file=sys.stderr)
+                    print(f"python {memory_skill_path}/scripts/index_memory.py --path \"{ctx_path}\"", file=sys.stderr)
+                    print(f"```\n", file=sys.stderr)
+                else:
+                    print(f"\nThe `abd-context-to-memory` skill is not installed. Install it to re-chunk documents.\n", file=sys.stderr)
+
+
 def _get_instructions(operation: str, strategy_path: Path | None = None) -> None:
     """Load engine, get abd-story-synthesizer skill, print display_content(operation)."""
     if sys.stdout.encoding and sys.stdout.encoding.lower() not in ("utf-8", "utf8"):
@@ -155,6 +206,9 @@ def _get_instructions(operation: str, strategy_path: Path | None = None) -> None
             encoding="utf-8",
         )
     engine = AgileContextEngine(engine_root=engine_root, strategy_path_override=strategy_path).load()
+
+    _check_context(engine)
+
     skill = engine.get_skill("abd-story-synthesizer") or (engine.skills[0] if engine.skills else None)
     if not skill:
         print("ERROR: No abd-story-synthesizer skill loaded.", file=sys.stderr)
