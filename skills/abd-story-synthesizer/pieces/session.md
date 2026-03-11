@@ -99,7 +99,7 @@ Use `concept_tracker.py report` to validate and find things you missed — terms
 - **State Model** — Complete typed concept(s) with properties, operations, collaborators, invariants. Same format as domain-model.md concepts. Use `Dictionary<K,V>` for named collections accessed by key; `List<T>` only when order matters.
 - **Extensions** — List of objects that extend or specialize this model. Names only — how they differ is the job of variation analysis.
 
-Foundational models are written to `domain-model.md` § Foundational Object Models (marked with `<!-- section: foundational_models -->`). The session references the file. The `create_strategy` operation injects this section into the prompt automatically.
+**Output location:** Write foundational models directly to `domain-model.md` § Foundational Object Models (marked with `<!-- section: foundational_models -->` / `<!-- /section: foundational_models -->`). The session §4 references the file — do NOT duplicate the models in the session. The `create_strategy` operation auto-injects this section into the prompt when continuing an existing session.
 
 ### 5 - Variation Analysis (→ interaction-tree.md)
 
@@ -110,7 +110,7 @@ With the foundational models established, analyze what varies within each. The m
 - **Workflows** — different sequences or paths change steps, actors, or outcomes.
 - **State** — different state transitions or preconditions change required or resulting state.
 
-Variation analysis is written to `interaction-tree.md` § Variation Analysis (marked with `<!-- section: variation_analysis -->`). The session references the file. The `create_strategy` operation injects this section into the prompt automatically.
+**Output location:** Write variation analysis directly to `interaction-tree.md` § Variation Analysis (marked with `<!-- section: variation_analysis -->` / `<!-- /section: variation_analysis -->`). The session §5 references the file — do NOT duplicate the analysis in the session. The `create_strategy` operation auto-injects this section into the prompt when continuing an existing session.
 
 This is where the interaction verbs and nouns become structured:
 - **Verbs** — User/System actions, but now organized by which foundational model they operate on.
