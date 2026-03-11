@@ -189,20 +189,24 @@ def _check_context(engine: AgileContextEngine) -> None:
                     print(f"\nThe `abd-context-to-memory` skill is not installed. Install it to re-chunk documents.\n", file=sys.stderr)
 
         report_dir = ctx_path.parent
-        terms_report = report_dir / "terms_report.json"
-        context_analysis = report_dir / "context_analysis.json"
+        analysis_file = report_dir / "context_analysis.json"
 
-        if has_enough_chunks and not terms_report.exists():
+        if has_enough_chunks and not analysis_file.exists():
             print(f"## Context Warning\n", file=sys.stderr)
             print(f"Context is chunked but concept tracking has not been run. Run:", file=sys.stderr)
             print(f"```", file=sys.stderr)
             print(f"python scripts/concept_tracker.py scan --context-path \"{ctx_path}\"", file=sys.stderr)
-            print(f"python scripts/concept_tracker.py report \"{terms_report}\" --min-units 5", file=sys.stderr)
+            print(f"python scripts/concept_tracker.py report \"{analysis_file}\" --min-units 5", file=sys.stderr)
             print(f"```\n", file=sys.stderr)
 
-        if terms_report.exists() and not context_analysis.exists():
-            print(f"## Context Warning\n", file=sys.stderr)
-            print(f"Concept tracking done but deep analysis not saved. After reading representative chunks per model, save results to `{context_analysis}`.\n", file=sys.stderr)
+        if analysis_file.exists():
+            try:
+                analysis_data = json.loads(analysis_file.read_text(encoding="utf-8"))
+                if "deep_analysis" not in analysis_data:
+                    print(f"## Context Warning\n", file=sys.stderr)
+                    print(f"Concept tracking done but deep analysis not saved. After reading representative chunks per model, add `deep_analysis` key to `{analysis_file}`.\n", file=sys.stderr)
+            except (json.JSONDecodeError, OSError):
+                pass
 
 
 def _get_instructions(operation: str, strategy_path: Path | None = None) -> None:

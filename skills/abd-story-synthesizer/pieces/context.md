@@ -17,36 +17,42 @@ Run `concept_tracker.py` to extract terms from chunks and build a cross-referenc
 ```bash
 python scripts/concept_tracker.py seed --source <domain-model-or-wordlist>   # optional: seed glossary
 python scripts/concept_tracker.py scan --context-path <context-path>
-python scripts/concept_tracker.py report <terms_report.json> --min-units 5
+python scripts/concept_tracker.py report <context_analysis.json> --min-units 5
 ```
 
-**Output:** `terms_report.json` with per-unit terms, term index, cross-references by frequency, and co-occurrence clusters. Use the report to drive foundational model identification.
+**Output:** `context_analysis.json` (first version) with per-unit terms, term index, cross-references by frequency, and co-occurrence clusters. Deep analysis extends this same file.
 
 ## Concept Deep Analysis
 
 The concept tracker finds *what terms exist* and *where they co-occur*, but does NOT reveal mechanical variation. Before writing foundational models or variation analysis, deep-read the source chunks for each candidate model.
 
-1. Use `term_index` from `terms_report.json` to find which chunks contain each candidate model's key terms
+1. Use `term_index` from `context_analysis.json` to find which chunks contain each candidate model's key terms
 2. For each candidate model, read 3–5 representative chunks
 3. Extract the mechanically distinct categories from the actual source text — not from memory
-4. Save results to `context_analysis.json` (same location as `terms_report.json`)
+4. Save results back to `context_analysis.json` — add a `deep_analysis` key to the existing file
 
-**`context_analysis.json` format:**
+**Deep analysis extends `context_analysis.json` with:**
 ```json
 {
-  "context_path": "<path>",
-  "models": [
-    {
-      "name": "Model Name",
-      "key_terms": ["Term A", "Term B"],
-      "chunks_read": ["section_285.md", "section_286.md", "section_290.md"],
-      "categories": [
-        { "name": "Category 1", "description": "What makes it mechanically distinct", "examples": ["X", "Y"] },
-        { "name": "Category 2", "description": "...", "examples": ["A", "B"] }
-      ]
-    }
-  ],
-  "timestamp": "2026-03-11T15:30:00"
+  "context_path": "...",
+  "total_units": 407,
+  "total_terms": 2892,
+  "term_index": { ... },
+  "cross_references": [ ... ],
+  "co_occurrence": [ ... ],
+  "deep_analysis": {
+    "models": [
+      {
+        "name": "Model Name",
+        "key_terms": ["Term A", "Term B"],
+        "chunks_read": ["section_285.md", "section_286.md"],
+        "categories": [
+          { "name": "Category 1", "description": "What makes it mechanically distinct", "examples": ["X", "Y"] }
+        ]
+      }
+    ],
+    "timestamp": "2026-03-11T15:30:00"
+  }
 }
 ```
 

@@ -124,7 +124,7 @@ def cmd_scan(args):
         print(f"ERROR: context path does not exist: {context_path}", file=sys.stderr)
         sys.exit(1)
 
-    output_path = Path(args.output) if args.output else context_path.parent / "terms_report.json"
+    output_path = Path(args.output) if args.output else context_path.parent / "context_analysis.json"
     glossary_path = Path(args.glossary) if args.glossary else context_path.parent / "glossary.json"
     glossary = _load_glossary(glossary_path)
 
