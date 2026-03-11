@@ -16,6 +16,24 @@ In Agile terminology, this translates to a **story map** and **domain model**. T
 <!-- section: story_synthesizer.interaction.model -->
 # Interaction Model
 
+## Variation Analysis
+
+With the foundational models established (see `pieces/domain.md`), analyze what varies within each. The models are the lens — variation analysis asks: "for this model, what specializes it? What's the same base, what's different?"
+
+- **Per foundational model:** What consumers extend it with new behavior (stories) vs add only new data (examples)?
+- **Business rules** — distinct rules or conditions that change behavior within the model.
+- **Workflows** — different sequences or paths that change steps, actors, or outcomes.
+- **State** — different state transitions or preconditions that change required or resulting state.
+
+This is where the interaction verbs and nouns become structured:
+- **Verbs** — User/System actions, organized by which foundational model they operate on.
+- **Nouns** — Domain concepts, placed within their foundational model.
+- **What is consistent, what is different** — within each model, not across the whole context.
+
+**Output location:** Write to `<session>/interaction-tree.md` between `<!-- section: variation_analysis -->` and `<!-- /section: variation_analysis -->` markers.
+
+---
+
 An interaction is a single meaningful exchange between two actors that results in either a retrieval of state or a change of state.
 
 ## Interaction
@@ -458,7 +476,35 @@ Entity table (scenario + fields):
 
 ---
 
+<!-- section: story_synthesizer.domain -->
 # Domain Model
+
+## Foundational Object Models
+
+A **foundational object model** is a subset of the domain model — a discrete set of objects, their logic, relationships, interactions, and state transitions — that serves as the base for the rest of the model. These models appear repeatedly across the system. Different parts of the system extend foundational objects but specialize with different data or rules. When you see the same objects doing the same things in multiple places, that's one foundational model.
+
+Example: in a payments system, Account + Transaction + ValidationRule collaborate the same way whether you're processing a wire transfer, ACH, or direct debit. The base collaboration (debit account, validate, settle) is the foundational model. Wire vs ACH vs direct debit are extensions — they add different validation rules and settlement timing, but the objects and operations are the same.
+
+Each foundational model likely becomes a distinct module in the domain model.
+
+**How to identify foundational models (OOAD):**
+
+1. **Find the objects.** Read through the context looking for domain nouns — things that hold state and get operated on. Not source document headings — actual things described in the content.
+2. **Find the collaborations.** For each object, what other objects does it work with? What operations do they perform on each other? What state flows between them?
+3. **Find the repetition.** Where do you see the same group of objects collaborating the same way in multiple places? That repetition is a foundational model.
+4. **Do NOT trust the source document's categories.** Read actual content. Group by shared collaborations, not by chapter headings.
+5. **Do NOT group by surface similarity.** Group by what objects collaborate and what operations they perform.
+
+Use `concept_tracker.py report` to validate — high co-occurrence terms likely belong to the same foundational model.
+
+**One sub-section per foundational model. Each contains:**
+
+- **State Model** — Complete typed concept(s) with properties, operations, collaborators, invariants. Same format as domain concepts below. Use `Dictionary<K,V>` for named collections; `List<T>` only when order matters.
+- **Extensions** — List of objects that extend or specialize this model. Names only.
+
+**Output location:** Write to `<session>/domain-model.md` between `<!-- section: foundational_models -->` and `<!-- /section: foundational_models -->` markers.
+
+---
 
 The Domain Model holds **modules** (groupings of tightly related concepts) and **domain concepts** — the things that have state and can be operated on. Concepts are referenced in interactions via `**Concept`** in Pre-Condition, Trigger, Response, and Failure-Modes. Every `**Concept**` must exist in the Domain Model; concepts must be placed at the right level in the hierarchy. No drift between tree and model. Use source entity data, not aggregated/calculated values.
 
@@ -856,19 +902,13 @@ The concept tracker identifies *what terms exist* and *where they co-occur*, but
 **Validation pass on "examples" annotations:**
 After drafting the scaffold, for every place that says "X are examples (same flow)," go back to the source and verify all items in that group actually share the same interaction flow. The test: does the item change who rolls, what DC, what triggers the check, or what the outcome does? If yes — it's not an example, it's a separate story.
 
-### 4 - Foundational Object Models (→ domain-model.md)
+### 4 - Foundational Object Models
 
-Identify foundational models using OOAD: find objects, find collaborations, find repetition. See § Foundational Object Models in `domain-model.md` for the output format and content. Use `concept_tracker.py report` to validate — high co-occurrence terms likely belong to the same model.
+Process and format defined in `pieces/domain.md` § Foundational Object Models. Output written to `<session>/domain-model.md`. Session §4 references the output file only. Auto-injected into `create_strategy` prompt.
 
-Each model has a **State Model** (typed concepts with properties, operations, collaborators) and **Extensions** (names only). Each model likely becomes a module in the domain model.
+### 5 - Variation Analysis
 
-**Output:** Write directly to `domain-model.md` § Foundational Object Models (marked with `<!-- section: foundational_models -->` / `<!-- /section: foundational_models -->`). Session §4 references the file only. Auto-injected into `create_strategy` prompt.
-
-### 5 - Variation Analysis (→ interaction-tree.md)
-
-Per foundational model: what's consistent, what varies, what's a story vs example. See § Variation Analysis in `interaction-tree.md` for the output format and content.
-
-**Output:** Write directly to `interaction-tree.md` § Variation Analysis (marked with `<!-- section: variation_analysis -->` / `<!-- /section: variation_analysis -->`). Session §5 references the file only. Auto-injected into `create_strategy` prompt.
+Process and format defined in `pieces/interaction.md` § Variation Analysis. Output written to `<session>/interaction-tree.md`. Session §5 references the output file only. Auto-injected into `create_strategy` prompt.
 
 ### 6 - Interactions
 

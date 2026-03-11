@@ -74,19 +74,13 @@ The concept tracker identifies *what terms exist* and *where they co-occur*, but
 **Validation pass on "examples" annotations:**
 After drafting the scaffold, for every place that says "X are examples (same flow)," go back to the source and verify all items in that group actually share the same interaction flow. The test: does the item change who rolls, what DC, what triggers the check, or what the outcome does? If yes — it's not an example, it's a separate story.
 
-### 4 - Foundational Object Models (→ domain-model.md)
+### 4 - Foundational Object Models
 
-Identify foundational models using OOAD: find objects, find collaborations, find repetition. See § Foundational Object Models in `domain-model.md` for the output format and content. Use `concept_tracker.py report` to validate — high co-occurrence terms likely belong to the same model.
+Process and format defined in `pieces/domain.md` § Foundational Object Models. Output written to `<session>/domain-model.md`. Session §4 references the output file only. Auto-injected into `create_strategy` prompt.
 
-Each model has a **State Model** (typed concepts with properties, operations, collaborators) and **Extensions** (names only). Each model likely becomes a module in the domain model.
+### 5 - Variation Analysis
 
-**Output:** Write directly to `domain-model.md` § Foundational Object Models (marked with `<!-- section: foundational_models -->` / `<!-- /section: foundational_models -->`). Session §4 references the file only. Auto-injected into `create_strategy` prompt.
-
-### 5 - Variation Analysis (→ interaction-tree.md)
-
-Per foundational model: what's consistent, what varies, what's a story vs example. See § Variation Analysis in `interaction-tree.md` for the output format and content.
-
-**Output:** Write directly to `interaction-tree.md` § Variation Analysis (marked with `<!-- section: variation_analysis -->` / `<!-- /section: variation_analysis -->`). Session §5 references the file only. Auto-injected into `create_strategy` prompt.
+Process and format defined in `pieces/interaction.md` § Variation Analysis. Output written to `<session>/interaction-tree.md`. Session §5 references the output file only. Auto-injected into `create_strategy` prompt.
 
 ### 6 - Interactions
 
