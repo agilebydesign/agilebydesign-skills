@@ -57,6 +57,7 @@ from .inheritance_scanner import (
 from .steps_language_scanner import (
     AndButConditionsScanner, OutcomeLanguageScanner, BackgroundSetupScanner,
 )
+from .slice_epic_scanner import SliceEpicScanner
 
 
 SCANNER_BY_NAME: dict[str, type[BaseScanner]] = {
@@ -97,6 +98,7 @@ SCANNER_BY_NAME: dict[str, type[BaseScanner]] = {
     "and_but_conditions": AndButConditionsScanner,
     "outcome_language": OutcomeLanguageScanner,
     "background_setup": BackgroundSetupScanner,
+    "slice_epic": SliceEpicScanner,
 }
 
 RULE_TO_SCANNER: dict[str, str] = {
@@ -137,6 +139,7 @@ RULE_TO_SCANNER: dict[str, str] = {
     "interaction-steps-use-and-and-but-for-conditions": "and_but_conditions",
     "interaction-outcome-oriented-language": "outcome_language",
     "interaction-examples-background-vs-scenario-setup": "background_setup",
+    "session-slice-not-epic-by-epic": "slice_epic",
 }
 
 

@@ -1,4 +1,3 @@
-<!-- section: story_synthesizer.process -->
 # Process Overview
 
 Your task is to **synthesize** context into an **Interaction Tree** and **Domain Model** — a hierarchical structure of meaningful exchanges between actors, plus the domain concepts and state that support them.
@@ -11,7 +10,7 @@ Within each phase: **Human** → **AI** invokes script → **Script** returns in
 
 ---
 
-## Phase 0: Set Work Area
+## Phase 1: Set Work Area
 
 
 | Human                                           | AI / Script                | AI                                           | Human → AI                    |
@@ -25,8 +24,6 @@ Before starting or continuing work, establish where output goes. **New work:** s
 
 **Get path to continue:** Run `get_config` to see where the skill is currently pointed.
 
-**After setting or verifying the path, run Phase 1** to discover context automatically.
-
 **Script:**
 
 ```bash
@@ -38,36 +35,29 @@ python scripts/build.py get_config
 
 ---
 
-## Phase 1: Discover Context
+## Phase 2: Analyze Concepts
+
+Like Phase 0, this is setup — run once, skip on subsequent sessions if a report already exists.
 
 
-| Human                                                        | AI / Script                        | AI                                              | Human → AI                                  |
-| ------------------------------------------------------------ | ---------------------------------- | ------------------------------------------------ | ------------------------------------------- |
-| Says "discover context" or proceeds after setting work area  | Runs `build.py discover_context`   | Reports discovered and manual context paths      | Confirms or adds manual paths               |
+| Human                                      | AI / Script                                                           | AI                                                     | Human → AI     |
+| ------------------------------------------ | --------------------------------------------------------------------- | ------------------------------------------------------ | -------------- |
+| Says "analyze concepts" or "scan concepts" | Runs `concept_tracker.py seed` (optional), then `scan`, then `report` | Reports cross-cutting term clusters and co-occurrences | Reviews report |
 
 
-After `skill_space_path` is set (Phase 0), **run `discover_context` to scan the skill space for context.** The script searches the entire skill space folder recursively for anything matching `context*`:
-
-- Folders named `context/` (e.g. `mm3e/context/`, `mm3e/context/rules/`)
-- Files named `context.*` (e.g. `context.md`, `context.json`, `context.zip`)
-
-The script collects all matches and writes `context_paths` to the **skill space's** `conf/abd-config.json` (e.g. `mm3e/conf/abd-config.json`). Context belongs to the skill space, not the synthesizer skill.
-
-**Manual context is also valid.** The user can manually add paths to `context_paths` in the skill space's `conf/abd-config.json` — these are preserved alongside any auto-discovered paths. Auto-discovery supplements manual paths; it does not replace them.
-
-**No context found:** If no `context*` matches are found in the skill space and no manual paths are configured, report it and ask the user where the context is or whether they need to create it.
-
-**Script:**
+Run the concept tracker to extract terms from context and build a cross-reference matrix.
 
 ```bash
-python scripts/build.py discover_context
+python scripts/concept_tracker.py seed --source <domain-model-or-wordlist>   # optional: seed glossary
+python scripts/concept_tracker.py scan --context-path <context-path>
+python scripts/concept_tracker.py report <terms_report.json> --min-units 5
 ```
 
-**Output:** JSON with `skill_space_path`, `manual_paths`, `discovered_paths`, and `total_context_paths`.
+**Output:** `terms_report.json` with per-unit terms, term index, cross-references sorted by frequency, and co-occurrence clusters. The `report` command prints a markdown summary of cross-cutting candidates. Use the report to drive foundational object model identification (see `pieces/session.md` § 4 - Foundational Object Models).
 
 ---
 
-## Phase 2: Start Session
+## Phase 3: Start Session
 
 
 | Human                                        | AI / Script                                       | AI                                             | Human → AI                                 |
@@ -75,7 +65,7 @@ python scripts/build.py discover_context
 | Says "start a session" or "create a session" | Invokes script `get_instructions create_strategy` | Produces session file with strategy and slices | Updates and adjusts → incorporates changes |
 
 
-Create, open, or continue an existing session. Name it (user-provided or AI-derived from context). The session file stores strategy: Level of Detail, Scope, Variation Analysis, and slices. Option: carry slices over from a previous session (e.g. Exploration reuses Discovery slices) or create new slices.
+Create, open, or continue an existing session. Name it (user-provided or AI-derived from context). The session file stores strategy: Level of Detail, Scope, Context Inventory, Foundational Object Models, Variation Analysis, Interactions, and slices. Option: carry slices over from a previous session (e.g. Exploration reuses Discovery slices) or create new slices.
 
 **Session path:** `<skill-space>/story-synthesizer/<session-name>/<session-name>-session.md`
 
@@ -83,7 +73,7 @@ Create, open, or continue an existing session. Name it (user-provided or AI-deri
 
 The session/strategy declares **tags in scope** (e.g. `discovery`, `interaction_tree`, `stories`, `domain`, `steps`). The engine filters rules by tags. See `pieces/session.md` for session content, slices, discriminators, and tag definitions.
 
-**Session creation is iterative.** The user will review and correct the strategy, variation analysis, and first-cut output files before runs begin. Record all corrections during session creation in `runs/run-0.md` using the same DO/DON'T format as run corrections (see `pieces/runs.md`). Corrections during session creation feed into run 1 — they are not lost.
+**Session creation is a run (run-0).** Treat it exactly like any other run: produce output, validate with `build.py validate`, fix violations, record corrections in `runs/run-0.md`. The user reviews and corrects strategy, foundational models, variation analysis, and first-cut output files. Run `build.py validate` on `interaction-tree.md` and `domain-model.md` before session creation is considered done. Corrections feed into run 1 — they are not lost.
 
 **Script:**
 
@@ -93,7 +83,7 @@ python scripts/build.py get_instructions create_strategy
 
 ---
 
-## Phase 3: Execute a Run
+## Phase 4: Execute a Run
 
 
 | Human                                                             | AI / Script                                 | AI                                | Human → AI                                 |
@@ -117,16 +107,16 @@ python scripts/build.py get_instructions run_slice [--strategy path/to/strategy.
 
 **Before starting a run:** Check for unrecorded corrections from session creation or previous runs. If unsure, run `python scripts/build.py get_instructions correct_run` to review the chat for missed corrections.
 
-**Build phase validation:** After producing output, run `build.py validate`. Fix any violations before marking the run complete — validation is part of the build phase. See Phase 4 and `pieces/validation.md`.
+**Build phase validation:** After producing output, run `build.py validate`. Fix any violations before marking the run complete — validation is part of the build phase. See Phase 3 and `pieces/validation.md`.
 
 ---
 
-## Phase 4: Validate
+## Phase 5: Validate
 
 
 | Human                                                                    | AI / Script                 | AI                                       | Human → AI                                 |
 | ------------------------------------------------------------------------ | --------------------------- | ---------------------------------------- | ------------------------------------------ |
-| Says "validate", "run validation", "check the output" (or after Phase 2) | Invokes `build.py validate` | Reports violations; fixes if build phase | Updates and adjusts → incorporates changes |
+| Says "validate", "run validation", "check the output" (or after Phase 1) | Invokes `build.py validate` | Reports violations; fixes if build phase | Updates and adjusts → incorporates changes |
 
 
 Run `build.py validate` (or `validate <path>`) to execute rule scanners. Report any violations. Validation behavior depends on scope and context:
@@ -156,7 +146,7 @@ python scripts/build.py get_instructions validate_slice
 
 ---
 
-## Phase 5: Correct
+## Phase 6: Correct
 
 
 | Human                                | AI / Script                                    | AI                                          | Human → AI                                 |
@@ -180,7 +170,7 @@ python scripts/build.py get_instructions correct_all
 
 ---
 
-## Phase 6: Adjust
+## Phase 7 : Adjust
 
 
 | Human                                        | AI / Script                                        | AI                                          | Human → AI                                 |
@@ -204,12 +194,14 @@ python scripts/build.py get_instructions improve_strategy
 
 Corrections flow through three layers. Each layer builds on the previous — don't skip ahead, but don't stop at recording either. Be aggressive about suggesting what should change at each layer.
 
-| Layer | Operation | Where | What happens |
-|-------|-----------|-------|-------------|
-| **1. Record** | `correct_run` | Run log (`runs/run-N.md`) | DO/DO NOT captured with wrong/correct examples. The fix is applied to the output files. |
-| **2. Strategy** | `correct_session` | Session file (`*-session.md`) | Correction incorporated into session strategy so future runs in this session follow it. |
-| **3. Skill** | `correct_skill` | Skill rules/pieces (`rules/*.md`, `pieces/*.md`) | Correction promoted to a skill rule or process piece. Recorded in "Promoted to Skill" table in run log. |
-| **All** | `correct_all` | All three in sequence | Runs all three layers: record → strategy → skill. |
+
+| Layer           | Operation         | Where                                            | What happens                                                                                            |
+| --------------- | ----------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------- |
+| **1. Record**   | `correct_run`     | Run log (`runs/run-N.md`)                        | DO/DO NOT captured with wrong/correct examples. The fix is applied to the output files.                 |
+| **2. Strategy** | `correct_session` | Session file (`*-session.md`)                    | Correction incorporated into session strategy so future runs in this session follow it.                 |
+| **3. Skill**    | `correct_skill`   | Skill rules/pieces (`rules/*.md`, `pieces/*.md`) | Correction promoted to a skill rule or process piece. Recorded in "Promoted to Skill" table in run log. |
+| **All**         | `correct_all`     | All three in sequence                            | Runs all three layers: record → strategy → skill.                                                       |
+
 
 **Don't give up on making changes.** Each layer builds on the previous. Be aggressive in suggestions at every layer — propose the change, let the user decide.
 
@@ -217,8 +209,9 @@ Corrections flow through three layers. Each layer builds on the previous — don
 
 ## Process Checklist
 
-- [ ] **Session created and approved** — session file at `sessions/<session-name>.md` with strategy and slices; user approves before runs start
-- [ ] **Run 1 produced** — output for first slice; run log written to `sessions/<session-name>/runs/run-1.md`
-- [ ] **Run 1 approved** — user reviews; corrections to run log; re-run until approved
-- [ ] **Run 2 … Run N** — each remaining slice: produce → review → corrections → re-run until approved
-- [ ] **Review and Adjust** — review all corrections in run logs; incorporate into session strategy and/or promote to skill rules
+- **Session created and approved** — session file at `sessions/<session-name>.md` with strategy and slices; user approves before runs start
+- **Run 1 produced** — output for first slice; run log written to `sessions/<session-name>/runs/run-1.md`
+- **Run 1 approved** — user reviews; corrections to run log; re-run until approved
+- **Run 2 … Run N** — each remaining slice: produce → review → corrections → re-run until approved
+- **Review and Adjust** — review all corrections in run logs; incorporate into session strategy and/or promote to skill rules
+

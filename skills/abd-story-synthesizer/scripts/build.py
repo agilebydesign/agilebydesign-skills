@@ -14,6 +14,8 @@ from engine import AgileContextEngine, build_skill
 
 def _run_validate(target_path: Path | None = None) -> None:
     """Run scanners on interaction tree and Domain Model. Exit 1 if violations."""
+    if sys.stdout.encoding and sys.stdout.encoding.lower() not in ("utf-8", "utf8"):
+        sys.stdout.reconfigure(encoding="utf-8")
     from scanners.registry import run_scanners, scanner_mode
 
     mode = scanner_mode()

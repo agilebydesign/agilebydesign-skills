@@ -561,7 +561,6 @@ Concept : <Base Concept if any>
 
 ---
 
-<!-- section: story_synthesizer.process -->
 # Process Overview
 
 Your task is to **synthesize** context into an **Interaction Tree** and **Domain Model** — a hierarchical structure of meaningful exchanges between actors, plus the domain concepts and state that support them.
@@ -574,7 +573,7 @@ Within each phase: **Human** → **AI** invokes script → **Script** returns in
 
 ---
 
-## Phase 0: Set Work Area
+## Phase 1: Set Work Area
 
 
 | Human                                           | AI / Script                | AI                                           | Human → AI                    |
@@ -588,8 +587,6 @@ Before starting or continuing work, establish where output goes. **New work:** s
 
 **Get path to continue:** Run `get_config` to see where the skill is currently pointed.
 
-**After setting or verifying the path, run Phase 1** to discover context automatically.
-
 **Script:**
 
 ```bash
@@ -601,36 +598,29 @@ python scripts/build.py get_config
 
 ---
 
-## Phase 1: Discover Context
+## Phase 2: Analyze Concepts
+
+Like Phase 0, this is setup — run once, skip on subsequent sessions if a report already exists.
 
 
-| Human                                                        | AI / Script                        | AI                                              | Human → AI                                  |
-| ------------------------------------------------------------ | ---------------------------------- | ------------------------------------------------ | ------------------------------------------- |
-| Says "discover context" or proceeds after setting work area  | Runs `build.py discover_context`   | Reports discovered and manual context paths      | Confirms or adds manual paths               |
+| Human                                      | AI / Script                                                           | AI                                                     | Human → AI     |
+| ------------------------------------------ | --------------------------------------------------------------------- | ------------------------------------------------------ | -------------- |
+| Says "analyze concepts" or "scan concepts" | Runs `concept_tracker.py seed` (optional), then `scan`, then `report` | Reports cross-cutting term clusters and co-occurrences | Reviews report |
 
 
-After `skill_space_path` is set (Phase 0), **run `discover_context` to scan the skill space for context.** The script searches the entire skill space folder recursively for anything matching `context*`:
-
-- Folders named `context/` (e.g. `mm3e/context/`, `mm3e/context/rules/`)
-- Files named `context.*` (e.g. `context.md`, `context.json`, `context.zip`)
-
-The script collects all matches and writes `context_paths` to the **skill space's** `conf/abd-config.json` (e.g. `mm3e/conf/abd-config.json`). Context belongs to the skill space, not the synthesizer skill.
-
-**Manual context is also valid.** The user can manually add paths to `context_paths` in the skill space's `conf/abd-config.json` — these are preserved alongside any auto-discovered paths. Auto-discovery supplements manual paths; it does not replace them.
-
-**No context found:** If no `context*` matches are found in the skill space and no manual paths are configured, report it and ask the user where the context is or whether they need to create it.
-
-**Script:**
+Run the concept tracker to extract terms from context and build a cross-reference matrix.
 
 ```bash
-python scripts/build.py discover_context
+python scripts/concept_tracker.py seed --source <domain-model-or-wordlist>   # optional: seed glossary
+python scripts/concept_tracker.py scan --context-path <context-path>
+python scripts/concept_tracker.py report <terms_report.json> --min-units 5
 ```
 
-**Output:** JSON with `skill_space_path`, `manual_paths`, `discovered_paths`, and `total_context_paths`.
+**Output:** `terms_report.json` with per-unit terms, term index, cross-references sorted by frequency, and co-occurrence clusters. The `report` command prints a markdown summary of cross-cutting candidates. Use the report to drive foundational object model identification (see `pieces/session.md` § 4 - Foundational Object Models).
 
 ---
 
-## Phase 2: Start Session
+## Phase 3: Start Session
 
 
 | Human                                        | AI / Script                                       | AI                                             | Human → AI                                 |
@@ -638,7 +628,7 @@ python scripts/build.py discover_context
 | Says "start a session" or "create a session" | Invokes script `get_instructions create_strategy` | Produces session file with strategy and slices | Updates and adjusts → incorporates changes |
 
 
-Create, open, or continue an existing session. Name it (user-provided or AI-derived from context). The session file stores strategy: Level of Detail, Scope, Variation Analysis, and slices. Option: carry slices over from a previous session (e.g. Exploration reuses Discovery slices) or create new slices.
+Create, open, or continue an existing session. Name it (user-provided or AI-derived from context). The session file stores strategy: Level of Detail, Scope, Context Inventory, Foundational Object Models, Variation Analysis, Interactions, and slices. Option: carry slices over from a previous session (e.g. Exploration reuses Discovery slices) or create new slices.
 
 **Session path:** `<skill-space>/story-synthesizer/<session-name>/<session-name>-session.md`
 
@@ -646,7 +636,7 @@ Create, open, or continue an existing session. Name it (user-provided or AI-deri
 
 The session/strategy declares **tags in scope** (e.g. `discovery`, `interaction_tree`, `stories`, `domain`, `steps`). The engine filters rules by tags. See `pieces/session.md` for session content, slices, discriminators, and tag definitions.
 
-**Session creation is iterative.** The user will review and correct the strategy, variation analysis, and first-cut output files before runs begin. Record all corrections during session creation in `runs/run-0.md` using the same DO/DON'T format as run corrections (see `pieces/runs.md`). Corrections during session creation feed into run 1 — they are not lost.
+**Session creation is a run (run-0).** Treat it exactly like any other run: produce output, validate with `build.py validate`, fix violations, record corrections in `runs/run-0.md`. The user reviews and corrects strategy, foundational models, variation analysis, and first-cut output files. Run `build.py validate` on `interaction-tree.md` and `domain-model.md` before session creation is considered done. Corrections feed into run 1 — they are not lost.
 
 **Script:**
 
@@ -656,7 +646,7 @@ python scripts/build.py get_instructions create_strategy
 
 ---
 
-## Phase 3: Execute a Run
+## Phase 4: Execute a Run
 
 
 | Human                                                             | AI / Script                                 | AI                                | Human → AI                                 |
@@ -680,16 +670,16 @@ python scripts/build.py get_instructions run_slice [--strategy path/to/strategy.
 
 **Before starting a run:** Check for unrecorded corrections from session creation or previous runs. If unsure, run `python scripts/build.py get_instructions correct_run` to review the chat for missed corrections.
 
-**Build phase validation:** After producing output, run `build.py validate`. Fix any violations before marking the run complete — validation is part of the build phase. See Phase 4 and `pieces/validation.md`.
+**Build phase validation:** After producing output, run `build.py validate`. Fix any violations before marking the run complete — validation is part of the build phase. See Phase 3 and `pieces/validation.md`.
 
 ---
 
-## Phase 4: Validate
+## Phase 5: Validate
 
 
 | Human                                                                    | AI / Script                 | AI                                       | Human → AI                                 |
 | ------------------------------------------------------------------------ | --------------------------- | ---------------------------------------- | ------------------------------------------ |
-| Says "validate", "run validation", "check the output" (or after Phase 2) | Invokes `build.py validate` | Reports violations; fixes if build phase | Updates and adjusts → incorporates changes |
+| Says "validate", "run validation", "check the output" (or after Phase 1) | Invokes `build.py validate` | Reports violations; fixes if build phase | Updates and adjusts → incorporates changes |
 
 
 Run `build.py validate` (or `validate <path>`) to execute rule scanners. Report any violations. Validation behavior depends on scope and context:
@@ -719,7 +709,7 @@ python scripts/build.py get_instructions validate_slice
 
 ---
 
-## Phase 5: Correct
+## Phase 6: Correct
 
 
 | Human                                | AI / Script                                    | AI                                          | Human → AI                                 |
@@ -743,7 +733,7 @@ python scripts/build.py get_instructions correct_all
 
 ---
 
-## Phase 6: Adjust
+## Phase 7 : Adjust
 
 
 | Human                                        | AI / Script                                        | AI                                          | Human → AI                                 |
@@ -767,12 +757,14 @@ python scripts/build.py get_instructions improve_strategy
 
 Corrections flow through three layers. Each layer builds on the previous — don't skip ahead, but don't stop at recording either. Be aggressive about suggesting what should change at each layer.
 
-| Layer | Operation | Where | What happens |
-|-------|-----------|-------|-------------|
-| **1. Record** | `correct_run` | Run log (`runs/run-N.md`) | DO/DO NOT captured with wrong/correct examples. The fix is applied to the output files. |
-| **2. Strategy** | `correct_session` | Session file (`*-session.md`) | Correction incorporated into session strategy so future runs in this session follow it. |
-| **3. Skill** | `correct_skill` | Skill rules/pieces (`rules/*.md`, `pieces/*.md`) | Correction promoted to a skill rule or process piece. Recorded in "Promoted to Skill" table in run log. |
-| **All** | `correct_all` | All three in sequence | Runs all three layers: record → strategy → skill. |
+
+| Layer           | Operation         | Where                                            | What happens                                                                                            |
+| --------------- | ----------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------- |
+| **1. Record**   | `correct_run`     | Run log (`runs/run-N.md`)                        | DO/DO NOT captured with wrong/correct examples. The fix is applied to the output files.                 |
+| **2. Strategy** | `correct_session` | Session file (`*-session.md`)                    | Correction incorporated into session strategy so future runs in this session follow it.                 |
+| **3. Skill**    | `correct_skill`   | Skill rules/pieces (`rules/*.md`, `pieces/*.md`) | Correction promoted to a skill rule or process piece. Recorded in "Promoted to Skill" table in run log. |
+| **All**         | `correct_all`     | All three in sequence                            | Runs all three layers: record → strategy → skill.                                                       |
+
 
 **Don't give up on making changes.** Each layer builds on the previous. Be aggressive in suggestions at every layer — propose the change, let the user decide.
 
@@ -780,11 +772,11 @@ Corrections flow through three layers. Each layer builds on the previous — don
 
 ## Process Checklist
 
-- [ ] **Session created and approved** — session file at `sessions/<session-name>.md` with strategy and slices; user approves before runs start
-- [ ] **Run 1 produced** — output for first slice; run log written to `sessions/<session-name>/runs/run-1.md`
-- [ ] **Run 1 approved** — user reviews; corrections to run log; re-run until approved
-- [ ] **Run 2 … Run N** — each remaining slice: produce → review → corrections → re-run until approved
-- [ ] **Review and Adjust** — review all corrections in run logs; incorporate into session strategy and/or promote to skill rules
+- **Session created and approved** — session file at `sessions/<session-name>.md` with strategy and slices; user approves before runs start
+- **Run 1 produced** — output for first slice; run log written to `sessions/<session-name>/runs/run-1.md`
+- **Run 1 approved** — user reviews; corrections to run log; re-run until approved
+- **Run 2 … Run N** — each remaining slice: produce → review → corrections → re-run until approved
+- **Review and Adjust** — review all corrections in run logs; incorporate into session strategy and/or promote to skill rules
 
 ---
 
@@ -845,63 +837,85 @@ What portion of the context we are working with. Scope is not just a list — it
 
 **Bespoke strategies:** A custom strategy can mix components beyond the predefined session types (e.g. discovery + examples at sub-epic level, or exploration + domain concepts). The strategy defines which tags are in scope; the engine filters rules accordingly. Examples can be scoped at different levels — the strategy defines where.
 
-### 3 - Variation Analysis
+### 3 - Context Inventory
 
-Identify differences in the scope that allow you to synthesize the elements that go into the interaction tree and Domain Model. The analysis informs when to group context into a single story and the patterns used to create different stories. **Perform enough interaction and OOAD analysis** to identify differences that could come from any of:
+Inventory the context before any analysis. Source paths, chunk index (if chunked), chunk types, map to structure.
 
-- **Business rules** — distinct rules or conditions change behavior.
-- **System interactions** — different systems or integration points change exchange pattern.
+**Concept tracker:** Run `concept_tracker.py scan` then `report` to get cross-cutting term clusters as data input for foundational model identification. The concept tracker is required — if it is not available, stop and report the error.
+
+### 3b - Deep Read Pass
+
+The concept tracker identifies *what terms exist* and *where they co-occur*, but it does NOT reveal mechanical variation. Before writing foundational models or variation analysis, perform a deep read of source chunks for each candidate model.
+
+**Process:**
+1. Use `term_index` from `terms_report.json` to find which chunks contain each candidate model's key terms
+2. For each candidate model, read 3–5 representative chunks that contain the model's terms
+3. Extract the mechanically distinct categories from the actual source text — not from memory or surface knowledge
+4. Record which sections were read and what categories were found
+
+**Validation pass on "examples" annotations:**
+After drafting the scaffold, for every place that says "X are examples (same flow)," go back to the source and verify all items in that group actually share the same interaction flow. The test: does the item change who rolls, what DC, what triggers the check, or what the outcome does? If yes — it's not an example, it's a separate story.
+
+### 4 - Foundational Object Models
+
+A **foundational object model** are a subset of the domain model — with a descrete set of objects, and their logic,relationships, interactions,  and state transitions — that serve as the base for the rest of the model. These models appear repeatedly across the system. Different parts of the system extend foundational objects but specialize it with different data or rules. When you see the same objects doing the same things in multiple places, that's one foundational model.
+
+Example: in a payments system, Account + Transaction + ValidationRule collaborate the same way whether you're processing a wire transfer, ACH, or direct debit. The base collaboration (debit account, validate, settle) is the foundational model. Wire vs ACH vs direct debit are extensions — they add different validation rules and settlement timing, but the objects and operations are the same.
+
+Each foundational model likely becomes a distinct module in the domain model. The set of foundational models + one representative instance each IS the scaffold for the domain model.
+
+**How to identify foundational models (OOAD):**
+
+Read the context and perform object-oriented analysis:
+
+1. **Find the objects.** Read through the context looking for domain nouns — things that hold state and get operated on. Not source document headings — actual things described in the content. What are the entities, what properties do they carry, what are their relationships?
+2. **Find the collaborations.** For each object, what other objects does it work with? What operations do they perform on each other? What state flows between them? Map out who calls whom, who produces what, who consumes what.
+3. **Find the repetition.** Where do you see the same group of objects collaborating the same way in multiple places? That repetition is a foundational model. The objects and operations are the same; only the data or specific rules change per instance.
+4. **Do NOT trust the source document's categories.** Read actual content. Group by shared collaborations, not by chapter headings or document structure. See rule `context-deep-mechanical-analysis`.
+5. **Do NOT group by surface similarity** (e.g. "things that take one parameter"). Group by what objects collaborate and what operations they perform.
+
+Use `concept_tracker.py report` to validate and find things you missed — terms with high co-occurrence across many chunks likely belong to the same foundational model.
+
+**One sub-section per foundational model. Each contains:**
+
+- **State Model** — Complete typed concept(s) with properties, operations, collaborators, invariants. Same format as domain-model.md concepts. Use `Dictionary<K,V>` for named collections accessed by key; `List<T>` only when order matters.
+- **Extensions** — List of objects that extend or specialize this model. Names only — how they differ is the job of variation analysis.
+
+### 5 - Variation Analysis
+
+With the foundational models established, analyze what varies within each. The models are the lens — variation analysis asks: "for this model, what specializes it? What's the same base, what's different?"
+
+- **Per foundational model:** What consumers extend it with new behavior (stories) vs add only new data (examples)?
+- **Business rules** — distinct rules or conditions change behavior within the model.
 - **Workflows** — different sequences or paths change steps, actors, or outcomes.
-- **Structure** — different concept shapes or taxonomies change the interaction.
 - **State** — different state transitions or preconditions change required or resulting state.
 
-**Go over all context in enough detail** to understand how to identify all items. For instance, if doing Discovery and the context is a game rulebook, go chapter by chapter and examine the rulebook for every different rule: is it more of the same (part of same story), or different (new story)?
+This is where the interaction verbs and nouns become structured:
+- **Verbs** — User/System actions, but now organized by which foundational model they operate on.
+- **Nouns** — Domain concepts, but now placed within their foundational model.
+- **What is consistent, what is different** — within each model, not across the whole context.
 
-**CRITICAL: Do NOT trust the source document's own categories as your groupings.** Read actual item content — not just headings — and identify shared mechanics, shared domain objects, and shared resolution patterns. Group by what the data actually shares, not by how the source organizes it. See rule `context-deep-mechanical-analysis` for detailed guidance.
+### 6 - Interactions
 
-**The AI is empowered to create a more detailed interaction tree and domain model at whatever detail it needs to identify a pattern.** Once it has done so, it can create the rest of stories using that pattern without detailing everything. The same holds for other session types: e.g. a Specification session might go through a couple of stories and attached domain to see how to write good examples, then not need to create the rest to know what examples stories would have — just name them.
+**Story vs Example rule:** Functionality that extends a foundational model with NEW BEHAVIOR requires a story (new operations, new state transitions, new validation rules). Adding DATA to the same behavior is just an example on an existing story. This is how you decide what becomes a story and what becomes an example.
 
-#### Variation Analysis Structure
-
-The session's Variation Analysis section should follow this structure (with more or less detail as needed):
-
-**1. Context Inventory / Scope**
-
-- Source paths, chunk index (if chunked), chunk types
-- Map to structure: e.g. "Abilities 107–111, Skills 113–129, Powers 143+, Combat 235–251"
-
-**2. Analysis — Interaction**
-
-- **Verbs** — User/System actions (Configure, Add, Choose, Apply, Resolve, Roll, Track, Create, Assign, etc.)
-- **Nouns** — Domain concepts (Character, Campaign, Effect, Modifier, etc.)
-- **What is consistent, what is different** — Common interactions for potentially very different data. E.g. "Configure Effect" applies to Affliction, Damage, Weaken — same workflow, different parameters per effect type.
-
-**3. Analysis — Domain**
-
-- Combine nouns into domain concept scaffolding
-- Per-concept: properties, lifecycle, relationships
-- Effect-specific structure table (when applicable): each effect type has different data structure
-
-**4. Scaffold — Interaction Model**
+Build the interaction tree on top of the foundational models:
 
 - Epic/Sub-epic/Story breakdown
-- MUST detail 2-3 stories per epic in full (with Trigger, Response, Pre-Condition, domain concepts). List remaining stories by name only: "N more stories following this pattern based on [specific items]."
+- Each sub-epic references which foundational model(s) it extends
+- List ALL story names (lean format: name + parenthetical examples). The session scaffold identifies every story — this is Discovery's job at the session level.
 - Pattern-change boundaries (when does the pattern change? new epic? new sub-epic?)
-- The scaffold MUST NOT enumerate every story with full detail — that is the job of runs.
+- The scaffold lists names only — no Trigger, Response, Pre-Condition, or other fields. Those belong in the interaction-tree.md output file.
 
-**5. Scaffold — Domain Model**
+**Scaffold format:** Lean — epic name, story names with parenthetical examples, variation analysis rationale. List ALL story names so slices can be properly designed (you need the full picture to build vertical slices). There is only one scaffold format.
 
-- Module per major concept (Character, Power, Effect, etc.)
-- State model scaffolding per concept — properties, operations, collaborating concepts
-- Use `Dictionary<K,V>` for named collections accessed by key; `List<T>` only when order matters.
+### 7 - First-Cut Output Files
 
-**Scaffold completeness:** The scaffold must NOT enumerate every story with full detail. 2-3 stories per epic in full, then "N more stories based on [pattern]." The pattern, once identified, drives the rest. Runs expand the first cut — if the first cut enumerates everything, runs have nothing to do.
+The scaffold phase produces the **first cut of the real output files** (`interaction-tree.md`, `domain-model.md`). These are not separate "scaffold files" — they ARE the deliverables at version 1. Runs expand them slice by slice.
 
-### 4 - First-Cut Output Files
+The first cut uses pattern+extrapolation: 2-3 stories per epic in full detail (Trigger, Response, Pre-Condition, domain concepts), remaining stories listed by name only. Runs expand the named stories with full detail slice by slice.
 
-The scaffold phase produces the **first cut of the real output files** (`interaction-tree.md`, `domain-model.md`). These are not separate "scaffold files" — they ARE the deliverables at version 1. Runs expand them slice by slice. Scanners validate them at every stage.
-
-The first cut MUST use pattern+extrapolation: 2-3 stories per epic in full detail, then "N more following this pattern." If the first cut enumerates everything, runs have nothing to do.
+**Validate first-cut outputs.** Session creation is run-0 — run `build.py validate` on `interaction-tree.md` and `domain-model.md` before session creation is done. Same rules, same scanners, same fix-before-marking-complete as any run. The session scaffold (§6) also gets the slice scanner (`session-slice-not-epic-by-epic`).
 
 #### First Cut (by Session Type)
 
@@ -913,9 +927,17 @@ The first cut MUST use pattern+extrapolation: 2-3 stories per epic in full detai
 | **Specification** | Steps + Scenarios + Examples added to existing stories. May detail a couple of stories fully to establish pattern, then apply to rest.        |
 
 
-### 6 - Slices
+### 8 - Slices
 
 The order in which you work through slices is **not** necessarily epic-by-epic. Slices are units of work that may cut across epics.
+
+**DO NOT slice by epic.** If your slices map 1:1 to epics, you did it wrong. Each slice must build something AND use it — end-to-end. There is no value in building all of one epic's stories without proving they work by using them. Group build + use into categories and implement that way.
+
+**Slicing checklist:**
+- Does each slice build AND use something?
+- Does any slice build things that aren't used until a later slice? If yes, restructure.
+- Are slices ordered from simple to complex, layering on complexity?
+- Does each slice prove the previous one works before adding the next layer?
 
 A **slice** is a collection of context we want to further refine, ranging from no structure to a set of example stories. Each slice defines *what* we are synthesizing. A slice can be scoped to epics only (not down to stories), or it can go all the way to stories, steps, or examples — the slice defines the scope for the run. Slices are stored in the session file; tick each when a run is done for it.
 
@@ -923,7 +945,7 @@ A **slice** is a collection of context we want to further refine, ranging from n
 
 **New session:** Slices can be carried over from a previous session (e.g. Exploration reuses Discovery slices) or create new slices.
 
-### 7 - Runs
+### 9 - Runs
 
 One run per slice. See `pieces/runs.md` for run lifecycle, run log structure, corrections format, and patterns.
 
