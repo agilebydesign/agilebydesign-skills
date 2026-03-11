@@ -808,11 +808,11 @@ A session has:
 
 How deep the synthesis goes. Each session type defines what a run produces.
 
-| Session Type | What runs produce | Domain Model |
+| Session Type | What runs produce | Artifacts |
 |---|---|---|
-| **Discovery** | Epics, Stories (Name, Trigger, Response, Pre-Condition, domain concepts). Foundational object models. Epic/story hierarchy. | Foundational models with typed state (properties, operations, collaborators). |
-| **Exploration** | Steps below stories. Remaining domain model fields (full properties, operations, invariants). Remaining story fields not covered in discovery. | Complete domain model. |
-| **Specification** | Steps grouped into scenarios. Examples (tables per concept). Failure-Modes. | Domain model with examples linked to interaction tree. |
+| **Discovery** | Story map (epic/story hierarchy, short names only). Foundational object model / domain model (typed state: properties, operations, collaborators). | `story-map.md` (hierarchy of names), `domain-model.md` (foundational models + concepts) |
+| **Exploration** | Interaction detail on stories (Trigger, Response, Pre-Condition, domain concepts). Steps below stories. Completes domain model. | `interaction-tree.md` (stories with full fields), `domain-model.md` (completed) |
+| **Specification** | Steps grouped into scenarios. Examples (tables per concept). Failure-Modes. | `interaction-tree.md` (scenarios + examples), `domain-model.md` (examples linked) |
 
 #### Validation and Build Rule Tags
 
