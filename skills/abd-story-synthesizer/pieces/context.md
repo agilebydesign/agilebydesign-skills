@@ -1,11 +1,11 @@
 <!-- section: story_synthesizer.context -->
 # Context Preparation
 
-Context preparation is a foundational activity — not part of a session. It happens when setting up or updating a skill space. Each step cascades: chunking before scanning, scanning before deep analysis.
+Prepared context is a foundational component that needs to be roesent before the skill can run. Check for prepared context when setting up or updating a skill space. Check for prepared context before starting a session or running a skill. Each step cascades: chunking before scanning, scanning before deep analysis.
 
 ## Chunking
 
-Source documents (PDF, PPTX, DOCX) must be chunked into markdown before analysis. The `get_instructions` command validates this automatically — if documents are unchunked or stale, it warns with the command to run.
+Source documents (PDF, PPTX, DOCX) must be chunked into markdown using the abd-context-to-memory skill before analysis. The `get_instructions` command validates this automatically — if documents are unchunked or stale, it warns with the command to run.
 
 - **Raw context:** Categorize what you have — source paths, chunk count, chunk types, section mapping. Example: "406 sections; Abilities 107–111, Skills 113–129, Powers 143+, Combat 235–251."
 - **Existing structure:** If output already exists: "these stories", "all these epics", "Epic 2 and its sub-epics".
@@ -29,6 +29,25 @@ The concept tracker finds *what terms exist* and *where they co-occur*, but does
 1. Use `term_index` from `terms_report.json` to find which chunks contain each candidate model's key terms
 2. For each candidate model, read 3–5 representative chunks
 3. Extract the mechanically distinct categories from the actual source text — not from memory
-4. Record which sections were read and what categories were found
+4. Save results to `context_analysis.json` (same location as `terms_report.json`)
+
+**`context_analysis.json` format:**
+```json
+{
+  "context_path": "<path>",
+  "models": [
+    {
+      "name": "Model Name",
+      "key_terms": ["Term A", "Term B"],
+      "chunks_read": ["section_285.md", "section_286.md", "section_290.md"],
+      "categories": [
+        { "name": "Category 1", "description": "What makes it mechanically distinct", "examples": ["X", "Y"] },
+        { "name": "Category 2", "description": "...", "examples": ["A", "B"] }
+      ]
+    }
+  ],
+  "timestamp": "2026-03-11T15:30:00"
+}
+```
 
 **Validation pass on "examples" annotations:** After drafting the scaffold, for every annotation that says "X are examples (same flow)," verify from source chunks that all items share the same interaction flow. The test: does the item change who rolls, what DC, what triggers the check, or what the outcome does? If yes — separate story, not example.
