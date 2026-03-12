@@ -110,16 +110,26 @@ When a concept changes in its home model:
 - **Derived properties** with invariants: `Number cost` + `Invariant: cost = rank × 2` — not `calculate_cost() → Number`
 - **Invariants** for all rules, formulas, and constraints — not embedded in property descriptions or operation signatures
 
+## Class Diagram Rules
+
+Rules tagged `class_diagram` in `rules/` govern diagram rendering conventions. These are injected when using the class diagram CLI tool — they are NOT part of synthesis run instructions. Apply them during the rendering workflow below.
+
+Key rules:
+- **Hierarchy flow** — base classes top, children below (`domain-ooa-diagram-hierarchy-flow.md`)
+- **Cross-model imports** — import base classes that establish ancestry context (`domain-ooa-diagram-cross-model-imports.md`)
+- **Edge routing** — explicit exit/entry points when multiple edges share a source (`domain-ooa-diagram-edge-routing.md`)
+
 ## AI Workflow for Rendering
 
 After producing domain model output for a slice:
 
-1. **Init** page if needed: `init <file> --page "<Model Name>"`
-2. **Add classes** with properties, operations, invariants at planned grid positions
-3. **Add edges** — inheritance first (defines vertical structure), then composition/aggregation, then associations/dependencies
-4. **Inspect** to check for overlaps and edge routing
-5. **Move** any classes that overlap or cause edge crossings
-6. **Verify** sync: `sync-to-model` should report "no changes" (diagram matches model)
+1. **Review `class_diagram` rules** — apply positioning and edge conventions from `rules/domain-ooa-diagram-*.md`
+2. **Init** page if needed: `init <file> --page "<Model Name>"`
+3. **Add classes** with properties, operations, invariants at planned grid positions (base classes top, children below)
+4. **Add edges** — inheritance first (defines vertical structure), then composition/aggregation, then associations/dependencies. Use explicit exitX/exitY/entryX/entryY when multiple edges leave the same class.
+5. **Inspect** to check for overlaps and edge routing
+6. **Move** any classes that overlap or cause edge crossings
+7. **Verify** sync: `sync-to-model` should report "no changes" (diagram matches model)
 
 When user edits the diagram in DrawIO:
 

@@ -19,4 +19,13 @@ scanner: domain_property_types
 | **UniqueID** | Identifier, reference | `Order.customerId`, `LineItem.productId` |
 | **Instant** | Point in time (ISO 8601) | `Order.createdAt`, `Payment.processedAt` |
 
+| **EnumType** | Fixed set of valid values | `ModifierType type {bonus, penalty}`, `ActionType action_type {standard, move, free, reaction}` |
+
 Use `List<T>` or `Dictionary<K,V>` when element types matter.
+
+**DO** use a named enum type when a property has a constrained set of valid values. Format: `EnumType property_name {value1, value2, value3}`.
+
+**DO NOT** use `String` with parenthetical options (e.g., `String type (bonus/penalty)`). Strings imply free-form text; constrained options are a distinct type.
+
+- Example (wrong): `String type (bonus/penalty)`, `String attack_type (close/ranged)`.
+- Example (right): `ModifierType type {bonus, penalty}`, `AttackType attack_type {close, ranged}`.

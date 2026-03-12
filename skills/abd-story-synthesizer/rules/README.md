@@ -16,7 +16,9 @@ tags: [discovery, story_map, story, domain]
 ---
 ```
 
-**Tag set:** `discovery`, `exploration`, `specification`, `story_map`, `stories`, `domain`, `steps`, `steps_edge_cases`, `examples`, `scenarios`
+**Tag set:** `discovery`, `exploration`, `specification`, `story_map`, `stories`, `domain`, `steps`, `steps_edge_cases`, `examples`, `scenarios`, `class_diagram`
+
+**`class_diagram` tag:** Rules tagged `class_diagram` govern DrawIO class diagram rendering — positioning, edge routing, import conventions, hierarchy layout. These rules are injected when using the class diagram CLI tool (`drawio_class_cli.py`), not during synthesis runs. They apply alongside `domain` rules when rendering domain model changes to diagrams.
 
 Use the tags that apply to the rule. Include a rule if any of its tags matches any tag the session/strategy declares in scope. Session type (Discovery, Exploration, Specification) determines scope; see `pieces/session.md` Session Types table.
 
