@@ -456,7 +456,7 @@ Slice
 | Operation | Inject |
 |-----------|--------|
 | create_strategy | intro.process, story_synthesizer.strategy_phase, story_synthesizer.strategy_criteria, core.interaction, core.state_concept |
-| generate_slice | intro.process, story_synthesizer.running_slices, output.interaction_tree, output.state_model, validation.checklist, core.*, strategy doc |
+| generate_slice | intro.process, story_synthesizer.running_slices, output.story_map, output.state_model, validation.checklist, core.*, strategy doc |
 | improve_skill | story_synthesizer.corrections, validation.checklist (correction format) |
 
 | Concept | Properties | Operations |

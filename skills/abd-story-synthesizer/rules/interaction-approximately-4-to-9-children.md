@@ -1,7 +1,7 @@
 ---
 title: Hierarchy — approximately 4 to 9 children
 impact: MEDIUM
-tags: [discovery, interaction_tree, epic, story, scenario]
+tags: [discovery, story_map, epic, story, scenario]
 scanner: hierarchy_sizing
 ---
 

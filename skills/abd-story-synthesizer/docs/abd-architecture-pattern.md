@@ -330,7 +330,7 @@ Instructions are assembled and **injected** into the AI prompt. The AI doesn't "
 |------|-------------|---------|
 | **process.md** | `story_synthesizer.process.intro`, `story_synthesizer.process.post_synthesis.review` | Process overview; post-synthesis review |
 | **strategy.md** | `story_synthesizer.strategy.iterative`, `story_synthesizer.strategy.criteria`, `story_synthesizer.strategy.slices.running`, `story_synthesizer.strategy.corrections` | Iterative Strategy, criteria, running slices, DO/DO NOT |
-| **output.md** | `story_synthesizer.output.interaction_tree`, `story_synthesizer.output.state_model` | Interaction Tree and State Model format |
+| **output.md** | `story_synthesizer.output.story_map`, `story_synthesizer.output.state_model` | Interaction Tree and State Model format |
 | **validation.md** | `story_synthesizer.validation.checklist`, `story_synthesizer.validation.rules` | Validation checklist; DO/DON'T rules |
 | **core.md** | `story_synthesizer.core.interaction`, `story_synthesizer.core.state_concept` | Interaction and State Concept definitions |
 | **rules/** (markdown + JSON) | `story_synthesizer.validation.rules` | DO/DON'T rules, scanner configs; merged into RuleSet |

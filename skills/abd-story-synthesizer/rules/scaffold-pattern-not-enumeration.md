@@ -1,7 +1,7 @@
 ---
 title: Scaffold pattern not enumeration
 impact: HIGH
-tags: [discovery, interaction_tree, epic, story]
+tags: [discovery, story_map, epic, story]
 ---
 
 ## Scaffold pattern not enumeration

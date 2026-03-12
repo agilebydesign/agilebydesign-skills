@@ -1,7 +1,7 @@
 ---
 title: Deep mechanical analysis
 impact: HIGH
-tags: [discovery, interaction_tree, epic, story, domain]
+tags: [discovery, story_map, epic, story, domain]
 ---
 
 ## Deep mechanical analysis

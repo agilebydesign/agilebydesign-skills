@@ -12,11 +12,11 @@ Each rule **must** have YAML frontmatter with `tags`:
 ---
 title: Rule name
 impact: HIGH | MEDIUM | LOW
-tags: [discovery, interaction_tree, story, domain]
+tags: [discovery, story_map, story, domain]
 ---
 ```
 
-**Tag set:** `discovery`, `exploration`, `specification`, `interaction_tree`, `stories`, `domain`, `steps`, `steps_edge_cases`, `examples`, `scenarios`
+**Tag set:** `discovery`, `exploration`, `specification`, `story_map`, `stories`, `domain`, `steps`, `steps_edge_cases`, `examples`, `scenarios`
 
 Use the tags that apply to the rule. Include a rule if any of its tags matches any tag the session/strategy declares in scope. Session type (Discovery, Exploration, Specification) determines scope; see `pieces/session.md` Session Types table.
 

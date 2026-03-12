@@ -1,7 +1,7 @@
 ---
 title: Cross-cutting domain concepts
 impact: HIGH
-tags: [discovery,exploration, interaction_tree, epic, story, domain]  
+tags: [discovery,exploration, story_map, epic, story, domain]  
 ---
 
 ## Cross-cutting domain concepts

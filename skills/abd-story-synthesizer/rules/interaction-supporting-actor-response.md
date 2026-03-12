@@ -1,7 +1,7 @@
 ---
 title: Supporting actor and Response
 impact: MEDIUM-HIGH
-tags: [discovery, interaction_tree, epic, story, step]
+tags: [discovery, story_map, epic, story, step]
 scanner: actor_response
 ---
 

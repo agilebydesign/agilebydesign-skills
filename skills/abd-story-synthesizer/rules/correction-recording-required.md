@@ -1,7 +1,7 @@
 ---
 title: Correction recording required
 impact: HIGH
-tags: [discovery, exploration, specification, interaction_tree, epic, story, domain, step, scenario, example]
+tags: [discovery, exploration, specification, story_map, epic, story, domain, step, scenario, example]
 ---
 
 ## Correction recording required

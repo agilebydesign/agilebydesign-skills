@@ -1,7 +1,7 @@
 ---
 title: Derive from context
 impact: HIGH
-tags: [interaction_tree, story, step, scenario, example, domain]
+tags: [story_map, story, step, scenario, example, domain]
 ---
 
 ## Derive from context

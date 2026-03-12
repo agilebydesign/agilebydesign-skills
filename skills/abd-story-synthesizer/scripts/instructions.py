@@ -55,31 +55,31 @@ class Instructions:
         return "".join(parts).rstrip() + "\n"
 
     def _inject_output_sections(self, parts: list[str]) -> None:
-        """Inject foundational models and variation analysis from output files into create_strategy prompt."""
+        """Inject foundational models from output files into create_strategy prompt."""
         if not self.engine.workspace_path:
             return
 
         ws = Path(self.engine.workspace_path)
-        session_dirs = sorted(ws.glob("story-synthesizer/*/"), key=lambda p: p.stat().st_mtime, reverse=True) if (ws / "story-synthesizer").exists() else []
+        synth_dir = ws / "story-synthesizer"
+        if not synth_dir.exists():
+            return
 
-        for session_dir in session_dirs:
-            domain_path = session_dir / "domain-model.md"
-            tree_path = session_dir / "interaction-tree.md"
+        domain_path = synth_dir / "domain-model.md"
+        tree_path = synth_dir / "interaction-tree.md"
 
-            if domain_path.exists():
-                section = self._extract_section(domain_path, "foundational_models")
-                if section:
-                    parts.append(f"## Existing Foundational Models (from {domain_path.name})\n\n")
-                    parts.append(section)
-                    parts.append("\n\n---\n\n")
+        if domain_path.exists():
+            section = self._extract_section(domain_path, "foundational_models")
+            if section:
+                parts.append(f"## Existing Foundational Models (from {domain_path.name})\n\n")
+                parts.append(section)
+                parts.append("\n\n---\n\n")
 
-            if tree_path.exists():
-                section = self._extract_section(tree_path, "variation_analysis")
-                if section:
-                    parts.append(f"## Existing Variation Analysis (from {tree_path.name})\n\n")
-                    parts.append(section)
-                    parts.append("\n\n---\n\n")
-            break
+        if tree_path.exists():
+            section = self._extract_section(tree_path, "variation_analysis")
+            if section:
+                parts.append(f"## Existing Variation Analysis (from {tree_path.name})\n\n")
+                parts.append(section)
+                parts.append("\n\n---\n\n")
 
     @staticmethod
     def _extract_section(path: Path, section_name: str) -> str | None:

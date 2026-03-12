@@ -11,7 +11,7 @@ Grouping of tightly related concepts.
 
 ## Domain Concept
 
-A domain concept that holds state and can be operated on. Referenced in interactions via `**Concept`** in labels. Examples live on the interaction. The Domain Model connects what concepts know and do to interactions — concepts participate as callers, receivers, and collaborators; state flows through Pre-Condition, Triggering-State, and Resulting-State.
+A domain concept that holds state and can be operated on (equates to a class in object oritented code). Referenced in interactions via `**Concept`** in labels. Examples live on the interaction. The Domain Model connects what concepts know and do to interactions — concepts participate as callers, receivers, and collaborators; state flows through Pre-Condition, Triggering-State, and Resulting-State.
 
 - **Name**
 - **Module** — optional; grouping of tightly related concepts

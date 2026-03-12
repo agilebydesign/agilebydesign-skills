@@ -1,7 +1,7 @@
 ---
 title: Data vs logic story split
 impact: HIGH
-tags: [discovery, interaction_tree, story]
+tags: [discovery, story_map, story]
 ---
 
 ## Data vs logic story split

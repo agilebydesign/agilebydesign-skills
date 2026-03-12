@@ -1,7 +1,7 @@
 ---
 title: Interactions inheritance — Examples
 impact: MEDIUM-HIGH
-tags: [discovery, specification, interaction_tree, story, step, scenario, example]
+tags: [discovery, specification, story_map, story, step, scenario, example]
 scanner: inheritance_examples
 ---
 

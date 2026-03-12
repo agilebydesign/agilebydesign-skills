@@ -1,7 +1,7 @@
 ---
 title: Ensure vertical slices
 impact: MEDIUM
-tags: [discovery, interaction_tree, epic, story]
+tags: [discovery, story_map, epic, story]
 scanner: vertical_slice
 ---
 

@@ -10,31 +10,15 @@ A session has:
 
 How deep the synthesis goes. Each session type defines what a run produces.
 
-| Session Type | What runs produce | Artifacts |
-|---|---|---|
-| **Discovery** | Story map (epic/story hierarchy, short names only). Foundational object model / domain model (typed state: properties, operations, collaborators). | `story-map.md` (hierarchy of names), `domain-model.md` (foundational models + concepts) |
-| **Exploration** | Interaction detail on stories (Trigger, Response, Pre-Condition, domain concepts). Steps below stories. Completes domain model. | `interaction-tree.md` (stories with full fields), `domain-model.md` (completed) |
-| **Specification** | Steps grouped into scenarios. Examples (tables per concept). Failure-Modes. | `interaction-tree.md` (scenarios + examples), `domain-model.md` (examples linked) |
 
-#### Validation and Build Rule Tags
+| Session Type      | What runs produce                                                                                                                                                                                             | Artifacts                                | Tags                                                                       | Slice size                                                                                                                          |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- | -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| **Discovery**     | Story-Map (Epic/story hierarchy; short names only) as first cut of the **interaction tree. ** Foundational object model portion of the **domain model** (typed state: properties, operations, collaborators). | `interaction-tree.md`, `domain-model.md` | `discovery`, `story_map`, `epic`, `story`, `domain`                        | Large — one or more, foundational model or cross-cutting concernd per slice, all the way thin slice of multiple comcepts end to end |
+| **Exploration**   | Full story fields: Trigger, Response, Pre-Condition, Triggering-State, Resulting-State, domain concepts, Failure-Modes, Constraints. Steps below stories. Completes domain model.                             | `interaction-tree.md`, `domain-model.md` | `exploration`, `story_map`, `epic`, `story`, `domain`, `step`              | Medium — a group of related stories that share state or workflow                                                                    |
+| **Specification** | Steps grouped into scenarios. Examples (tables per concept). Failure-Modes.                                                                                                                                   | `interaction-tree.md`, `domain-model.md` | `specification`, `step`, `step_edge_case`, `scenario`, `example`, `domain` | Small — individual stories or story pairs with shared scenarios                                                                     |
 
-The session type determines which rules guide the build and validate the output.
 
-| Tag | Description |
-|---|---|
-| `discovery` | Story-level: Trigger, Response, Pre-Condition, foundational models |
-| `exploration` | Steps below story; linear, no edge cases |
-| `specification` | Steps, scenarios, examples, failure modes |
-| `interaction_tree` | Epic/Story hierarchy; names, actors, constraints |
-| `epic` | Epic-level nodes; hierarchy, granularity |
-| `story` | Story-level fields |
-| `domain` | Domain Model — concepts, properties, operations |
-| `step` | Atomic Trigger/Response |
-| `step_edge_case` | Steps + Failure-Modes; error paths |
-| `example` | Example tables per concept |
-| `scenario` | Step grouping by path |
-
-**Default when no session:** `tags: [discovery, interaction_tree, epic, story, domain]`.
+**Default when no session:** `tags: [discovery, story_map, epic, story, domain]`.
 
 ### 2 - Scope
 
@@ -51,33 +35,30 @@ If no scope is set, ask the user. The AI can suggest scope based on the context 
 
 Slices define the order of work. Each slice scopes one run. Slice design depends on session type.
 
-**DO NOT slice by epic.** Each slice must build AND use something end-to-end.
+**DO NOT slice by epic.** Each slice must end to end lfe cycle of  a user, product, service or oter aspect of the user-solution journey
 
 #### Discovery Slices
 
-Discovery slices are **big** — scoped to a cross-cutting concern or foundational model from `context_analysis.json`. The variation analysis already identifies the models and their categories; each slice covers one model (or related group of models) and produces all the epics and stories that touch it.
+Discovery slices (slices focused on building the story-map) are **big** — scoped to a cross-cutting concern or foundational model from `context_analysis.json`. The variation analysis already identifies the models and their categories; each slice covers one model (or related group of models) and produces all the epics and stories that touch it.
 
 **Slicing by foundational model:** Each model from context analysis becomes a candidate slice. Related models that share state (e.g., Resolution System used by Combat) may be grouped or ordered by dependency.
 
 **Slice checklist:**
+
 - Does the slice cover a complete foundational model or cross-cutting concern?
 - Are state dependencies respected (creators before consumers)?
 - Is the slice big enough to be coherent but small enough to review?
 
 #### Exploration Slices
 
-Exploration slices can reuse discovery slices or define new ones scoped to specific stories that need steps added.
+Exploration slices can reuse discovery slices or define new ones scoped to a smaller collection of stories that need details  added.
 
 #### Specification Slices
 
-Specification slices scope to stories that need scenarios, examples, and failure modes.
+Specification slices often scope to a couple of stories that need scenarios, examples, and failure modes.
 
 ### 4 - Runs
 
 One run per slice. See `pieces/runs.md` for run lifecycle, run log structure, corrections format, and patterns.
 
-**Discovery runs produce:** Complete epics and stories for the slice's scope — Name, Trigger, Response, Pre-Condition, domain concepts, foundational model state (properties, operations, collaborators). Written to `interaction-tree.md` and `domain-model.md`.
-
-**Exploration runs produce:** Steps below existing stories. Domain model completion. Written to the same output files.
-
-**Validation pass on "examples" annotations:** After each run, for every annotation that says "X are examples (same flow)," verify from source chunks that all items share the same interaction flow. The test: does the item change who rolls, what DC, what triggers the check, or what the outcome does? If yes — separate story, not example.
+What each run produces is defined by the session's level of detail (see § 1). A session has one run type — all runs in a session produce the same kind of output.

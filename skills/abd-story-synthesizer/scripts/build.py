@@ -188,8 +188,11 @@ def _check_context(engine: AgileContextEngine) -> None:
                 else:
                     print(f"\nThe `abd-context-to-memory` skill is not installed. Install it to re-chunk documents.\n", file=sys.stderr)
 
-        report_dir = ctx_path.parent
-        analysis_file = report_dir / "context_analysis.json"
+        synth_dir = ctx_path.parent / "story-synthesizer"
+        if synth_dir.exists():
+            analysis_file = synth_dir / "context_analysis.json"
+        else:
+            analysis_file = ctx_path.parent / "context_analysis.json"
 
         if has_enough_chunks and not analysis_file.exists():
             print(f"## Context Warning\n", file=sys.stderr)

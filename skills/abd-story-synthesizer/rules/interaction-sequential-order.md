@@ -1,7 +1,7 @@
 ---
 title: Sequential order
 impact: HIGH
-tags: [discovery, interaction_tree, epic, story]
+tags: [discovery, story_map, epic, story]
 scanner: sequential_order
 ---
 

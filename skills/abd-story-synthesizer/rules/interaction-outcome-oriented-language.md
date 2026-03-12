@@ -1,7 +1,7 @@
 ---
 title: Outcome-oriented language
 impact: HIGH
-tags: [interaction_tree, story, step]
+tags: [story_map, story, step]
 scanner: outcome_language
 ---
 

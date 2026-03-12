@@ -60,7 +60,7 @@
 |------|-------------|---------|
 | **process.md** | `story_synthesizer.process.intro`, `story_synthesizer.process.post_synthesis.review` | Process overview; post-synthesis review (promote corrections to skill) |
 | **strategy.md** | `story_synthesizer.strategy.iterative`, `story_synthesizer.strategy.criteria`, `story_synthesizer.strategy.slices.running`, `story_synthesizer.strategy.corrections` | Iterative Strategy, criteria, running slices, DO/DO NOT corrections |
-| **output/*.md** | `story_synthesizer.output.interaction_tree`, `story_synthesizer.output.state_model` | Interaction Tree and State Model format |
+| **output/*.md** | `story_synthesizer.output.story_map`, `story_synthesizer.output.state_model` | Interaction Tree and State Model format |
 | **validation** | `story_synthesizer.validation.checklist`, `story_synthesizer.validation.rules` | Validation checklist; DO/DON'T rules (from rules/) |
 | **core.md** | `story_synthesizer.core.interaction`, `story_synthesizer.core.state_concept` | Interaction and State Concept definitions |
 | **rules/** (markdown + JSON) | `story_synthesizer.validation.rules` | DO/DON'T rules, scanner configs; merged into RuleSet; sibling to checklist under validation |
@@ -75,7 +75,7 @@
 | `story_synthesizer.strategy.criteria` | strategy.md | Splitting criteria, depth, traversal order |
 | `story_synthesizer.strategy.slices.running` | strategy.md | Run slice, corrections, next slice |
 | `story_synthesizer.strategy.corrections` | strategy.md | Corrections → DO/DO NOT with examples |
-| `story_synthesizer.output.interaction_tree` | output/*.md | Interaction format, hierarchy |
+| `story_synthesizer.output.story_map` | output/*.md | Interaction format, hierarchy |
 | `story_synthesizer.output.state_model` | output/*.md | State Model format |
 | `story_synthesizer.validation.checklist` | validation | Full validation checklist |
 | `story_synthesizer.validation.rules` | rules/ (markdown + JSON) | DO/DON'T rules, scanner configs; loaded via RuleSet; sibling to checklist under validation |
@@ -89,7 +89,7 @@
 | Operation | Inject | Rationale |
 |-----------|--------|-----------|
 | **create_strategy** | `story_synthesizer.process.intro`, `story_synthesizer.strategy.iterative`, `story_synthesizer.strategy.criteria`, `story_synthesizer.core.interaction`, `story_synthesizer.core.state_concept` | AI needs process overview, iterative strategy, splitting/depth/traversal criteria, and domain language. Creates strategy + tree + state model as you go. |
-| **generate_slice** | `story_synthesizer.process.intro`, `story_synthesizer.strategy.slices.running`, `story_synthesizer.strategy.corrections`, `story_synthesizer.output.interaction_tree`, `story_synthesizer.output.state_model`, `story_synthesizer.validation.checklist`, `story_synthesizer.validation.rules`, `story_synthesizer.core.interaction`, `story_synthesizer.core.state_concept`, **strategy doc** (from path) | AI produces output; needs output format, validation checklist + rules, and the approved strategy. **Corrections top of mind** — when user feedback implies reusable rule, AI adds DO/DO NOT during slice flow; no separate improve_strategy call. |
+| **generate_slice** | `story_synthesizer.process.intro`, `story_synthesizer.strategy.slices.running`, `story_synthesizer.strategy.corrections`, `story_synthesizer.output.story_map`, `story_synthesizer.output.state_model`, `story_synthesizer.validation.checklist`, `story_synthesizer.validation.rules`, `story_synthesizer.core.interaction`, `story_synthesizer.core.state_concept`, **strategy doc** (from path) | AI produces output; needs output format, validation checklist + rules, and the approved strategy. **Corrections top of mind** — when user feedback implies reusable rule, AI adds DO/DO NOT during slice flow; no separate improve_strategy call. |
 | **improve_strategy** | `story_synthesizer.strategy.corrections`, `story_synthesizer.validation.checklist` (correction format only) | AI adds DO/DO NOT to strategy doc; needs correction format and example requirements. |
 | **improve_skill** | `story_synthesizer.process.post_synthesis.review`, `story_synthesizer.strategy.corrections`, **strategy doc** (from path) | AI reviews strategy corrections; needs correction format and the strategy doc with accumulated DO/DO NOT; determines what to change in skill content/rules; promotes rules that apply across domains. |
 

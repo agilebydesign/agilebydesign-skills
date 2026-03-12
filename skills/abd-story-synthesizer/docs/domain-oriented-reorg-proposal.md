@@ -68,7 +68,7 @@ operations:
       - session.model
       - session.content
       - session.types
-    rules: [discovery, interaction_tree, story, domain]  # or from session type
+    rules: [discovery, story_map, story, domain]  # or from session type
 
   run_slice:
     pieces:
