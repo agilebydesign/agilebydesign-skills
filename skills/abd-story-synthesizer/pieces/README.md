@@ -11,6 +11,7 @@ Domain-oriented content pieces. Each piece is one markdown file; one concept, on
 | `session.md` | `session`, `session.traversal` | Session content (level of detail, scope, variation analysis, scaffold, slices), traversal order |
 | `runs.md` | `runs`, `runs.corrections`, `runs.patterns` | Run lifecycle, run log structure, corrections format, patterns |
 | `validation.md` | `validation.checklist` | Validation checklist (interaction tree, domain model, failure modes, content) |
+| `diagrams.md` | `diagrams` | DrawIO class diagram tools, layout guidelines, sync workflow |
 
 ## Section Marker Convention
 
@@ -37,6 +38,7 @@ All markers use prefix `story_synthesizer.` followed by `{piece}.{subsection}`:
 <!-- section: story_synthesizer.runs.corrections -->
 <!-- section: story_synthesizer.runs.patterns -->
 <!-- section: story_synthesizer.validation.checklist -->
+<!-- section: story_synthesizer.diagrams -->
 ```
 
 ## Operation → Pieces Mapping (suggested)
@@ -44,7 +46,7 @@ All markers use prefix `story_synthesizer.` followed by `{piece}.{subsection}`:
 | Operation | Pieces |
 |-----------|--------|
 | `create_strategy` | introduction, process, session |
-| `run_slice` | introduction, interaction, domain, process, runs |
+| `run_slice` | introduction, interaction, domain, process, runs, diagrams |
 | `validate_run` | process, validation, runs |
 | `validate_slice` | process, validation, runs |
 | `improve_strategy` | process, session, runs |

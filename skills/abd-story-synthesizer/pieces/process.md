@@ -91,7 +91,9 @@ python scripts/build.py get_instructions run_slice [--strategy path/to/strategy.
 
 **Before starting a run:** Check for unrecorded corrections from session creation or previous runs. If unsure, run `python scripts/build.py get_instructions correct_run` to review the chat for missed corrections.
 
-**Build phase validation:** After producing output, run `build.py validate`. Fix any violations before marking the run complete — validation is part of the build phase. See `pieces/validation.md`.
+**Build phase diagram rendering:** After producing domain model output, render changes to the class diagram (`class diagram.drawio`). One page per foundational model. Use the DrawIO CLI tools to add/update classes and relationships, then `inspect` to verify no overlaps. See `pieces/diagrams.md` for the full tool reference and layout guidelines.
+
+**Build phase validation:** After producing output and rendering diagrams, run `build.py validate`. Fix any violations before marking the run complete — validation is part of the build phase. See `pieces/validation.md`.
 
 ---
 
@@ -195,8 +197,8 @@ Corrections flow through three layers. Each layer builds on the previous — don
 
 - **Context prepared** — chunked, scanned, deep-analyzed, variation analysis in `context_analysis.json`
 - **Session created** — session file with level of detail, scope, and slices; user approves before runs start
-- **Run 1 produced** — output for first slice; run log written to `runs/run-1.md`
-- **Run 1 approved** — user reviews; corrections to run log; re-run until approved
-- **Run 2 … Run N** — each remaining slice: produce → review → corrections → re-run until approved
+- **Run 1 produced** — output for first slice; run log written to `runs/run-1.md`; class diagram rendered for domain model changes
+- **Run 1 approved** — user reviews (including diagram); corrections to run log; re-run until approved
+- **Run 2 … Run N** — each remaining slice: produce → render diagram → review → corrections → re-run until approved
 - **Review and Adjust** — review all corrections; incorporate into session strategy and/or promote to skill rules
 

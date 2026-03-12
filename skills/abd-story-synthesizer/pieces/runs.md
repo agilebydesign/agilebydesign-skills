@@ -11,9 +11,9 @@ Each run writes a **run log** to its own file under the session's runs folder. A
 
 ## Running Slices
 
-1. **Run the first slice** — Produce output for Slice 1 according to the session's level of detail (e.g. 4–7 stories if stopping at stories; epics only if stopping at sub-epics). Write the run log. User reviews.
-2. **Corrections → run log** — When a mistake is found, add a DO or DO NOT to the run log's Corrections section (see Corrections Format below). Re-run the slice; update the run log; repeat until approved.
-3. **Next slice** — Proceed to the next slice. Apply corrections from previous runs. Same pattern: produce → review → corrections → re-run until approved.
+1. **Run the first slice** — Produce output for Slice 1 according to the session's level of detail (e.g. 4–7 stories if stopping at stories; epics only if stopping at sub-epics). Write the run log. Render domain model changes to class diagram (see `pieces/diagrams.md`). User reviews.
+2. **Corrections → run log** — When a mistake is found, add a DO or DO NOT to the run log's Corrections section (see Corrections Format below). Re-run the slice; update the run log and diagram; repeat until approved.
+3. **Next slice** — Proceed to the next slice. Apply corrections from previous runs. Same pattern: produce → render diagram → review → corrections → re-run until approved.
 4. **Slice ordering** — At any point, you may change the slice order; update the session and continue.
 5. **Progressive expansion** — Slice size may increase as the user prefers.
 
