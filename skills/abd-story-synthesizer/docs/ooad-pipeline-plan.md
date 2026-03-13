@@ -1,6 +1,6 @@
 ---
 name: OOAD Pipeline Skill
-overview: Modify abd-domain-synthesizer to use a 17-step OOAD pipeline (7 CODE scripts + 1 concept scan + 9 AI modeling passes) for domain modeling, while preserving all existing interaction tree capabilities.
+overview: Modify abd-story-synthesizer to use a 17-step OOAD pipeline (7 CODE scripts + 1 concept scan + 9 AI modeling passes) for domain modeling, while preserving all existing interaction tree capabilities.
 todos:
   - id: update-intro
     content: Update pieces/introduction.md to reframe for evidence-first pipeline while keeping interaction tree definitions
@@ -44,7 +44,7 @@ todos:
 isProject: false
 ---
 
-# Adapt abd-domain-synthesizer for OOAD Evidence Pipeline
+# Adapt abd-story-synthesizer for OOAD Evidence Pipeline
 
 ## Core Change
 
@@ -356,7 +356,7 @@ file_map = {
 
 **UPDATE `SKILL.md`**
 
-- Update name from `abd-story-synthesizer` to `abd-domain-synthesizer`
+- Update name from `abd-story-synthesizer` to `abd-story-synthesizer`
 - Update description to reflect evidence-first approach
 - Add evidence pipeline to quick reference
 - Add new rule categories

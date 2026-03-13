@@ -52,7 +52,7 @@ Phase 8: Adjust
 |-------|-------------|-----|------------|
 | Says "set skill space to X" or "new workspace" | Runs `build.py get_config`, validates paths | Reports paths; checks readiness | Confirms or provides new path |
 
-Configure the skill space path in `abd-domain-synthesizer/conf/abd-config.json` and the context paths in `<skill-space>/conf/abd-config.json`.
+Configure the skill space path in `abd-story-synthesizer/conf/abd-config.json` and the context paths in `<skill-space>/conf/abd-config.json`.
 
 ```bash
 python scripts/build.py get_config

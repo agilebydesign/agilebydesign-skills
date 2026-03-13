@@ -1,5 +1,5 @@
 ---
-name: abd-domain-synthesizer
+name: abd-story-synthesizer
 description: Build rich OO domain models from context using a 17-step evidence pipeline. Extracts structured evidence with scripts, then uses focused AI passes to discover mechanisms, assign decision ownership, and produce validated object models. Also produces Interaction Trees (story maps). Use when synthesizing requirements into domain models, deriving objects from source documents, or building story maps with domain concepts.
 license: MIT
 metadata:
@@ -7,7 +7,7 @@ metadata:
   version: "2.0.0"
 ---
 
-# Domain Synthesizer
+# Story Synthesizer
 
 Build rich OO domain models from context using a **17-step evidence pipeline**. The core principle: **Do not go from text to classes. Go from context → mechanisms → behavior owners → object model.**
 
@@ -28,7 +28,7 @@ AI:   Concept scan → Behavior packets → Mechanisms → Decision ownership �
 
 | Location | Contains | Owns |
 |----------|----------|------|
-| `abd-domain-synthesizer/conf/abd-config.json` | Engine config: `skills`, `skills_config`, `skill_space_path` | Which skill space to target |
+| `abd-story-synthesizer/conf/abd-config.json` | Engine config: `skills`, `skills_config`, `skill_space_path` | Which skill space to target |
 | `<skill-space>/conf/abd-config.json` | Skill space config: `context_paths` | Where context lives in this workspace |
 
 ## Rule Categories
@@ -57,7 +57,7 @@ AI:   Concept scan → Behavior packets → Mechanisms → Decision ownership �
 ## Build
 
 ```bash
-cd skills/abd-domain-synthesizer
+cd skills/abd-story-synthesizer
 python scripts/build.py                              # rebuild AGENTS.md
 python scripts/build.py get_instructions concept_scan # get AI concept scan instructions
 python scripts/build.py extract_evidence              # run evidence extraction pipeline

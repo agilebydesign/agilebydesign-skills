@@ -1,5 +1,5 @@
 {
-  "name": "abd-domain-synthesizer",
+  "name": "abd-story-synthesizer",
   "version": "2.0.0",
   "content_order": [
     "introduction.md",

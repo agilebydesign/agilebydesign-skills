@@ -1,7 +1,7 @@
 <!-- section: story_synthesizer.introduction -->
 # Introduction
 
-The domain synthesizer skill turns context into an **Interaction Tree** and **Domain Model** — meaningful exchanges between actors, plus the domain concepts and state that support them. Outputs: story map, domain model, acceptance criteria, specifications.
+The story synthesizer skill turns context into an **Interaction Tree** and **Domain Model** — meaningful exchanges between actors, plus the domain concepts and state that support them. Outputs: story map, domain model, acceptance criteria, specifications.
 
 The core principle: **Do not go from text to classes. Go from context → mechanisms → behavior owners → object model.**
 
