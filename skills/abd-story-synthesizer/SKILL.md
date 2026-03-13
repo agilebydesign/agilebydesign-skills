@@ -1,116 +1,67 @@
 ---
-name: abd-story-synthesizer
-description: Shape source material into an Interaction Tree and State Model (story map and domain model). Use when synthesizing requirements, deriving epics and stories from source documents, or building a hierarchical structure of actor exchanges and domain concepts.
+name: abd-domain-synthesizer
+description: Build rich OO domain models from context using a 17-step evidence pipeline. Extracts structured evidence with scripts, then uses focused AI passes to discover mechanisms, assign decision ownership, and produce validated object models. Also produces Interaction Trees (story maps). Use when synthesizing requirements into domain models, deriving objects from source documents, or building story maps with domain concepts.
 license: MIT
 metadata:
   author: agilebydesign
-  version: "1.0.0"
+  version: "2.0.0"
 ---
 
-# Story Synthesizer
+# Domain Synthesizer
 
-Shape source material into an **Interaction Tree** and **State Model** — a story map and domain model. Contains rules across Context, Interaction Inheritance, Interaction Hierarchy, and Domain & Interaction categories to guide synthesis of requirements into epics, sub-epics, and stories with associated state concepts. See `rules/README.md` for tag set and filtering; `pieces/session.md` for session types and scope.
+Build rich OO domain models from context using a **17-step evidence pipeline**. The core principle: **Do not go from text to classes. Go from context → mechanisms → behavior owners → object model.**
 
-## Config Location (IMPORTANT)
+The skill produces an **Interaction Tree** (story map) and **Domain Model** — meaningful exchanges between actors, plus the domain concepts and state that support them. The domain model is built through structured evidence extraction (CODE scripts) followed by focused AI modeling passes — never from raw text directly.
+
+## Pipeline Overview
+
+```
+CODE: Normalize → Extract terms/actions/decisions/variations/states → Build evidence graph
+AI:   Concept scan → Behavior packets → Mechanisms → Decision ownership →
+      Object candidates → Relationships → Inheritance test →
+      Scenario walkthrough → Anemia critique → Final OO model
+```
+
+## Config Location
 
 **Two config files — each owns different concerns.**
 
 | Location | Contains | Owns |
 |----------|----------|------|
-| `abd-story-synthesizer/conf/abd-config.json` | Engine config: `skills`, `skills_config`, `skill_space_path` | Which skill space to target |
-| `<skill-space>/conf/abd-config.json` (e.g. `mm3e/conf/abd-config.json`) | Skill space config: `context_paths` | Where context lives in this workspace |
+| `abd-domain-synthesizer/conf/abd-config.json` | Engine config: `skills`, `skills_config`, `skill_space_path` | Which skill space to target |
+| `<skill-space>/conf/abd-config.json` | Skill space config: `context_paths` | Where context lives in this workspace |
 
-The synthesizer skill points to the skill space via `skill_space_path`. The skill space owns its own context — the engine reads `context_paths` from the skill space's config. Run `discover_context` to auto-populate `context_paths` in the skill space's config.
-
-## Source Folder Structure
-
-`abd_content/source/` contains content sources. Workspace RFQ folders are linked in for skill access:
-
-- `source/JBOM Agile Support` — Junction to `workspace/Scotia Talent Journey Based Operating Model/source` (RFQ docs, B&T, Supplier Q&A, etc.)
-
-Use this path when synthesizing from RFQ or JBOM source material.
-
-## When to Apply
-
-Reference these guidelines when:
-- Shaping requirements from source documents into a story map
-- Deriving epics and stories from user journeys or business flows
-- Building an Interaction Tree (hierarchical actor exchanges)
-- Modeling domain state concepts (State Model)
-- Defining story granularity and slice order
-
-## Rule Categories by Priority
+## Rule Categories
 
 | Priority | Category | Impact | Prefix |
 |----------|----------|--------|--------|
 | 1 | Context & Scope | HIGH | `context-` |
-| 2 | Interaction Inheritance | HIGH | `interaction-inheritance-` |
-| 3 | Interaction Hierarchy | HIGH | `interaction-` |
-| 4 | Domain & Interaction | HIGH | `domain-`, `interaction-` |
-| 5 | Shape & Naming | HIGH | (from story_bot shape) |
+| 2 | Domain OOA | HIGH | `domain-ooa-` |
+| 3 | Interaction Inheritance | HIGH | `interaction-inheritance-` |
+| 4 | Interaction Hierarchy | HIGH | `interaction-` |
+| 5 | Shape & Naming | HIGH | `verb-noun-`, `scaffold-` |
 
-## Quick Reference
+## Operations
 
-### 1. Context & Scope (HIGH)
-
-- `context-derive-from-source` — Derive concepts from interactions in the context; do not invent workflows
-- `context-speculation-assumptions` — State assumptions when unclear; do not speculate or invent
-
-### 2. Interaction Inheritance (HIGH)
-
-- `interaction-inheritance-pre-condition` — Shared Pre-Condition on parent only; comprehensive preconditions
-- `interaction-inheritance-domain-concepts` — Scope concepts to Epic/Story that owns them
-- `interaction-inheritance-resulting-state` — Same inheritance as Pre-Condition; outcome language only
-- `interaction-inheritance-actors` — Use [User], [System] at every trigger/response
-- `interaction-inheritance-examples` — Examples live on interaction; use [inherited] when from parent
-- `interaction-inheritance-triggering-state` — Epic holds rules that apply to all children
-
-### 3. Interaction Hierarchy (HIGH)
-
-- `interaction-parent-granularity` — Keep parent nodes at appropriate granularity; do not leak child detail
-- `interaction-sequential-order` — Order tree sequentially; required state creators before consumers
-- `interaction-story-granularity` — Break down by distinct areas; sufficient stories for rule detail
-
-### 4. Domain & Interaction (HIGH / MEDIUM-HIGH)
-
-- `domain-synchronize-concepts` — Complete full workflow (interactions → concepts → Domain Model) for each slice
-- `domain-logical-domain-level` — Keep at logical/domain level; no implementation details
-- `interaction-failure-modes` — Max 3 per interaction; domain rules only
-- `interaction-supporting-actor-response` — Supporting = system; Actor → System exchange
-
-### 5. Shape & Naming (HIGH)
-
-- `verb-noun-format` — Verb-noun for names, scenario steps, and AC; active voice; base verb forms; business language (merges active_business_and_behavioral_language and use_verb_noun_format_for_story_elements)
-- `interaction-story-small-and-testable` — Story = testable outcome; step = implementation detail
-- `interaction-outcome-oriented-language` — Outcomes over mechanisms; artifacts over "visualizing"
-- `interaction-ensure-vertical-slices` — Vertical slices; end-to-end flows when slice design in scope
-
-## How to Use
-
-Read individual rule files for detailed DO/DO NOT guidance:
-
-```
-rules/context-derive-from-source.md
-rules/verb-noun-format.md
-rules/interaction-inheritance-pre-condition.md
-```
-
-Each rule file contains:
-- Brief explanation
-- DO with example
-- DO NOT with example
-
-## Full Compiled Document
-
-For the complete guide with all rules, core definitions, output structure, validation, and synthesis process: `AGENTS.md`
+| Operation | What it does | Type |
+|-----------|-------------|------|
+| `concept_scan` | AI concept scan — discover primitives, mechanisms, authority boundaries | AI |
+| `extract_evidence` | Run scripts 01–07 to extract and consolidate evidence | CODE |
+| `model_discovery` | AI Pass A (steps 9–14): behavior packets through inheritance test | AI |
+| `model_validation` | AI Pass B (steps 15–17): scenario walkthrough, critique, final model | AI |
+| `create_strategy` | Create session with strategy and slices | AI |
+| `run_slice` | Synthesize interaction tree for a slice | AI |
+| `validate` | Run scanners on output | CODE |
+| `correct_run` / `correct_all` | Record and promote corrections | AI |
 
 ## Build
 
-To regenerate AGENTS.md from pieces:
-
 ```bash
-cd skills/abd-story-synthesizer
-python scripts/build.py
+cd skills/abd-domain-synthesizer
+python scripts/build.py                              # rebuild AGENTS.md
+python scripts/build.py get_instructions concept_scan # get AI concept scan instructions
+python scripts/build.py extract_evidence              # run evidence extraction pipeline
+python scripts/build.py get_instructions model_discovery  # get Pass A instructions
+python scripts/build.py get_instructions model_validation # get Pass B instructions
+python scripts/build.py validate                      # run scanners
 ```
-
-Run from the agilebydesign-skills root, or from within the abd-story-synthesizer skill directory.

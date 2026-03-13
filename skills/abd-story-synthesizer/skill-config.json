@@ -1,26 +1,111 @@
 {
-  "name": "abd-story-synthesizer",
-  "version": "1.0.0",
+  "name": "abd-domain-synthesizer",
+  "version": "2.0.0",
   "content_order": [
     "introduction.md",
+    "concept_scan.md",
+    "evidence.md",
+    "ai_passes.md",
     "interaction.md",
     "domain.md",
+    "context.md",
     "process.md",
     "session.md",
     "runs.md",
+    "diagrams.md",
     "correct.md",
     "validation.md"
   ],
   "operation_sections": {
-    "create_strategy": ["story_synthesizer.introduction", "story_synthesizer.process", "story_synthesizer.session", "story_synthesizer.interaction.model", "story_synthesizer.domain.model", "story_synthesizer.validation.checklist"],
-    "run_slice": ["story_synthesizer.introduction", "story_synthesizer.process", "story_synthesizer.interaction.model", "story_synthesizer.interaction.inheritance", "story_synthesizer.interaction.example", "story_synthesizer.interaction.output", "story_synthesizer.domain.model", "story_synthesizer.domain.example", "story_synthesizer.domain.output", "story_synthesizer.runs", "story_synthesizer.runs.corrections", "story_synthesizer.validation.checklist"],
-    "generate_slice": ["story_synthesizer.introduction", "story_synthesizer.process", "story_synthesizer.interaction.model", "story_synthesizer.interaction.inheritance", "story_synthesizer.interaction.example", "story_synthesizer.interaction.output", "story_synthesizer.domain.model", "story_synthesizer.domain.example", "story_synthesizer.domain.output", "story_synthesizer.runs", "story_synthesizer.runs.corrections", "story_synthesizer.validation.checklist"],
-    "improve_strategy": ["story_synthesizer.process", "story_synthesizer.session", "story_synthesizer.runs.corrections", "story_synthesizer.runs.patterns", "story_synthesizer.validation.checklist"],
-    "correct_run": ["story_synthesizer.correct.run", "story_synthesizer.runs.corrections"],
-    "correct_session": ["story_synthesizer.correct.session"],
-    "correct_skill": ["story_synthesizer.correct.skill"],
-    "correct_all": ["story_synthesizer.correct.run", "story_synthesizer.runs.corrections", "story_synthesizer.correct.session", "story_synthesizer.correct.skill"],
-    "validate_run": ["story_synthesizer.interaction.output", "story_synthesizer.domain.output", "story_synthesizer.validation.checklist"],
-    "validate_slice": ["story_synthesizer.interaction.output", "story_synthesizer.domain.output", "story_synthesizer.validation.checklist"]
+    "concept_scan": [
+      "story_synthesizer.concept_scan",
+      "story_synthesizer.context",
+      "story_synthesizer.validation.rules"
+    ],
+    "extract_evidence": [
+      "story_synthesizer.evidence",
+      "story_synthesizer.context"
+    ],
+    "model_discovery": [
+      "story_synthesizer.ai_passes.discovery",
+      "story_synthesizer.evidence",
+      "story_synthesizer.domain",
+      "story_synthesizer.validation.rules"
+    ],
+    "model_validation": [
+      "story_synthesizer.ai_passes.validation",
+      "story_synthesizer.evidence",
+      "story_synthesizer.domain",
+      "story_synthesizer.validation.rules"
+    ],
+    "create_strategy": [
+      "story_synthesizer.introduction",
+      "story_synthesizer.process",
+      "story_synthesizer.session",
+      "story_synthesizer.interaction.model",
+      "story_synthesizer.domain",
+      "story_synthesizer.validation.checklist"
+    ],
+    "run_slice": [
+      "story_synthesizer.introduction",
+      "story_synthesizer.process",
+      "story_synthesizer.interaction.model",
+      "story_synthesizer.interaction.inheritance",
+      "story_synthesizer.interaction.example",
+      "story_synthesizer.interaction.output",
+      "story_synthesizer.domain",
+      "story_synthesizer.runs",
+      "story_synthesizer.runs.corrections",
+      "story_synthesizer.validation.checklist",
+      "story_synthesizer.validation.rules"
+    ],
+    "generate_slice": [
+      "story_synthesizer.introduction",
+      "story_synthesizer.process",
+      "story_synthesizer.interaction.model",
+      "story_synthesizer.interaction.inheritance",
+      "story_synthesizer.interaction.example",
+      "story_synthesizer.interaction.output",
+      "story_synthesizer.domain",
+      "story_synthesizer.runs",
+      "story_synthesizer.runs.corrections",
+      "story_synthesizer.validation.checklist",
+      "story_synthesizer.validation.rules"
+    ],
+    "improve_strategy": [
+      "story_synthesizer.process",
+      "story_synthesizer.session",
+      "story_synthesizer.runs.corrections",
+      "story_synthesizer.runs.patterns",
+      "story_synthesizer.validation.checklist"
+    ],
+    "correct_run": [
+      "story_synthesizer.correct.run",
+      "story_synthesizer.runs.corrections"
+    ],
+    "correct_session": [
+      "story_synthesizer.correct.session"
+    ],
+    "correct_skill": [
+      "story_synthesizer.correct.skill"
+    ],
+    "correct_all": [
+      "story_synthesizer.correct.run",
+      "story_synthesizer.runs.corrections",
+      "story_synthesizer.correct.session",
+      "story_synthesizer.correct.skill"
+    ],
+    "validate_run": [
+      "story_synthesizer.interaction.output",
+      "story_synthesizer.domain",
+      "story_synthesizer.validation.checklist",
+      "story_synthesizer.validation.rules"
+    ],
+    "validate_slice": [
+      "story_synthesizer.interaction.output",
+      "story_synthesizer.domain",
+      "story_synthesizer.validation.checklist",
+      "story_synthesizer.validation.rules"
+    ]
   }
 }

@@ -109,6 +109,27 @@ class AbdSkill:
                 "story_synthesizer.validation.checklist",
                 "story_synthesizer.validation.rules",
             ],
+            "concept_scan": [
+                "story_synthesizer.concept_scan",
+                "story_synthesizer.context",
+                "story_synthesizer.validation.rules",
+            ],
+            "extract_evidence": [
+                "story_synthesizer.evidence",
+                "story_synthesizer.context",
+            ],
+            "model_discovery": [
+                "story_synthesizer.ai_passes.discovery",
+                "story_synthesizer.evidence",
+                "story_synthesizer.domain",
+                "story_synthesizer.validation.rules",
+            ],
+            "model_validation": [
+                "story_synthesizer.ai_passes.validation",
+                "story_synthesizer.evidence",
+                "story_synthesizer.domain",
+                "story_synthesizer.validation.rules",
+            ],
         }
         if skill_config_path.exists():
             data = json.loads(skill_config_path.read_text(encoding="utf-8"))

@@ -126,6 +126,9 @@ class Instructions:
             "runs": "runs.md",
             "validation": "validation.md",
             "correct": "correct.md",
+            "concept_scan": "concept_scan.md",
+            "evidence": "evidence.md",
+            "ai_passes": "ai_passes.md",
         }
         fpath = file_map.get(piece_name)
         if not fpath:

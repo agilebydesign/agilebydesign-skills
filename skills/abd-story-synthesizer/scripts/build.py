@@ -242,14 +242,42 @@ def _get_instructions(operation: str, strategy_path: Path | None = None) -> None
 if __name__ == "__main__":
     args = sys.argv[1:]
 
-    if args and args[0] == "discover_context":
+    if args and args[0] == "extract_evidence":
+        engine = AgileContextEngine(engine_root=_skill_dir).load()
+        if not engine.context_paths:
+            print("ERROR: No context paths configured. Run discover_context first.", file=sys.stderr)
+            sys.exit(1)
+        ctx = engine.context_paths[0]
+        import subprocess
+        scripts = [
+            ("01_analyze_chunks.py", ["--context-path", str(ctx)]),
+            ("02_extract_terms.py", ["--chunks", str(ctx.parent / "normalized" / "chunk_index.json")]),
+            ("03_extract_actions.py", ["--chunks", str(ctx.parent / "normalized" / "chunk_index.json")]),
+            ("04_extract_decisions.py", ["--chunks", str(ctx.parent / "normalized" / "chunk_index.json")]),
+            ("05_extract_variations.py", ["--chunks", str(ctx.parent / "normalized" / "chunk_index.json")]),
+            ("06_extract_states.py", ["--chunks", str(ctx.parent / "normalized" / "chunk_index.json")]),
+            ("07_consolidate_evidence.py", ["--extracted-path", str(ctx.parent / "extracted")]),
+        ]
+        for script_name, script_args in scripts:
+            script_path = _scripts_dir / script_name
+            if not script_path.exists():
+                print(f"SKIP: {script_name} not found")
+                continue
+            print(f"\n--- Running {script_name} ---")
+            result = subprocess.run([sys.executable, str(script_path)] + script_args)
+            if result.returncode != 0:
+                print(f"ERROR: {script_name} failed with exit code {result.returncode}", file=sys.stderr)
+                sys.exit(result.returncode)
+        print("\n--- Evidence extraction complete ---")
+
+    elif args and args[0] == "discover_context":
         _discover_context()
     elif args and args[0] == "get_config":
         _get_config()
     elif args and args[0] == "get_instructions":
         if len(args) < 2:
             print("Usage: python build.py get_instructions <operation> [--strategy path]", file=sys.stderr)
-            print("Operations: prepare_context, create_strategy, run_slice, generate_slice, validate_run, validate_slice, improve_strategy, correct_run, correct_session, correct_skill, correct_all", file=sys.stderr)
+            print("Operations: prepare_context, create_strategy, run_slice, generate_slice, validate_run, validate_slice, improve_strategy, correct_run, correct_session, correct_skill, correct_all, concept_scan, extract_evidence, model_discovery, model_validation", file=sys.stderr)
             sys.exit(1)
         strategy_path = None
         rest = args[1:]

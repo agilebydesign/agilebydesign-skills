@@ -143,13 +143,18 @@ class AgileContextEngine:
 
 CONTENT_ORDER = [
     "introduction.md",
+    "concept_scan.md",
+    "evidence.md",
+    "ai_passes.md",
     "interaction.md",
     "domain.md",
     "context.md",
     "process.md",
     "session.md",
     "runs.md",
+    "diagrams.md",
     "validation.md",
+    "correct.md",
 ]
 
 

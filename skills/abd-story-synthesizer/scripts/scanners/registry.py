@@ -58,6 +58,9 @@ from .steps_language_scanner import (
     AndButConditionsScanner, OutcomeLanguageScanner, BackgroundSetupScanner,
 )
 from .slice_epic_scanner import SliceEpicScanner
+from .thin_orchestration_scanner import ThinOrchestrationScanner
+from .generic_resolver_scanner import GenericResolverScanner
+from .decision_ownership_scanner import DecisionOwnershipScanner
 
 
 SCANNER_BY_NAME: dict[str, type[BaseScanner]] = {
@@ -99,6 +102,9 @@ SCANNER_BY_NAME: dict[str, type[BaseScanner]] = {
     "outcome_language": OutcomeLanguageScanner,
     "background_setup": BackgroundSetupScanner,
     "slice_epic": SliceEpicScanner,
+    "thin_orchestration": ThinOrchestrationScanner,
+    "generic_resolver": GenericResolverScanner,
+    "decision_ownership": DecisionOwnershipScanner,
 }
 
 RULE_TO_SCANNER: dict[str, str] = {
@@ -140,6 +146,9 @@ RULE_TO_SCANNER: dict[str, str] = {
     "interaction-outcome-oriented-language": "outcome_language",
     "interaction-examples-background-vs-scenario-setup": "background_setup",
     "session-slice-not-epic-by-epic": "slice_epic",
+    "domain-ooa-thin-orchestration": "thin_orchestration",
+    "domain-ooa-no-generic-resolvers": "generic_resolver",
+    "domain-ooa-behavior-owns-decision": "decision_ownership",
 }
 
 

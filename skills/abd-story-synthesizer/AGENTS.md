@@ -1,15 +1,457 @@
 <!-- section: story_synthesizer.introduction -->
 # Introduction
 
-The story synthesizer skill helps you take context and synthesize it into **stories** that explain how a user engages with a solution or system(s) to create value. Stories are about **interaction**, but also about **structure**, **state**, and **rules**.
+The domain synthesizer skill turns context into an **Interaction Tree** and **Domain Model** — meaningful exchanges between actors, plus the domain concepts and state that support them. Outputs: story map, domain model, acceptance criteria, specifications.
 
-The story skill **synthesizes** source material into an **Interaction Tree** and **Domain Model** — meaningful exchanges between actors, plus the domain concepts and state that support them. Outputs: story map, domain model, acceptance criteria, specifications.
+The core principle: **Do not go from text to classes. Go from context → mechanisms → behavior owners → object model.**
 
-In Agile terminology, this translates to a **story map** and **domain model**. The hierarchy goes from larger, coarser-grain business outcomes (*Epics*) down to **Stories** — tangible user and system interactions. Synthesis can stop at the story level; details are flushed out later.
+The skill uses a **17-step pipeline** that separates mechanical evidence extraction (CODE) from analytical reasoning (AI). Scripts extract structured evidence from context; AI operates on the evidence graph through focused passes — never on raw text directly.
 
 **Interaction Tree:** Epic → Story → Scenario → Step. Epics can nest (an epic whose parent is an epic is sometimes called a sub-epic). Epics group stories; the story is the backbone — the smallest unit that is both valuable and independently deliverable. Each epic and story can have Pre-Condition, Trigger, and Response. Scenarios optionally group steps; steps are atomic interactions.
 
-**Domain Model:** Domain Models describe the state found in Pre-Condition, Trigger, and Response. **Domain Concepts** (the things that hold state and get operated on) are referenced via `**Concept**` in the name/labels of Interaction tree elements (e.g. Make `**Country**`-specific `**Payment**`). Interaction Tree and Domain Model evolve together — no drift.
+**Domain Model:** Domain Models describe the state found in Pre-Condition, Trigger, and Response. **Domain Concepts** (the things that hold state and get operated on) are referenced via `**Concept**` in the name/labels of Interaction tree elements. Domain concepts emerge from the evidence pipeline — through behavior packet detection, mechanism synthesis, and decision ownership — not from surface noun extraction. Interaction Tree and Domain Model evolve together — no drift.
+
+**Evidence Pipeline:** Term scanning is only an **index**, not the model. The actual OOAD reasoning uses the **evidence graph** — structured facts about actions, decisions, variations, states, and relationships extracted from context by scripts, then analyzed by AI in focused passes.
+
+---
+
+<!-- section: story_synthesizer.concept_scan -->
+# Domain Concept Scan
+
+The concept scan is the first AI step in the pipeline (Step 2). It runs after context has been normalized but before evidence extraction scripts run. Its purpose is to discover the conceptual structure of the system without designing classes.
+
+## Goal
+
+Produce a **conceptual map** that orients the evidence extraction scripts and feeds into later AI passes. This is not a domain model — it is a hypothesis about what the system is really about, where decisions live, and where behavior varies.
+
+## Instructions
+
+You are performing a domain concept scan.
+
+Your goal is **NOT** to design classes yet.
+
+Your goal is to discover the conceptual structure of the system.
+
+Analyze the context and identify the following:
+
+### 1. Core Domain Primitives
+
+The fundamental things the system operates on. Not surface nouns — things that hold state, get transformed, or participate in decisions.
+
+### 2. Interaction Phases
+
+The major stages of domain interactions or resolution processes. What are the phases that context flows through?
+
+### 3. Stateful Entities
+
+Anything that accumulates state, conditions, or lifecycle changes. Things that are created, modified, tracked, or expired.
+
+### 4. Authority Boundaries
+
+Concepts that appear to own decisions or enforce rules. What decides? What validates? What controls transitions?
+
+### 5. Resource Flows
+
+Resources that are created, transferred, consumed, or modified. What moves through the system and who acts on it?
+
+### 6. Variation Axes
+
+Places where behavior changes depending on a mode, type, category, or condition. These often indicate polymorphic structures.
+
+### 7. Rule Mechanisms
+
+Clusters of rules that appear to revolve around the same mechanism. Rules that collaborate to produce an outcome.
+
+### 8. Implicit Concepts
+
+Missing or implicit concepts that appear necessary to explain the rules but are not named directly in the context.
+
+## Constraints
+
+- Do NOT assume these correspond to classes
+- Be skeptical of surface nouns — focus on mechanisms, phases, and rule ownership
+- Produce a conceptual map, not an object model
+- After the map: identify potential conceptual abstractions that may later become domain objects
+- Identify search anchors for targeted evidence extraction
+
+## Output Structure
+
+```
+## Core Primitives
+- [list]
+
+## Interaction Phases
+1. [ordered list]
+
+## Stateful Entities
+- [list]
+
+## Authority Boundaries
+- [list with what each controls]
+
+## Resource Flows
+- [list with flow direction]
+
+## Variation Axes
+- [list with what varies]
+
+## Rule Mechanisms
+- [list with mechanism description]
+
+## Implicit Concepts
+- [list with why each is needed]
+
+## Search Anchors
+- [terms/patterns for evidence extraction scripts to target]
+```
+
+## Output Location
+
+Write to `<session>/concept_scan.md`.
+
+---
+
+<!-- section: story_synthesizer.evidence -->
+# Evidence Model
+
+Evidence extraction is the disciplined compression step of the pipeline. Scripts extract structured evidence from normalized context without pretending to design the model. These are evidence records, not object candidates.
+
+## Canonical Evidence Structure
+
+All extraction scripts write into a shared structure:
+
+```json
+{
+  "documents": [],
+  "terms": [],
+  "actions": [],
+  "decisions": [],
+  "variations": [],
+  "states": [],
+  "relationships": [],
+  "issues": []
+}
+```
+
+| Type | Description | Script |
+|------|-------------|--------|
+| terms | Nouns, concepts — index entries for navigating context | `02_extract_terms.py` |
+| actions | Subject-verb-object behavioral facts | `03_extract_actions.py` |
+| decisions | Conditional logic (if/when/unless/must/on success/on failure) | `04_extract_decisions.py` |
+| variations | Independent behavior axes (mode/type differences) | `05_extract_variations.py` |
+| states | Lifecycle hints, condition accumulation, transitions | `06_extract_states.py` |
+| relationships | Explicit associations, ownership, containment, dependency | `06_extract_states.py` |
+| issues | Ambiguities, conflicts, contradictions | `07_consolidate_evidence.py` |
+
+**Terms are index entries, not classes.** Actions and decisions carry stronger evidence for domain modeling than nouns do.
+
+## Evidence Extraction Scripts
+
+### 01_analyze_chunks.py
+
+Runs on chunks that already exist from `abd-context-to-memory`. Does NOT re-chunk.
+
+- Validates chunk readiness: chunks present, count, paths, duplicates
+- Builds chunk index with stable IDs, source locations, section mapping
+- Output: `<workspace>/context/normalized/chunk_index.json`
+
+### 02_extract_terms.py
+
+Builds the concept index from normalized chunks.
+
+- Extracts noun phrases, defined terms, section titles, repeated domain vocabulary
+- Output: `terms.json` with `term_id`, `name`, `aliases`, `occurrences`
+
+### 03_extract_actions.py
+
+Extracts behavioral facts as subject-verb-object patterns.
+
+- Example: "attacker makes attack check", "target rolls resistance", "effect applies condition"
+- Output: `actions.json`
+
+### 04_extract_decisions.py
+
+Captures rule logic from conditional triggers.
+
+- Triggers: if, when, unless, must, may not, on success, on failure
+- Example: "if attack roll >= defense → hit"
+- Output: `decisions.json`
+
+### 05_extract_variations.py
+
+Detects independent behavior axes.
+
+- Patterns: "close vs ranged", "different types", "depending on", "one of the following"
+- Output: `variations.json`
+
+### 06_extract_states.py
+
+Extracts stateful entities and explicit relationships.
+
+- States: lifecycle hints, condition accumulation, transitions
+- Relationships: explicit associations, ownership, containment, dependency
+- Output: `states.json`, `relationships.json`
+
+### 07_consolidate_evidence.py
+
+Builds the AI-ready evidence graph from all extracted evidence.
+
+- Creates: concept clusters, term→action links, term→decision links, variation links, state links, ambiguity list, conflict list, hotspot detection
+- Output: `evidence_graph.json`, `evidence_summary.md`
+
+## File Layout
+
+```
+<skill_space>/
+  context/
+    raw/                    # original source files (chunked by abd-context-to-memory)
+    normalized/             # chunk_index.json from 01_analyze_chunks
+    extracted/              # terms, actions, decisions, variations, states, relationships
+    consolidated/           # evidence_graph.json, evidence_summary.md
+```
+
+## How Evidence Maps to Domain Model
+
+| Evidence Type | Maps To |
+|---------------|---------|
+| actions | Operations on domain concepts |
+| decisions | Policies, invariants, rules owned by concepts |
+| variations | Polymorphic families, strategy patterns |
+| states | Lifecycle, state machines, condition tracking |
+| relationships | Composition, aggregation, association, dependency |
+| terms | Index for navigating — NOT directly to classes |
+
+## Running the Pipeline
+
+```bash
+python scripts/01_analyze_chunks.py --context-path <path>
+python scripts/02_extract_terms.py --chunks <chunk_index.json>
+python scripts/03_extract_actions.py --chunks <chunk_index.json>
+python scripts/04_extract_decisions.py --chunks <chunk_index.json>
+python scripts/05_extract_variations.py --chunks <chunk_index.json>
+python scripts/06_extract_states.py --chunks <chunk_index.json>
+python scripts/07_consolidate_evidence.py --extracted-path <extracted/>
+```
+
+Or use the build script shortcut:
+
+```bash
+python scripts/build.py extract_evidence
+```
+
+---
+
+<!-- section: story_synthesizer.ai_passes -->
+# AI Modeling Passes
+
+AI operates **only after evidence extraction**. The AI receives the evidence graph, not raw context. Passes are organized into Pass A (Discovery) and Pass B (Validation + Repair).
+
+## Three Rules That Must Never Be Violated
+
+1. **Do not go from nouns to classes.** Terms are index entries. Objects emerge from owned behavior, decisions, and state.
+2. **Do not assign behavior to services until you fail to find a real owner.** Bias toward the information expert.
+3. **Do not introduce inheritance until the domain proves substitutability and shared semantics.**
+
+---
+
+<!-- section: story_synthesizer.ai_passes.discovery -->
+## Pass A: Discovery (Steps 9–14)
+
+### Step 9 — Behavior Packet Detection
+
+Detect coherent behavioral mechanisms before creating objects.
+
+A behavior packet is a cluster of actions, decisions, required state, outputs, and variation rules that together form one mechanism.
+
+**For each packet produce:**
+- Name and description
+- Actions included
+- Decisions included
+- Required state (information needed)
+- Outputs and state changes
+- Variation axis (if any)
+- Likely role: domain object, value object, policy/strategy, state holder, or orchestration
+- Evidence references
+
+**Why this matters:** Behavior packets prevent the classic mistake of terms becoming classes and behavior getting pushed into services.
+
+### Step 10 — Mechanism Synthesis
+
+Move from packets to domain mechanisms. Ask:
+- Which packets are facets of one deeper mechanism?
+- Which mechanisms interact?
+- Which mechanisms own important transitions, decisions, and outcomes?
+
+**For each mechanism produce:**
+- Name
+- Inputs and outputs
+- Internal decisions
+- External collaborators
+- Variation axes
+- State touched
+- Invariants enforced
+
+**Why this matters:** Sometimes a packet is too small. Several packets may be one mechanism (e.g. targeting, delivery, resistance, condition progression). This finds the real structural seams. Objects should emerge from mechanisms, not the reverse.
+
+### Step 11 — Decision Ownership
+
+Assign each important decision to the concept that should own it.
+
+**For each decision ask:**
+- Who has the information needed?
+- Who should own the rule?
+- Who should enforce the invariant?
+- Who should control the transition?
+- Who should compute the outcome?
+- Who should NOT own this?
+
+**Rule:** Bias toward the information expert, not toward a controller or manager.
+
+**For each mechanism produce:**
+- Decision owner
+- Collaborators required
+- What remains orchestration only
+- What should be polymorphic
+- What should be stateful
+- What should stay value-like
+
+### Step 12 — Object Candidate Formation
+
+Derive candidate objects from owned behavior and state.
+
+**An object candidate must justify itself by at least one of:**
+- Owns important decisions
+- Enforces invariants
+- Owns meaningful lifecycle or state
+- Coordinates a tight behavior cluster as the natural expert
+- Represents a cohesive value with validation and behavior
+- Represents a true relationship with behavior of its own
+
+If it is just "a noun that exists," it is not yet a valid object candidate.
+
+**Output categories:**
+- Domain entities
+- Value objects
+- Policies or strategies
+- State holders
+- Relationship objects
+- Orchestration or application services (thin)
+
+### Step 13 — Relationship and Boundary Modeling
+
+Define real relationships based on behavior, not diagram aesthetics.
+
+**For each relationship ask:**
+- What behavior crosses this relationship?
+- What decisions depend on it?
+- Does the relationship have its own lifecycle or rules?
+- Is it actually a hidden concept of its own?
+- Is this ownership, association, collaboration, containment, or dependency?
+- What consistency boundary applies?
+
+**Also identify:**
+- Aggregate-like boundaries
+- State ownership boundaries
+- Responsibility boundaries
+- Creation and mutation boundaries
+
+**Why this matters:** Fake relationships are one of the biggest causes of bad OO models. A relationship should exist because behavior needs it, not because nouns co-occur.
+
+### Step 14 — Inheritance Test
+
+Use inheritance only when the domain truly supports it. Test every proposed base/subtype structure:
+
+1. **Shared identity or just shared algorithm?** If only shared algorithm, prefer strategy, policy, or composition.
+2. **Stable substitutability?** Can every subtype truly stand in for the base without breaking behavior?
+3. **Shared invariants?** Do subtypes inherit meaningful rules, not just fields?
+4. **Variation in behavior or just configuration?** If the difference is data or config, do not create subtype inheritance.
+5. **Does the hierarchy reflect the domain or the implementation?** If it is only convenient for code reuse, it is probably wrong.
+
+**Good inheritance usually appears when:**
+- The domain itself has a stable is-a structure
+- The base has real semantics
+- The subtypes share meaningful invariants and protocol
+
+**Otherwise prefer:** composition, strategy, role objects, policies, tagged value types.
+
+---
+
+<!-- section: story_synthesizer.ai_passes.validation -->
+## Pass B: Validation + Repair (Steps 15–17)
+
+### Step 15 — Scenario / Message Walkthrough Validation
+
+Make sure the model can actually behave. A model that looks elegant but fails in message flow is not good OOAD.
+
+**Run walkthroughs for:**
+- Happy path
+- Error path
+- Edge case
+- Exception path
+- Stateful repetition
+- Alternate variation mode
+- Recovery, retry, or cancellation where relevant
+
+**Validate at two levels:**
+
+**Scenario flow:** What happens in the domain?
+
+**Message flow:** Which object sends what message to whom? Does the receiver know enough to act? Is the sender delegating a decision or making it centrally?
+
+**This step exposes:** missing objects, misplaced behavior, centralization, fake relationships, state with no owner.
+
+### Step 16 — Anemia / Centralization Critique
+
+Explicitly attack the candidate model before accepting it. This phase is mandatory.
+
+**Look for:**
+- Centralized handlers, resolvers, or managers
+- Anemic entities with no decisions
+- Objects that are just data bags
+- Config-holder pseudo-objects
+- Orphan concepts (referenced but not modeled)
+- State with no owner
+- Rules with no owner
+- Fake inheritance (shared fields, no shared semantics)
+- Type, mode, or effect switches that should be polymorphism
+- Orchestration making domain decisions
+- Relationships with no behavioral significance
+
+**AI must propose minimal corrections** for each issue found.
+
+### Step 17 — Final OO Domain Model
+
+Produce the final model only after the previous passes have stabilized.
+
+**For each object:**
+- Name
+- Purpose
+- Core state (properties)
+- Decisions owned
+- Invariants enforced
+- Collaborators
+- Messages sent and received
+- Lifecycle ownership (if applicable)
+
+**Also include:**
+- Polymorphic families
+- Value objects
+- Real relationship types (with behavioral justification)
+- Boundary notes
+- Orchestration skeleton (thin)
+- Unresolved ambiguities
+- Rejected alternatives (if useful)
+
+**The final model should be a consequence of the earlier reasoning, not a guess.**
+
+---
+
+## Recommended Execution
+
+Use the pipeline as two operations:
+
+- **`model_discovery`** — Steps 9–14 (Pass A). The model emerges.
+- **`model_validation`** — Steps 15–17 (Pass B). The model survives critique.
 
 ---
 
@@ -461,6 +903,33 @@ Entity table (scenario + fields):
 <!-- section: story_synthesizer.domain -->
 # Domain Model
 
+## Evidence-Driven Domain Discovery
+
+Domain concepts in this skill emerge from the evidence pipeline — not from direct synthesis of raw context. The path is:
+
+1. **Evidence extraction** (scripts) produces structured facts: actions, decisions, variations, states, relationships
+2. **Concept scan** (AI) identifies primitives, mechanisms, and authority boundaries
+3. **Behavior packet detection** (AI) clusters evidence into coherent mechanisms
+4. **Mechanism synthesis** (AI) finds the real structural seams
+5. **Decision ownership** (AI) assigns rules to the concepts that should own them
+6. **Object candidate formation** (AI) derives candidates justified by owned behavior
+
+See `pieces/ai_passes.md` for the full AI pass specifications.
+
+### Object Candidate Justification
+
+An object candidate must justify itself by at least one of:
+- Owns important decisions
+- Enforces invariants
+- Owns meaningful lifecycle or state
+- Coordinates a tight behavior cluster as the natural expert
+- Represents a cohesive value with validation and behavior
+- Represents a true relationship with behavior of its own
+
+If it is just "a noun that exists," it is not yet a valid object candidate.
+
+---
+
 ## Module
 
 Grouping of tightly related concepts.
@@ -470,7 +939,7 @@ Grouping of tightly related concepts.
 
 ## Domain Concept
 
-A domain concept that holds state and can be operated on (equates to a class in object oritented code). Referenced in interactions via `**Concept`** in labels. Examples live on the interaction. The Domain Model connects what concepts know and do to interactions — concepts participate as callers, receivers, and collaborators; state flows through Pre-Condition, Triggering-State, and Resulting-State.
+A domain concept that holds state and can be operated on (equates to a class in object oriented code). Referenced in interactions via `**Concept**` in labels. Examples live on the interaction. The Domain Model connects what concepts know and do to interactions — concepts participate as callers, receivers, and collaborators; state flows through Pre-Condition, Triggering-State, and Resulting-State.
 
 - **Name**
 - **Module** — optional; grouping of tightly related concepts
@@ -538,7 +1007,7 @@ Based on the Complete Example in the Interaction Tree (Make **Country**-specific
 - List fields
 - Operations: get_fields(payment_type) → fields
 
-These concepts are referenced in the Interaction Tree via `**Concept`** in Pre-Condition, Trigger, Response, and Examples. The interaction tree tables (Logged In User, Active User Session, User Payment Type Access, Selected Country, PaymentDetails (wire), etc.) are example data for these concepts.
+These concepts are referenced in the Interaction Tree via `**Concept**` in Pre-Condition, Trigger, Response, and Examples. The interaction tree tables (Logged In User, Active User Session, User Payment Type Access, Selected Country, PaymentDetails (wire), etc.) are example data for these concepts.
 
 ---
 
@@ -577,7 +1046,7 @@ Each foundational model likely becomes a distinct module in the domain model.
 4. **Do NOT trust the source document's categories.** Read actual content. Group by shared collaborations, not by chapter headings.
 5. **Do NOT group by surface similarity.** Group by what objects collaborate and what operations they perform.
 
-Use `concept_tracker.py report` to validate — high co-occurrence terms likely belong to the same foundational model.
+Use the evidence graph hotspot detection to validate — high co-occurrence terms likely belong to the same foundational model.
 
 **One sub-section per foundational model. Each contains:**
 
@@ -588,72 +1057,140 @@ Use `concept_tracker.py report` to validate — high co-occurrence terms likely 
 
 ---
 
-The Domain Model holds **modules** (groupings of tightly related concepts) and **domain concepts** — the things that have state and can be operated on. Concepts are referenced in interactions via `**Concept`** in Pre-Condition, Trigger, Response, and Failure-Modes. Every `**Concept**` must exist in the Domain Model; concepts must be placed at the right level in the hierarchy. No drift between tree and model. Use source entity data, not aggregated/calculated values.
+The Domain Model holds **modules** (groupings of tightly related concepts) and **domain concepts** — the things that have state and can be operated on. Concepts are referenced in interactions via `**Concept**` in Pre-Condition, Trigger, Response, and Failure-Modes. Every `**Concept**` must exist in the Domain Model; concepts must be placed at the right level in the hierarchy. No drift between tree and model. Use source entity data, not aggregated/calculated values.
+
+---
+
+<!-- section: story_synthesizer.context -->
+# Context Preparation
+
+Prepared context is a foundational component that must be present before the skill can run. Each step cascades: chunking before evidence extraction, evidence extraction before AI passes.
+
+## Chunking
+
+Source documents (PDF, PPTX, DOCX) must be chunked into markdown using the `abd-context-to-memory` skill before any analysis. The `get_instructions` command validates this automatically — if documents are unchunked or stale, it warns with the command to run.
+
+- **Raw context:** Categorize what you have — source paths, chunk count, chunk types, section mapping. Example: "312 sections; Accounts 12–45, Transactions 46–95, Compliance 150–200; chunk types: account definitions, transaction rules, validation policies."
+- **Existing structure:** If output already exists: "these stories", "all these epics", "Epic 2 and its sub-epics".
+
+## Evidence Extraction Pipeline
+
+After chunking, run the evidence extraction pipeline to build structured evidence from the normalized chunks. See `pieces/evidence.md` for the full pipeline specification.
+
+```bash
+python scripts/build.py extract_evidence
+```
+
+This runs scripts 01–07 in sequence:
+1. `01_analyze_chunks.py` — validate and index existing chunks
+2. `02_extract_terms.py` — noun phrases, defined terms, vocabulary index
+3. `03_extract_actions.py` — subject-verb-object behavioral facts
+4. `04_extract_decisions.py` — conditional logic and rules
+5. `05_extract_variations.py` — behavior axes and mode differences
+6. `06_extract_states.py` — stateful entities and explicit relationships
+7. `07_consolidate_evidence.py` — build evidence graph with links, clusters, hotspots
+
+**Output:** `evidence_graph.json` and `evidence_summary.md` in `<workspace>/context/consolidated/`.
+
+## Concept Tracking (Optional)
+
+The `concept_tracker.py` tool remains available as a supplementary tool for quick term frequency and co-occurrence analysis. It is not required — the evidence extraction pipeline subsumes its function with richer evidence types.
+
+```bash
+python scripts/concept_tracker.py scan --context-path <context-path>
+python scripts/concept_tracker.py report <context_analysis.json> --min-units 5
+```
+
+## Variation Analysis
+
+The evidence extraction pipeline captures variations (script 05). For deeper analysis, review the extracted variations and formalize: per mechanism, what's consistent, what differs, what extends with new behavior (→ story) vs adds data to same behavior (→ example).
+
+Variation analysis can be saved to `context_analysis.json` under each model's `variation` key for use in session strategy.
 
 ---
 
 # Process Overview
 
-Your task is to **synthesize** context into an **Interaction Tree** and **Domain Model** — a hierarchical structure of meaningful exchanges between actors, plus the domain concepts and state that support them.
+Your task is to build an **Interaction Tree** and **Domain Model** using a 17-step pipeline that separates mechanical evidence extraction (CODE) from analytical reasoning (AI).
 
-See `pieces/interaction.md` for the Interaction Tree data model. 
-
-See `pieces/domain.md` for the Domain Model data model.
+The core principle: **Do not go from text to classes. Go from context → mechanisms → behavior owners → object model.**
 
 Within each phase: **Human** → **AI** invokes script → **Script** returns instructions → **AI** produces output → **Human** updates and adjusts → **AI** incorporates changes. Do not rely on AGENTS.md alone.
 
 ---
 
-## Phase 1: Set Work Area and Prepare Context
+## The Pipeline
 
-| Human                                           | AI / Script                                      | AI                                                          | Human → AI                    |
-| ----------------------------------------------- | ------------------------------------------------ | ----------------------------------------------------------- | ----------------------------- |
-| Says "set path", "new workspace", or "continue" | Runs `build.py get_config`, validates context    | Reports paths; checks context readiness; asks if needed     | Confirms or provides new path |
+```text
+CODE
+ 1. Normalize + segment context               abd-context-to-memory + 01_analyze_chunks
+ 3. Extract terms                              02_extract_terms
+ 4. Extract actions (subject-verb-object)      03_extract_actions
+ 5. Extract decisions (rules/conditions)       04_extract_decisions
+ 6. Extract variations (mode/type diffs)       05_extract_variations
+ 7. Extract states & explicit relationships    06_extract_states
+ 8. Build evidence graph                       07_consolidate_evidence
 
-Before starting or continuing work, establish where output goes and ensure context is ready.
-
-**Set path:** Edit `conf/abd-config.json` and set `"skill_space_path": "/path/to/workspace"`. Output goes to `<skill_space_path>/story-synthesizer/`. Context paths are owned by the skill space's `conf/abd-config.json`.
-
-**Get path:** Run `get_config` to see where the skill is currently pointed.
-
-```bash
-cd skills/abd-story-synthesizer
-python scripts/build.py get_config
+AI
+ 2. Concept scan (primitives & mechanisms)     concept_scan operation
+ 9. Behavior packet detection                  --|
+10. Mechanism synthesis                          |
+11. Decision ownership                           |  model_discovery operation (Pass A)
+12. Object candidate formation                   |
+13. Relationship & boundary modeling             |
+14. Inheritance test                           --|
+15. Scenario / message walkthrough             --|
+16. Anemia / centralization critique             |  model_validation operation (Pass B)
+17. Final OO domain model                      --|
 ```
 
-### Context Readiness
+---
 
-After setting the work area, the engine automatically checks context readiness. Each check cascades — if an earlier step is missing, fix it before proceeding. See `pieces/context.md` for full details on each step.
+## Phase 1: Normalize Context and Extract Evidence
 
-**1. Chunking** — Are source documents (PDF, PPTX, DOCX) chunked to markdown? `get_instructions` validates automatically. If unchunked or stale → ask user: "Context needs chunking. Set it up?" If yes → run `abd-context-to-memory` pipeline.
+| Human | AI / Script | AI | Human → AI |
+|-------|-------------|-----|------------|
+| Says "set path", "new workspace", or "continue" | Runs `build.py get_config`, validates context | Reports paths; checks readiness | Confirms or provides new path |
 
-**2. Concept Tracking** — Does `terms_report.json` exist? If not → run `concept_tracker.py seed` (optional) → `scan` → `report`.
+### Step 1: Normalize + Segment (CODE)
 
-**3. Concept Deep Analysis** — Has the concept report been reviewed with deep reads of source chunks? If not → for each high-frequency term cluster, read 3–5 representative chunks, extract mechanically distinct categories.
+Use the `abd-context-to-memory` skill to chunk source documents into markdown. Then run `01_analyze_chunks.py` to validate and index the chunks.
 
-**4. Variation Analysis** — Per model from deep analysis: what's consistent, what varies, what's a story vs example. Saved to `context_analysis.json` under each model's `variation` key.
+```bash
+python scripts/01_analyze_chunks.py --context-path <path>
+```
 
-Each step is run once per workspace. Skip if already done and context hasn't changed.
+### Step 2: Concept Scan (AI)
+
+Run `get_instructions concept_scan` to perform the AI concept scan on normalized context. Produces a conceptual map with core primitives, interaction phases, authority boundaries, variation axes, and implicit concepts.
+
+```bash
+python scripts/build.py get_instructions concept_scan
+```
+
+Output: `<session>/concept_scan.md`. See `pieces/concept_scan.md` for full specification.
+
+### Steps 3–8: Evidence Extraction (CODE)
+
+Run the evidence extraction pipeline. This can be run as a single command or step by step.
+
+```bash
+python scripts/build.py extract_evidence
+```
+
+Output: `evidence_graph.json` and `evidence_summary.md` in `<workspace>/context/consolidated/`. See `pieces/evidence.md` for full specification.
 
 ---
 
 ## Phase 2: Start Session
 
+| Human | AI / Script | AI | Human → AI |
+|-------|-------------|-----|------------|
+| Says "start a session" or "create a session" | Invokes `get_instructions create_strategy` | Produces session file with strategy and slices | Updates and adjusts |
 
-| Human                                        | AI / Script                                       | AI                                             | Human → AI                                 |
-| -------------------------------------------- | ------------------------------------------------- | ---------------------------------------------- | ------------------------------------------ |
-| Says "start a session" or "create a session" | Invokes script `get_instructions create_strategy` | Produces session file with strategy and slices | Updates and adjusts → incorporates changes |
+Create, open, or continue an existing session. The session defines: Level of Detail (discovery/exploration/specification), Scope, and Slices. The evidence graph and concept scan are already available.
 
-
-Create, open, or continue an existing session. Name it (user-provided or AI-derived from context). The session defines: Level of Detail (discovery/exploration/specification), Scope, and Slices. Context analysis (variation, foundational model candidates) is already in `context_analysis.json`.
-
-**Session path:** `<skill-space>/story-synthesizer/<session-name>/<session-name>-session.md`
-
-**Session folder:** Contains session file, output files (`interaction-tree.md`, `domain-model.md`), and `runs/` folder.
-
-See `pieces/session.md` for session content, slice design by session type, and tag definitions.
-
-**Script:**
+See `pieces/session.md` for session content, slice design, and tag definitions.
 
 ```bash
 python scripts/build.py get_instructions create_strategy
@@ -661,65 +1198,58 @@ python scripts/build.py get_instructions create_strategy
 
 ---
 
-## Phase 3: Execute a Run
+## Phase 3: Execute AI Passes (Run)
 
+| Human | AI / Script | AI | Human → AI |
+|-------|-------------|-----|------------|
+| Says "proceed," "build it," "run slice", "discover model" | Invokes `get_instructions model_discovery` or `model_validation` | Produces domain model output | Updates and adjusts |
 
-| Human                                                             | AI / Script                                 | AI                                | Human → AI                                 |
-| ----------------------------------------------------------------- | ------------------------------------------- | --------------------------------- | ------------------------------------------ |
-| Says "proceed," "build it," "run slice", "next run", "next slice" | Invokes script `get_instructions run_slice` | Produces run output for the slice | Updates and adjusts → incorporates changes |
+The AI modeling passes operate on the evidence graph, not raw context. Execute as two operations:
 
-
-Slices are completed through a run. One run per slice. A run may require multiple iterations (user reviews → corrections to run log → re-run) until approved. Corrections carry forward: run 2 applies corrections from run 1; run 3 applies corrections from runs 1 and 2.
-
-**Output path:** `<skill-space>/story-synthesizer/` — Interaction Tree and Domain Model (format in `output/interaction-tree-output.md` and `output/domain-model-output.md`). **Run logs:** `<skill-space>/story-synthesizer/sessions/<session-name>/runs/run-N.md`
-
-See `pieces/session.md` for slices. See `pieces/runs.md` for run lifecycle, run log structure, and corrections format.
-
-**Script:**
+### Pass A: Discovery (Steps 9–14)
 
 ```bash
-python scripts/build.py get_instructions run_slice [--strategy path/to/strategy.md]
+python scripts/build.py get_instructions model_discovery
 ```
 
-**You MUST call `get_instructions` before producing any synthesis output.** The Engine assembles the correct sections, strategy, and paths. Never proceed without calling it first.
+Produces: behavior packets, mechanisms, decision ownership, object candidates, relationships, inheritance test results. See `pieces/ai_passes.md` Pass A.
 
-**Before starting a run:** Check for unrecorded corrections from session creation or previous runs. If unsure, run `python scripts/build.py get_instructions correct_run` to review the chat for missed corrections.
+### Pass B: Validation + Repair (Steps 15–17)
 
-**Build phase diagram rendering:** After producing domain model output, render changes to the class diagram (`class diagram.drawio`). One page per foundational model. Use the DrawIO CLI tools to add/update classes and relationships, then `inspect` to verify no overlaps. See `pieces/diagrams.md` for the full tool reference and layout guidelines.
+```bash
+python scripts/build.py get_instructions model_validation
+```
 
-**Build phase validation:** After producing output and rendering diagrams, run `build.py validate`. Fix any violations before marking the run complete — validation is part of the build phase. See `pieces/validation.md`.
+Produces: scenario walkthroughs, anemia critique, final OO domain model. See `pieces/ai_passes.md` Pass B.
+
+### Interaction Tree
+
+The interaction tree synthesis uses the existing `run_slice` operation and is unchanged. Domain concepts from the AI passes sync into the interaction tree via `**Concept**` references.
+
+```bash
+python scripts/build.py get_instructions run_slice
+```
+
+### Diagram Rendering
+
+After producing domain model output, render changes to the class diagram. See `pieces/diagrams.md`.
+
+### Build Phase Validation
+
+After producing output and rendering diagrams, run `build.py validate`. Fix any violations before marking the run complete. See `pieces/validation.md`.
 
 ---
 
 ## Phase 4: Validate
 
+| Human | AI / Script | AI | Human → AI |
+|-------|-------------|-----|------------|
+| Says "validate", "check the output" | Invokes `build.py validate` | Reports violations; fixes if build phase | Updates and adjusts |
 
-| Human                                                                    | AI / Script                 | AI                                       | Human → AI                                 |
-| ------------------------------------------------------------------------ | --------------------------- | ---------------------------------------- | ------------------------------------------ |
-| Says "validate", "run validation", "check the output" (or after Phase 1) | Invokes `build.py validate` | Reports violations; fixes if build phase | Updates and adjusts → incorporates changes |
-
-
-Run `build.py validate` (or `validate <path>`) to execute rule scanners. Report any violations. Validation behavior depends on scope and context:
-
-### Validate Run
-
-Validate **only the output of the current run**. Ignore previous work. Use when the user says "validate our run" or "check what we just did." **Fix violations before marking the run complete** — this is part of the build phase.
-
-### Validate Slice
-
-Validate **everything in the slice** — all accumulated output for that slice. Use when the user says "validate the slice" or "validate slice 1." **Fix violations before marking the run complete** — this is part of the build phase.
-
-### Explicit Validate (User Request Only)
-
-When the user **explicitly asks to validate** (e.g. "validate", "run validation", "check the output") **outside a build phase** — do **not** fix violations. Run validate, report violations, and leave with the reviewer. Do not edit files unless you are in a build phase (run_slice, validate_run, validate_slice).
-
-See `pieces/validation.md` for the full validation checklist.
-
-**Script:**
+Run `build.py validate` to execute rule scanners. See `pieces/validation.md` for the full checklist.
 
 ```bash
 python scripts/build.py validate
-python scripts/build.py validate path/to/interaction-tree.md
 python scripts/build.py get_instructions validate_run
 python scripts/build.py get_instructions validate_slice
 ```
@@ -728,22 +1258,13 @@ python scripts/build.py get_instructions validate_slice
 
 ## Phase 5: Correct
 
+| Human | AI / Script | AI | Human → AI |
+|-------|-------------|-----|------------|
+| Reviews output and gives corrections | Invokes `get_instructions correct_run` | Applies corrections to run log | Updates and adjusts |
 
-| Human                                | AI / Script                                    | AI                                          | Human → AI                                 |
-| ------------------------------------ | ---------------------------------------------- | ------------------------------------------- | ------------------------------------------ |
-| Reviews output and gives corrections | Invokes script `get_instructions validate_run` | Applies corrections to run log (may re-run) | Updates and adjusts → incorporates changes |
-
-
-Human reviews the run output and identifies mistakes. Corrections go to the run's Corrections section in the run log. Each correction must include a DO or DO NOT rule, an example of what was wrong, and the fix. AI may re-run the slice with corrections applied. 
-
-See `pieces/runs.md` § Corrections Format and § When User Gives a Correction.
-
-**Checking for missed corrections:** Run `get_instructions correct_run` to review the chat for unrecorded changes. Run `correct_all` to do the full correction pipeline (run → session → skill) in one shot.
-
-**Script:**
+See `pieces/runs.md` for corrections format and `pieces/correct.md` for the correction layers.
 
 ```bash
-python scripts/build.py get_instructions validate_run
 python scripts/build.py get_instructions correct_run
 python scripts/build.py get_instructions correct_all
 ```
@@ -752,49 +1273,31 @@ python scripts/build.py get_instructions correct_all
 
 ## Phase 6: Adjust
 
+| Human | AI / Script | AI | Human → AI |
+|-------|-------------|-----|------------|
+| Reviews corrections, decides what to promote | Invokes `get_instructions improve_strategy` | Updates session strategy and/or skill rules | Updates and adjusts |
 
-| Human                                        | AI / Script                                        | AI                                          | Human → AI                                 |
-| -------------------------------------------- | -------------------------------------------------- | ------------------------------------------- | ------------------------------------------ |
-| Reviews corrections, decides what to promote | Invokes script `get_instructions improve_strategy` | Updates session strategy and/or skill rules | Updates and adjusts → incorporates changes |
-
-
-After all runs (or when the user wants), review corrections collected in run logs (including `run-0.md` from session creation). Determine what needs to change. Incorporate into the session strategy and/or promote to the skill's rules those that apply across projects. The session file is the source of truth.
-
-**When promoting corrections to the skill**, record the fix details in the run log's "Promoted to Skill" section — a table with: Correction, Target file, and Change (a from→to snapshot, not the full diff). This creates a traceable history of why each rule or piece was added or changed.
-
-See `pieces/session.md` § Patterns and `pieces/runs.md` § Patterns.
-
-**Script:**
+See `pieces/correct.md` for the three layers of correction (run → session → skill).
 
 ```bash
 python scripts/build.py get_instructions improve_strategy
 ```
 
-### Three layers of correction
-
-Corrections flow through three layers. Each layer builds on the previous — don't skip ahead, but don't stop at recording either. Be aggressive about suggesting what should change at each layer.
-
-
-| Layer           | Operation         | Where                                            | What happens                                                                                            |
-| --------------- | ----------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------- |
-| **1. Record**   | `correct_run`     | Run log (`runs/run-N.md`)                        | DO/DO NOT captured with wrong/correct examples. The fix is applied to the output files.                 |
-| **2. Strategy** | `correct_session` | Session file (`*-session.md`)                    | Correction incorporated into session strategy so future runs in this session follow it.                 |
-| **3. Skill**    | `correct_skill`   | Skill rules/pieces (`rules/*.md`, `pieces/*.md`) | Correction promoted to a skill rule or process piece. Recorded in "Promoted to Skill" table in run log. |
-| **All**         | `correct_all`     | All three in sequence                            | Runs all three layers: record → strategy → skill.                                                       |
-
-
-**Don't give up on making changes.** Each layer builds on the previous. Be aggressive in suggestions at every layer — propose the change, let the user decide.
-
 ---
 
 ## Process Checklist
 
-- **Context prepared** — chunked, scanned, deep-analyzed, variation analysis in `context_analysis.json`
-- **Session created** — session file with level of detail, scope, and slices; user approves before runs start
-- **Run 1 produced** — output for first slice; run log written to `runs/run-1.md`; class diagram rendered for domain model changes
-- **Run 1 approved** — user reviews (including diagram); corrections to run log; re-run until approved
-- **Run 2 … Run N** — each remaining slice: produce → render diagram → review → corrections → re-run until approved
-- **Review and Adjust** — review all corrections; incorporate into session strategy and/or promote to skill rules
+- **Context chunked** — source docs chunked via `abd-context-to-memory`
+- **Chunks analyzed** — `01_analyze_chunks` validates and indexes
+- **Concept scan done** — AI conceptual map in `concept_scan.md`
+- **Evidence extracted** — scripts 02–07 complete; `evidence_graph.json` exists
+- **Session created** — session file with level of detail, scope, and slices
+- **Pass A complete** — behavior packets, mechanisms, decision ownership, object candidates, relationships, inheritance test
+- **Pass B complete** — scenario walkthroughs, anemia critique, final OO model
+- **Interaction tree produced** — interaction tree synthesized with domain concepts synced
+- **Diagrams rendered** — class diagram updated for domain model changes
+- **Validated** — `build.py validate` passes; violations fixed
+- **Corrections recorded** — all corrections in run logs; promoted to session/skill as needed
 
 ---
 
@@ -957,6 +1460,146 @@ Run `python scripts/build.py get_instructions correct_run` to review the chat fo
 
 
 **Example:** Run 2 built steps and examples for "Configure Power Effect" stories. Pattern: "Effect-type stories share same step structure — Configure, Validate, Apply." Applicable to: other effect types under the same epic.
+
+---
+
+<!-- section: story_synthesizer.diagrams -->
+# Class Diagrams
+
+When a run produces or modifies domain model concepts, render the changes to a DrawIO class diagram. One page per foundational model. The diagram is the visual representation of `domain-model.md` — they stay in sync.
+
+## Diagram File
+
+**Path:** `<session>/class diagram.drawio` (alongside `domain-model.md`)
+
+Each foundational model section in `domain-model.md` maps to one page in the diagram. Page names must match section names exactly (e.g., "Resolution System", "Combat System").
+
+## When to Render
+
+- **After producing domain model output** in a run — render new/changed concepts to the diagram
+- **After corrections that change domain model** — update the diagram to match
+- **After user edits the diagram in DrawIO** — sync back to `domain-model.md` using `sync-to-model`
+
+## Tools
+
+All tools are in `scripts/` in the synthesizer skill. Run from that directory.
+
+```bash
+cd skills/abd-story-synthesizer/scripts
+python drawio_class_cli.py <command> <drawio-file> [options]
+```
+
+### Diagram Management
+
+| Command | Usage |
+|---------|-------|
+| `init` | `init <file> --page <name>` — create file or add page |
+| `inspect` | `inspect <file> [--page <name>]` — JSON: classes, edges, overlaps |
+| `sync-to-model` | `sync-to-model <file> [--page <name>] [--model <md-path>]` — sync diagram classes back to domain-model.md with diffs |
+
+### Class CRUD
+
+| Command | Usage |
+|---------|-------|
+| `add-class` | `add-class <file> --page <page> --name <Name> [--base <Base>] [--props "p1\|p2"] [--ops "o1\|o2"] [--invs "i1\|i2"] [--x N] [--y N]` |
+| `update-class` | `update-class <file> --page <page> --name <Name> --add-prop "..." \| --remove-prop "..." \| --add-op "..." \| --remove-op "..." \| --add-inv "..." \| --set-base <Base>` |
+| `delete-class` | `delete-class <file> --page <page> --name <Name>` — removes class and all its edges |
+| `move` | `move <file> --page <page> --name <Name> --x N --y N` |
+
+### Relationship CRUD
+
+| Command | Style | Usage |
+|---------|-------|-------|
+| `add-inheritance` | Hollow triangle (straight) | `--child <Child> --parent <Parent>` |
+| `add-composition` | Filled diamond on owner (orthogonal) | `--owner <Owner> --part <Part> [--straight]` |
+| `add-aggregation` | Hollow diamond on owner (orthogonal) | `--owner <Owner> --part <Part> [--straight]` |
+| `add-association` | Open arrow (orthogonal) | `--from <Source> --to <Target> [--straight]` |
+| `add-dependency` | Dashed open arrow (straight) | `--from <Source> --to <Target> [--label <text>]` |
+| `delete-edge` | — | `--from <Source> --to <Target>` |
+
+## Layout Guidelines
+
+- **Inheritance:** Base on top, extensions below. Straight vertical lines preferred.
+- **Composition/aggregation:** Orthogonal routing (right-angle corners). Diamond on the owner (parent) side.
+- **Association:** Orthogonal routing. Use `--straight` when classes are on the same row to avoid bends.
+- **Dependency:** Dashed straight line for creates/uses relationships (e.g., Rollable creates Check).
+- **Grid layout:** Position classes in rows — parents row 0, children/dependents row 1+. Avoid all-on-one-row; aim for a square diagram.
+- **No overlaps:** After positioning, run `inspect` to check for overlapping classes. Use `move` to fix.
+- **No crossing edges:** Position classes so edges don't cross over other classes. Place related classes adjacent.
+
+## UML Relationship Selection
+
+| Relationship | When to use | DrawIO style |
+|-------------|-------------|--------------|
+| **Inheritance** | Concept extends another (e.g., Ability : Rollable) | Hollow triangle |
+| **Composition** | Part cannot exist without whole; collection property (e.g., Character ◆→ Ability via Dictionary) | Filled diamond |
+| **Aggregation** | Whole references part but part has independent lifecycle (e.g., Character ◇→ PowerLevel) | Hollow diamond |
+| **Association** | Concept uses another in operations (e.g., Check → DC, Check → Degree) | Open arrow |
+| **Dependency** | Concept creates instances of another (e.g., Rollable --creates-→ Check) | Dashed arrow |
+
+## Cross-Model Imports
+
+When a concept from one foundational model is referenced in another (e.g., Ability extends Rollable from Resolution System), mark it explicitly in both places.
+
+### Domain Model Convention
+
+Add `[from: Source Module]` after the base class:
+
+```
+**Ability** : Rollable [from: Resolution System]
+**AttackCheck** : Check [from: Resolution System]
+```
+
+### Class Diagram Convention
+
+Add the imported class using `--imported-from`:
+
+```bash
+python drawio_class_cli.py add-class <file> --page "Character Trait System" --name Rollable --imported-from "Resolution System" --props "Number modifier" --x 40 --y 620
+```
+
+The imported class renders with a dashed border and a `«from: Module»` stereotype label above the name. Add inheritance edges from local classes to the import as normal.
+
+### Keeping Cross-Model References in Sync
+
+When a concept changes in its home model:
+1. Update the concept in the home model's page and domain-model.md section
+2. Update imported copies in other pages (properties may differ — imports typically show only the key properties)
+3. Run `inspect` on pages that import the concept to verify edges still connect
+
+**Imported classes are lightweight copies** — they show the concept name, stereotype, and key properties only. They don't need full operations or invariants (those live in the home model).
+
+## Domain Model Type Conventions
+
+- **Enum types** for constrained options: `EnumType name {value1, value2, ...}` — not `String name (option1/option2)`
+- **Derived properties** with invariants: `Number cost` + `Invariant: cost = rank × 2` — not `calculate_cost() → Number`
+- **Invariants** for all rules, formulas, and constraints — not embedded in property descriptions or operation signatures
+
+## Class Diagram Rules
+
+Rules tagged `class_diagram` in `rules/` govern diagram rendering conventions. These are injected when using the class diagram CLI tool — they are NOT part of synthesis run instructions. Apply them during the rendering workflow below.
+
+Key rules:
+- **Hierarchy flow** — base classes top, children below (`domain-ooa-diagram-hierarchy-flow.md`)
+- **Cross-model imports** — import base classes that establish ancestry context (`domain-ooa-diagram-cross-model-imports.md`)
+- **Edge routing** — explicit exit/entry points when multiple edges share a source (`domain-ooa-diagram-edge-routing.md`)
+
+## AI Workflow for Rendering
+
+After producing domain model output for a slice:
+
+1. **Review `class_diagram` rules** — apply positioning and edge conventions from `rules/domain-ooa-diagram-*.md`
+2. **Init** page if needed: `init <file> --page "<Model Name>"`
+3. **Add classes** with properties, operations, invariants at planned grid positions (base classes top, children below)
+4. **Add edges** — inheritance first (defines vertical structure), then composition/aggregation, then associations/dependencies. Use explicit exitX/exitY/entryX/entryY when multiple edges leave the same class.
+5. **Inspect** to check for overlaps and edge routing
+6. **Move** any classes that overlap or cause edge crossings
+7. **Verify** sync: `sync-to-model` should report "no changes" (diagram matches model)
+
+When user edits the diagram in DrawIO:
+
+1. User saves the diagram
+2. Run `sync-to-model` to see diffs and apply changes back to `domain-model.md`
 
 ---
 

@@ -1,101 +1,45 @@
 <!-- section: story_synthesizer.context -->
 # Context Preparation
 
-Prepared context is a foundational component that needs to be roesent before the skill can run. Check for prepared context when setting up or updating a skill space. Check for prepared context before starting a session or running a skill. Each step cascades: chunking before scanning, scanning before deep analysis.
+Prepared context is a foundational component that must be present before the skill can run. Each step cascades: chunking before evidence extraction, evidence extraction before AI passes.
 
 ## Chunking
 
-Source documents (PDF, PPTX, DOCX) must be chunked into markdown using the abd-context-to-memory skill before analysis. The `get_instructions` command validates this automatically — if documents are unchunked or stale, it warns with the command to run.
+Source documents (PDF, PPTX, DOCX) must be chunked into markdown using the `abd-context-to-memory` skill before any analysis. The `get_instructions` command validates this automatically — if documents are unchunked or stale, it warns with the command to run.
 
 - **Raw context:** Categorize what you have — source paths, chunk count, chunk types, section mapping. Example: "312 sections; Accounts 12–45, Transactions 46–95, Compliance 150–200; chunk types: account definitions, transaction rules, validation policies."
 - **Existing structure:** If output already exists: "these stories", "all these epics", "Epic 2 and its sub-epics".
 
-## Concept Tracking
+## Evidence Extraction Pipeline
 
-Run `concept_tracker.py` to extract terms from chunks and build a cross-reference matrix. Required before foundational models — if not available, stop and report the error.
+After chunking, run the evidence extraction pipeline to build structured evidence from the normalized chunks. See `pieces/evidence.md` for the full pipeline specification.
 
 ```bash
-python scripts/concept_tracker.py seed --source <domain-model-or-wordlist>   # optional: seed glossary
+python scripts/build.py extract_evidence
+```
+
+This runs scripts 01–07 in sequence:
+1. `01_analyze_chunks.py` — validate and index existing chunks
+2. `02_extract_terms.py` — noun phrases, defined terms, vocabulary index
+3. `03_extract_actions.py` — subject-verb-object behavioral facts
+4. `04_extract_decisions.py` — conditional logic and rules
+5. `05_extract_variations.py` — behavior axes and mode differences
+6. `06_extract_states.py` — stateful entities and explicit relationships
+7. `07_consolidate_evidence.py` — build evidence graph with links, clusters, hotspots
+
+**Output:** `evidence_graph.json` and `evidence_summary.md` in `<workspace>/context/consolidated/`.
+
+## Concept Tracking (Optional)
+
+The `concept_tracker.py` tool remains available as a supplementary tool for quick term frequency and co-occurrence analysis. It is not required — the evidence extraction pipeline subsumes its function with richer evidence types.
+
+```bash
 python scripts/concept_tracker.py scan --context-path <context-path>
 python scripts/concept_tracker.py report <context_analysis.json> --min-units 5
 ```
 
-**Output:** `context_analysis.json` (first version). Deep analysis extends this same file.
-
-**`context_analysis.json` first version (from concept tracker):**
-```json
-{
-  "context_path": "/workspace/context",
-  "total_units": 312,
-  "total_terms": 1845,
-  "glossary_terms_used": 22,
-  "units": [
-    { "id": "section_042", "path": "rules/section_042.md", "terms": ["Account", "Transaction", "ValidationRule"] }
-  ],
-  "term_index": {
-    "Account": ["section_012", "section_042", "section_078", "section_155"],
-    "Transaction": ["section_042", "section_090", "section_155"]
-  },
-  "cross_references": [
-    { "term": "Account", "unit_count": 145 },
-    { "term": "Transaction", "unit_count": 112 }
-  ],
-  "co_occurrence": [
-    { "terms": ["Account", "Transaction"], "count": 98 },
-    { "terms": ["Transaction", "ValidationRule"], "count": 74 }
-  ]
-}
-```
-
-## Concept Deep Analysis
-
-The concept tracker finds *what terms exist* and *where they co-occur*, but does NOT reveal mechanical variation. Before writing foundational models or variation analysis, deep-read the source chunks for each candidate model.
-
-1. Use `term_index` from `context_analysis.json` to find which chunks contain each candidate model's key terms
-2. For each candidate model, read 3–5 representative chunks
-3. Extract the mechanically distinct categories by taking the time to **reading the actual source text again** — not from ai memory
-4. Save results back to `context_analysis.json` — add a `deep_analysis` key to the existing file
-
-**Deep analysis extends `context_analysis.json` with:**
-```json
-{
-  "context_path": "...",
-  "total_units": 312,
-  "total_terms": 1845,
-  "term_index": { "..." : "..." },
-  "cross_references": [ "..." ],
-  "co_occurrence": [ "..." ],
-  "deep_analysis": {
-    "models": [
-      {
-        "name": "Transaction Processing",
-        "key_terms": ["Account", "Transaction", "ValidationRule"],
-        "chunks_read": ["section_042.md", "section_090.md", "section_155.md"],
-        "categories": [
-          { "name": "Wire Transfer", "description": "Requires SWIFT code, multi-day settlement", "examples": ["domestic wire", "international wire"] },
-          { "name": "ACH Transfer", "description": "Batch processing, routing number, same-day or next-day", "examples": ["payroll", "vendor payment"] }
-        ]
-      }
-    ],
-    "timestamp": "2026-03-11T15:30:00"
-  }
-}
-```
-
 ## Variation Analysis
 
-The deep analysis categories already identify what varies within each model. This step formalizes it: per model, what's consistent, what differs, what extends with new behavior (→ story) vs adds data to same behavior (→ example).
+The evidence extraction pipeline captures variations (script 05). For deeper analysis, review the extracted variations and formalize: per mechanism, what's consistent, what differs, what extends with new behavior (→ story) vs adds data to same behavior (→ example).
 
-Save to `context_analysis.json` under `deep_analysis.models[].variation`:
-
-```json
-{
-  "name": "Effect System",
-  "categories": [ "..." ],
-  "variation": {
-    "consistent": "All effects share action, range, duration, cost_per_rank, extras, flaws",
-    "story_vs_example": "Each mechanically distinct category is a story. Specific effects within a category are examples.",
-    "business_rules": ["Alternate Effects share a slot", "Linked effects trigger together"]
-  }
-}
-```
+Variation analysis can be saved to `context_analysis.json` under each model's `variation` key for use in session strategy.
