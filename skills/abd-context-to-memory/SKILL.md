@@ -52,8 +52,9 @@ Use `link_workspace_source.py` to create links before converting.
 
 1. **Convert**: Use `markitdown` to convert supported files to markdown. Images extracted and referenced. **SharePoint links**: When source is in OneDrive, SharePoint URLs are auto-injected from `sharepoint_mapping.json` so links work for anyone.
 2. **Chunk**: Split large markdown by slides (decks) or headings (docs). Small files stay as single chunks.
-3. **Sync SharePoint URLs**: Replace source paths with SharePoint URLs; fix URL order; add `wdSlideIndex` (pptx) / `page` (pdf) for direct slide/page links. Run automatically in `index_memory --path` pipeline.
-4. **Embed + Index** (RAG): Embed chunks with sentence-transformers, store in ChromaDB for semantic search.
+3. **Index chunks**: Build `chunk_index.json` with stable IDs, paths, and section mapping. **Mandatory for abd-story-synthesizer** — required for evidence extraction. Writes to `<workspace>/story-synthesizer/context/chunk_index.json` when that path exists.
+4. **Sync SharePoint URLs**: Replace source paths with SharePoint URLs; fix URL order; add `wdSlideIndex` (pptx) / `page` (pdf) for direct slide/page links. Run automatically in `index_memory --path` pipeline.
+5. **Embed + Index** (RAG): Embed chunks with sentence-transformers, store in ChromaDB for semantic search.
 
 ## Semantic Search (RAG)
 
@@ -77,11 +78,12 @@ Run from workspace root. Scripts in `skills/abd-context-to-memory/scripts/`.
 - `index_memory.py --replace` — rebuild entire vector index from all memory
 - `search_memory.py "<query>" [--k 5] [--format text|json]` — semantic search; returns top-k chunks
 
-**Convert + chunk:**
+**Convert + chunk + index:**
 - `link_workspace_source.py --path <folder> [--name <link_name>]` or `--workspace <folder_name>` — **run on request** when adding content to memory; creates junction/symlink in `source/` so skills can access the folder
 - `convert_to_markdown.py --file <file_path>` — **single file only** (use when user asks for one file); writes markdown alongside the source file (same folder)
 - `convert_to_markdown.py --memory <source_path>` — folder (all supported files). When source is in OneDrive, SharePoint URLs are auto-injected via `sharepoint_mapping.json`.
 - `chunk_markdown.py --path <source_folder> [--memory <memory_name>]` — reads from source, writes to memory/<name>/
+- `index_chunks.py --context-path <chunk_folder> [--output <path>]` — build chunk_index.json for abd-story-synthesizer. **Mandatory for context preparation.** Run after chunk. Writes to `<workspace>/story-synthesizer/context/chunk_index.json` by default.
 - `embed_and_index.py [--memory <memory_name>] [--replace]` — embed chunks from memory/<name>/ into FAISS index (called by index_memory)
 - `sync_sharepoint_urls.py [--memory <memory_name>]` — run after chunk when source has `source/... | https://...`; replaces with SharePoint URL, fixes URL order, adds `wdSlideIndex` (pptx) / `page` (pdf) for direct links
 - `add_sharepoint_mapping.py --prefix "OneDrive - X" --base "<url>"` — add OneDrive→SharePoint mapping. Paste URL from browser; script derives base. Use when convert warns about missing mapping.

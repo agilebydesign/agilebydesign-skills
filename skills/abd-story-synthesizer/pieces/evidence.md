@@ -34,13 +34,13 @@ All extraction scripts write into a shared structure:
 
 ## Evidence Extraction Scripts
 
-### 01_analyze_chunks.py
+### Chunk index (abd-context-to-memory)
 
-Runs on chunks that already exist from `abd-context-to-memory`. Does NOT re-chunk.
+**Chunk index creation lives in `abd-context-to-memory`.** Run `index_memory.py --path <context_folder>` or `index_chunks.py --context-path <chunk_folder>` from that skill. Mandatory before `extract_evidence`.
 
 - Validates chunk readiness: chunks present, count, paths, duplicates
 - Builds chunk index with stable IDs, source locations, section mapping
-- Output: `<workspace>/context/normalized/chunk_index.json`
+- Output: `<workspace>/story-synthesizer/context/chunk_index.json`
 
 ### 02_extract_terms.py
 
@@ -88,14 +88,25 @@ Builds the AI-ready evidence graph from all extracted evidence.
 
 ## File Layout
 
+**Source vs chunks:** Original content (PDF, PPTX, etc.) can live anywhere — track its path. The **chunks** (markdown output from `abd-context-to-memory`) must live in `story-synthesizer/context/`, not alongside the PDF. If no context path is configured, the skill looks in `context/` at workspace root for the **source** to chunk; chunk output goes to `story-synthesizer/context/`.
+
+All processed context and evidence live under `story-synthesizer/`:
+
 ```
-<skill_space>/
-  context/
-    raw/                    # original source files (chunked by abd-context-to-memory)
-    normalized/             # chunk_index.json from 01_analyze_chunks
-    extracted/              # terms, actions, decisions, variations, states, relationships
-    consolidated/           # evidence_graph.json, evidence_summary.md
+<workspace>/
+  context/                  # original source (PDF, etc.) — default when none set; chunks go to story-synthesizer
+  story-synthesizer/
+    context/                # processed context
+      chunks/               # chunk files (.md from abd-context-to-memory)
+      chunk_index.json      # from abd-context-to-memory (index_chunks)
+      context_analysis.json # from concept_tracker scan
+      glossary.json         # from concept_tracker seed
+    evidence/               # all evidence outputs
+      terms.json, actions.json, decisions.json, variations.json, states.json, relationships.json
+      evidence_graph.json, evidence_summary.md
 ```
+
+**context_paths** in config points to `story-synthesizer/context/` (where chunks live) for evidence extraction.
 
 ## How Evidence Maps to Domain Model
 
@@ -111,7 +122,7 @@ Builds the AI-ready evidence graph from all extracted evidence.
 ## Running the Pipeline
 
 ```bash
-python scripts/01_analyze_chunks.py --context-path <path>
+# Chunk index: run from abd-context-to-memory first (index_memory.py or index_chunks.py)
 python scripts/02_extract_terms.py --chunks <chunk_index.json>
 python scripts/03_extract_actions.py --chunks <chunk_index.json>
 python scripts/04_extract_decisions.py --chunks <chunk_index.json>

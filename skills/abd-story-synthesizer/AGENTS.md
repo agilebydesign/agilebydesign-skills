@@ -3,15 +3,15 @@
 
 The story synthesizer skill turns context into an **Interaction Tree** and **Domain Model** — meaningful exchanges between actors, plus the domain concepts and state that support them. Outputs: story map, domain model, acceptance criteria, specifications.
 
-The core principle: **Do not go from text to classes. Go from context → mechanisms → behavior owners → object model.**
-
-The skill uses a **17-step pipeline** that separates mechanical evidence extraction (CODE) from analytical reasoning (AI). Scripts extract structured evidence from context; AI operates on the evidence graph through focused passes — never on raw text directly.
-
 **Interaction Tree:** Epic → Story → Scenario → Step. Epics can nest (an epic whose parent is an epic is sometimes called a sub-epic). Epics group stories; the story is the backbone — the smallest unit that is both valuable and independently deliverable. Each epic and story can have Pre-Condition, Trigger, and Response. Scenarios optionally group steps; steps are atomic interactions.
 
-**Domain Model:** Domain Models describe the state found in Pre-Condition, Trigger, and Response. **Domain Concepts** (the things that hold state and get operated on) are referenced via `**Concept**` in the name/labels of Interaction tree elements. Domain concepts emerge from the evidence pipeline — through behavior packet detection, mechanism synthesis, and decision ownership — not from surface noun extraction. Interaction Tree and Domain Model evolve together — no drift.
+**Domain Model:** Domain Models describe the state found in Pre-Condition, Trigger, and Response. **Domain Concepts** (the things that hold state and get operated on) are referenced via `**Concept**` in the name/labels of Interaction tree elements.
 
-**Evidence Pipeline:** Term scanning is only an **index**, not the model. The actual OOAD reasoning uses the **evidence graph** — structured facts about actions, decisions, variations, states, and relationships extracted from context by scripts, then analyzed by AI in focused passes.
+The core principle: **Do not go from text to classes. Go from context → mechanisms → behavior owners → object model.**
+
+ Domain concepts emerge from the use of a **17-step pipeline** that separates mechanical evidence extraction (CODE) from analytical reasoning (AI). Scripts extract structured evidence from contex into an **evidence graph** — actions, decisions, variations, states, and relationships.
+ 
+ AI then operates on the evidence graph through focused passes — never on raw text directly. The evidence pipeline creates object models through behavior packet detection, mechanism synthesis, and decision ownership — not from surface noun extraction. Interaction Tree and Domain Model evolve together — no drift.
 
 ---
 
@@ -107,7 +107,7 @@ Missing or implicit concepts that appear necessary to explain the rules but are 
 
 ## Output Location
 
-Write to `<session>/concept_scan.md`.
+Write to `<workspace>/story-synthesizer/concept_scan.md`.
 
 ---
 
@@ -147,13 +147,13 @@ All extraction scripts write into a shared structure:
 
 ## Evidence Extraction Scripts
 
-### 01_analyze_chunks.py
+### Chunk index (abd-context-to-memory)
 
-Runs on chunks that already exist from `abd-context-to-memory`. Does NOT re-chunk.
+**Chunk index creation lives in `abd-context-to-memory`.** Run `index_memory.py --path <context_folder>` or `index_chunks.py --context-path <chunk_folder>` from that skill. Mandatory before `extract_evidence`.
 
 - Validates chunk readiness: chunks present, count, paths, duplicates
 - Builds chunk index with stable IDs, source locations, section mapping
-- Output: `<workspace>/context/normalized/chunk_index.json`
+- Output: `<workspace>/story-synthesizer/context/chunk_index.json`
 
 ### 02_extract_terms.py
 
@@ -201,14 +201,25 @@ Builds the AI-ready evidence graph from all extracted evidence.
 
 ## File Layout
 
+**Source vs chunks:** Original content (PDF, PPTX, etc.) can live anywhere — track its path. The **chunks** (markdown output from `abd-context-to-memory`) must live in `story-synthesizer/context/`, not alongside the PDF. If no context path is configured, the skill looks in `context/` at workspace root for the **source** to chunk; chunk output goes to `story-synthesizer/context/`.
+
+All processed context and evidence live under `story-synthesizer/`:
+
 ```
-<skill_space>/
-  context/
-    raw/                    # original source files (chunked by abd-context-to-memory)
-    normalized/             # chunk_index.json from 01_analyze_chunks
-    extracted/              # terms, actions, decisions, variations, states, relationships
-    consolidated/           # evidence_graph.json, evidence_summary.md
+<workspace>/
+  context/                  # original source (PDF, etc.) — default when none set; chunks go to story-synthesizer
+  story-synthesizer/
+    context/                # processed context
+      chunks/               # chunk files (.md from abd-context-to-memory)
+      chunk_index.json      # from abd-context-to-memory (index_chunks)
+      context_analysis.json # from concept_tracker scan
+      glossary.json         # from concept_tracker seed
+    evidence/               # all evidence outputs
+      terms.json, actions.json, decisions.json, variations.json, states.json, relationships.json
+      evidence_graph.json, evidence_summary.md
 ```
+
+**context_paths** in config points to `story-synthesizer/context/` (where chunks live) for evidence extraction.
 
 ## How Evidence Maps to Domain Model
 
@@ -224,7 +235,7 @@ Builds the AI-ready evidence graph from all extracted evidence.
 ## Running the Pipeline
 
 ```bash
-python scripts/01_analyze_chunks.py --context-path <path>
+# Chunk index: run from abd-context-to-memory first (index_memory.py or index_chunks.py)
 python scripts/02_extract_terms.py --chunks <chunk_index.json>
 python scripts/03_extract_actions.py --chunks <chunk_index.json>
 python scripts/04_extract_decisions.py --chunks <chunk_index.json>
@@ -238,220 +249,6 @@ Or use the build script shortcut:
 ```bash
 python scripts/build.py extract_evidence
 ```
-
----
-
-<!-- section: story_synthesizer.ai_passes -->
-# AI Modeling Passes
-
-AI operates **only after evidence extraction**. The AI receives the evidence graph, not raw context. Passes are organized into Pass A (Discovery) and Pass B (Validation + Repair).
-
-## Three Rules That Must Never Be Violated
-
-1. **Do not go from nouns to classes.** Terms are index entries. Objects emerge from owned behavior, decisions, and state.
-2. **Do not assign behavior to services until you fail to find a real owner.** Bias toward the information expert.
-3. **Do not introduce inheritance until the domain proves substitutability and shared semantics.**
-
----
-
-<!-- section: story_synthesizer.ai_passes.discovery -->
-## Pass A: Discovery (Steps 9–14)
-
-### Step 9 — Behavior Packet Detection
-
-Detect coherent behavioral mechanisms before creating objects.
-
-A behavior packet is a cluster of actions, decisions, required state, outputs, and variation rules that together form one mechanism.
-
-**For each packet produce:**
-- Name and description
-- Actions included
-- Decisions included
-- Required state (information needed)
-- Outputs and state changes
-- Variation axis (if any)
-- Likely role: domain object, value object, policy/strategy, state holder, or orchestration
-- Evidence references
-
-**Why this matters:** Behavior packets prevent the classic mistake of terms becoming classes and behavior getting pushed into services.
-
-### Step 10 — Mechanism Synthesis
-
-Move from packets to domain mechanisms. Ask:
-- Which packets are facets of one deeper mechanism?
-- Which mechanisms interact?
-- Which mechanisms own important transitions, decisions, and outcomes?
-
-**For each mechanism produce:**
-- Name
-- Inputs and outputs
-- Internal decisions
-- External collaborators
-- Variation axes
-- State touched
-- Invariants enforced
-
-**Why this matters:** Sometimes a packet is too small. Several packets may be one mechanism (e.g. targeting, delivery, resistance, condition progression). This finds the real structural seams. Objects should emerge from mechanisms, not the reverse.
-
-### Step 11 — Decision Ownership
-
-Assign each important decision to the concept that should own it.
-
-**For each decision ask:**
-- Who has the information needed?
-- Who should own the rule?
-- Who should enforce the invariant?
-- Who should control the transition?
-- Who should compute the outcome?
-- Who should NOT own this?
-
-**Rule:** Bias toward the information expert, not toward a controller or manager.
-
-**For each mechanism produce:**
-- Decision owner
-- Collaborators required
-- What remains orchestration only
-- What should be polymorphic
-- What should be stateful
-- What should stay value-like
-
-### Step 12 — Object Candidate Formation
-
-Derive candidate objects from owned behavior and state.
-
-**An object candidate must justify itself by at least one of:**
-- Owns important decisions
-- Enforces invariants
-- Owns meaningful lifecycle or state
-- Coordinates a tight behavior cluster as the natural expert
-- Represents a cohesive value with validation and behavior
-- Represents a true relationship with behavior of its own
-
-If it is just "a noun that exists," it is not yet a valid object candidate.
-
-**Output categories:**
-- Domain entities
-- Value objects
-- Policies or strategies
-- State holders
-- Relationship objects
-- Orchestration or application services (thin)
-
-### Step 13 — Relationship and Boundary Modeling
-
-Define real relationships based on behavior, not diagram aesthetics.
-
-**For each relationship ask:**
-- What behavior crosses this relationship?
-- What decisions depend on it?
-- Does the relationship have its own lifecycle or rules?
-- Is it actually a hidden concept of its own?
-- Is this ownership, association, collaboration, containment, or dependency?
-- What consistency boundary applies?
-
-**Also identify:**
-- Aggregate-like boundaries
-- State ownership boundaries
-- Responsibility boundaries
-- Creation and mutation boundaries
-
-**Why this matters:** Fake relationships are one of the biggest causes of bad OO models. A relationship should exist because behavior needs it, not because nouns co-occur.
-
-### Step 14 — Inheritance Test
-
-Use inheritance only when the domain truly supports it. Test every proposed base/subtype structure:
-
-1. **Shared identity or just shared algorithm?** If only shared algorithm, prefer strategy, policy, or composition.
-2. **Stable substitutability?** Can every subtype truly stand in for the base without breaking behavior?
-3. **Shared invariants?** Do subtypes inherit meaningful rules, not just fields?
-4. **Variation in behavior or just configuration?** If the difference is data or config, do not create subtype inheritance.
-5. **Does the hierarchy reflect the domain or the implementation?** If it is only convenient for code reuse, it is probably wrong.
-
-**Good inheritance usually appears when:**
-- The domain itself has a stable is-a structure
-- The base has real semantics
-- The subtypes share meaningful invariants and protocol
-
-**Otherwise prefer:** composition, strategy, role objects, policies, tagged value types.
-
----
-
-<!-- section: story_synthesizer.ai_passes.validation -->
-## Pass B: Validation + Repair (Steps 15–17)
-
-### Step 15 — Scenario / Message Walkthrough Validation
-
-Make sure the model can actually behave. A model that looks elegant but fails in message flow is not good OOAD.
-
-**Run walkthroughs for:**
-- Happy path
-- Error path
-- Edge case
-- Exception path
-- Stateful repetition
-- Alternate variation mode
-- Recovery, retry, or cancellation where relevant
-
-**Validate at two levels:**
-
-**Scenario flow:** What happens in the domain?
-
-**Message flow:** Which object sends what message to whom? Does the receiver know enough to act? Is the sender delegating a decision or making it centrally?
-
-**This step exposes:** missing objects, misplaced behavior, centralization, fake relationships, state with no owner.
-
-### Step 16 — Anemia / Centralization Critique
-
-Explicitly attack the candidate model before accepting it. This phase is mandatory.
-
-**Look for:**
-- Centralized handlers, resolvers, or managers
-- Anemic entities with no decisions
-- Objects that are just data bags
-- Config-holder pseudo-objects
-- Orphan concepts (referenced but not modeled)
-- State with no owner
-- Rules with no owner
-- Fake inheritance (shared fields, no shared semantics)
-- Type, mode, or effect switches that should be polymorphism
-- Orchestration making domain decisions
-- Relationships with no behavioral significance
-
-**AI must propose minimal corrections** for each issue found.
-
-### Step 17 — Final OO Domain Model
-
-Produce the final model only after the previous passes have stabilized.
-
-**For each object:**
-- Name
-- Purpose
-- Core state (properties)
-- Decisions owned
-- Invariants enforced
-- Collaborators
-- Messages sent and received
-- Lifecycle ownership (if applicable)
-
-**Also include:**
-- Polymorphic families
-- Value objects
-- Real relationship types (with behavioral justification)
-- Boundary notes
-- Orchestration skeleton (thin)
-- Unresolved ambiguities
-- Rejected alternatives (if useful)
-
-**The final model should be a consequence of the earlier reasoning, not a guess.**
-
----
-
-## Recommended Execution
-
-Use the pipeline as two operations:
-
-- **`model_discovery`** — Steps 9–14 (Pass A). The model emerges.
-- **`model_validation`** — Steps 15–17 (Pass B). The model survives critique.
 
 ---
 
@@ -476,6 +273,8 @@ An interaction is a single meaningful exchange between two actors that results i
 - **Children** — child interactions of this interaction.
 
 ### Interaction Tree Rules
+
+**Epics from context (not slices):** **DO NOT** name epics after slices. Epics and sub-epics come from the larger context (goal, domain, concept map, evidence) — they are functional. Place slice stories under appropriate sub-epics. Mark remainder as estimated.
 
 **Node Hierarchy**
 - Epic - Can nest to have epic children or story children. An epic whose parent is an epic is sometimes called a sub-epic. Names are typically simple verb-noun.
@@ -802,6 +601,8 @@ A typical reference hierarchy for making a country-specific payment (trigger, ma
 <!-- section: story_synthesizer.interaction.output -->
 ## Output Format
 
+**Output path:** `<workspace>/story-synthesizer/interactions/interaction-tree.md`
+
 Format specification for the Interaction Tree output. See the Complete Example above for a full reference.
 
 **Constraints:** Any node can have a `Constraints:` collection — qualitative instructions on how the interaction is shaped. Each constraint may be a sentence, a file path, or (most commonly) a markdown reference. Inherited high to low. Typically at epic or story level; may appear in steps.
@@ -905,20 +706,97 @@ Entity table (scenario + fields):
 
 ## Evidence-Driven Domain Discovery
 
-Domain concepts in this skill emerge from the evidence pipeline — not from direct synthesis of raw context. The path is:
+Domain concepts emerge from the evidence pipeline — not from direct synthesis of raw context. The core principle: **do not go from nouns to classes. Go from context → mechanisms → behavior owners → object model.**
 
-1. **Evidence extraction** (scripts) produces structured facts: actions, decisions, variations, states, relationships
-2. **Concept scan** (AI) identifies primitives, mechanisms, and authority boundaries
-3. **Behavior packet detection** (AI) clusters evidence into coherent mechanisms
-4. **Mechanism synthesis** (AI) finds the real structural seams
-5. **Decision ownership** (AI) assigns rules to the concepts that should own them
-6. **Object candidate formation** (AI) derives candidates justified by owned behavior
+The pipeline has two stages: **upfront preparation** (done once per workspace) and **per-run modeling** (done on every slice run, regardless of session type).
 
-See `pieces/ai_passes.md` for the full AI pass specifications.
+### Upfront (done once, as part of session start)
 
-### Object Candidate Justification
+These steps produce the raw material that all runs operate on. They execute during session creation (Phases 2–4 in the process) before any slices run:
 
-An object candidate must justify itself by at least one of:
+1. **Evidence extraction** (CODE, scripts 02–07) — produces structured facts: actions, decisions, variations, states, relationships. Output: `evidence_graph.json`.
+2. **Concept scan** (AI) — identifies core primitives, interaction phases, authority boundaries, variation axes, and implicit concepts. Output: `concept_scan.md`.
+
+### Per-Run (done on every slice, every session type)
+
+Every run that discovers new evidence must model it. The OOAD modeling steps execute on every slice — what varies is **depth**, not which steps run:
+
+3. **Behavior packet detection** — cluster slice-scoped evidence into coherent mechanisms
+4. **Mechanism synthesis** — find the real structural seams from packets
+5. **Decision ownership** — assign each decision to the concept that should own it
+6. **Object candidate formation** — derive candidates justified by owned behavior
+
+The depth of modeling varies by session type (discovery, exploration, specification). See `pieces/session.md` for what each session type produces.
+
+### Three Rules That Must Never Be Violated
+
+1. **Do not go from nouns to classes.** Terms are index entries. Objects emerge from owned behavior, decisions, and state.
+2. **Do not assign behavior to services until you fail to find a real owner.** Bias toward the information expert.
+3. **Do not introduce inheritance until the domain proves substitutability and shared semantics.**
+
+### Behavior Packet Detection
+
+Detect coherent behavioral mechanisms before creating objects.
+
+A behavior packet is a cluster of actions, decisions, required state, outputs, and variation rules that together form one mechanism.
+
+**For each packet produce:**
+- Name and description
+- Actions included
+- Decisions included
+- Required state (information needed)
+- Outputs and state changes
+- Variation axis (if any)
+- Likely role: domain object, value object, policy/strategy, state holder, or orchestration
+- Evidence references
+
+**Why this matters:** Behavior packets prevent the classic mistake of terms becoming classes and behavior getting pushed into services.
+
+### Mechanism Synthesis
+
+Move from packets to domain mechanisms. Ask:
+- Which packets are facets of one deeper mechanism?
+- Which mechanisms interact?
+- Which mechanisms own important transitions, decisions, and outcomes?
+
+**For each mechanism produce:**
+- Name
+- Inputs and outputs
+- Internal decisions
+- External collaborators
+- Variation axes
+- State touched
+- Invariants enforced
+
+**Why this matters:** Sometimes a packet is too small. Several packets may be one mechanism (e.g. targeting, delivery, resistance, condition progression). This finds the real structural seams. Objects should emerge from mechanisms, not the reverse.
+
+### Decision Ownership
+
+Assign each important decision to the concept that should own it.
+
+**For each decision ask:**
+- Who has the information needed?
+- Who should own the rule?
+- Who should enforce the invariant?
+- Who should control the transition?
+- Who should compute the outcome?
+- Who should NOT own this?
+
+**Rule:** Bias toward the information expert, not toward a controller or manager.
+
+**For each mechanism produce:**
+- Decision owner
+- Collaborators required
+- What remains orchestration only
+- What should be polymorphic
+- What should be stateful
+- What should stay value-like
+
+### Object Candidate Formation
+
+Derive candidate objects from owned behavior and state.
+
+**An object candidate must justify itself by at least one of:**
 - Owns important decisions
 - Enforces invariants
 - Owns meaningful lifecycle or state
@@ -928,52 +806,207 @@ An object candidate must justify itself by at least one of:
 
 If it is just "a noun that exists," it is not yet a valid object candidate.
 
+**Output categories:**
+- Domain entities
+- Value objects
+- Policies or strategies
+- State holders
+- Relationship objects
+- Orchestration or application services (thin)
+
+### Relationship and Boundary Modeling
+
+Define real relationships based on behavior, not diagram aesthetics.
+
+**For each relationship ask:**
+- What behavior crosses this relationship?
+- What decisions depend on it?
+- Does the relationship have its own lifecycle or rules?
+- Is it actually a hidden concept of its own?
+- Is this ownership, association, collaboration, containment, or dependency?
+- What consistency boundary applies?
+
+**Also identify:**
+- Aggregate-like boundaries
+- State ownership boundaries
+- Responsibility boundaries
+- Creation and mutation boundaries
+
+**Why this matters:** Fake relationships are one of the biggest causes of bad OO models. A relationship should exist because behavior needs it, not because nouns co-occur.
+
+### Inheritance Test
+
+Use inheritance only when the domain truly supports it. Test every proposed base/subtype structure:
+
+1. **Shared identity or just shared algorithm?** If only shared algorithm, prefer strategy, policy, or composition.
+2. **Stable substitutability?** Can every subtype truly stand in for the base without breaking behavior?
+3. **Shared invariants?** Do subtypes inherit meaningful rules, not just fields?
+4. **Variation in behavior or just configuration?** If the difference is data or config, do not create subtype inheritance.
+5. **Does the hierarchy reflect the domain or the implementation?** If it is only convenient for code reuse, it is probably wrong.
+
+**Good inheritance usually appears when:**
+- The domain itself has a stable is-a structure
+- The base has real semantics
+- The subtypes share meaningful invariants and protocol
+
+**Otherwise prefer:** composition, strategy, role objects, policies, tagged value types.
+
+### Model Validation
+
+Attack the candidate model before accepting it. This is mandatory on every run.
+
+#### Scenario / Message Walkthrough
+
+Make sure the model can actually behave. A model that looks elegant but fails in message flow is not good OOAD.
+
+**Run walkthroughs for:**
+- Happy path
+- Error path
+- Edge case
+- Exception path
+- Stateful repetition
+- Alternate variation mode
+- Recovery, retry, or cancellation where relevant
+
+**Validate at two levels:**
+
+**Scenario flow:** What happens in the domain?
+
+**Message flow:** Which object sends what message to whom? Does the receiver know enough to act? Is the sender delegating a decision or making it centrally?
+
+**This step exposes:** missing objects, misplaced behavior, centralization, fake relationships, state with no owner.
+
+#### Anemia / Centralization Critique
+
+Explicitly attack the candidate model before accepting it.
+
+**Look for:**
+- Centralized handlers, resolvers, or managers
+- Anemic entities with no decisions
+- Objects that are just data bags
+- Config-holder pseudo-objects
+- Orphan concepts (referenced but not modeled)
+- State with no owner
+- Rules with no owner
+- Fake inheritance (shared fields, no shared semantics)
+- Type, mode, or effect switches that should be polymorphism
+- Orchestration making domain decisions
+- Relationships with no behavioral significance
+
+**AI must propose minimal corrections** for each issue found.
+
+#### Final Domain Model Output
+
+Produce the final model only after the previous steps have stabilized.
+
+**For each object:**
+- Name
+- Purpose
+- Core state (properties)
+- Decisions owned
+- Invariants enforced
+- Collaborators
+- Messages sent and received
+- Lifecycle ownership (if applicable)
+
+**Also include:**
+- Polymorphic families
+- Value objects
+- Real relationship types (with behavioral justification)
+- Boundary notes
+- Orchestration skeleton (thin)
+- Unresolved ambiguities
+- Rejected alternatives (if useful)
+
+**The final model should be a consequence of the earlier reasoning, not a guess.**
+
 ---
 
-## Module
+## Domain Model Structure
 
-Grouping of tightly related concepts.
+The Domain Model holds **modules**, **domain concepts**, and **foundational classes** — all in one file (`domain-model.md`). Concepts are referenced in interactions via `**Concept**` in Pre-Condition, Trigger, Response, and Failure-Modes. Every `**Concept**` must exist in the Domain Model. No drift between tree and model. Use source entity data, not aggregated/calculated values.
+
+### Module
+
+A grouping of tightly related concepts that collaborate around the same mechanism.
 
 - **name** — module name
 - **concepts** — list of tightly related domain concepts
 
-## Domain Concept
+Each module typically maps to one page in the class diagram.
 
-A domain concept that holds state and can be operated on (equates to a class in object oriented code). Referenced in interactions via `**Concept**` in labels. Examples live on the interaction. The Domain Model connects what concepts know and do to interactions — concepts participate as callers, receivers, and collaborators; state flows through Pre-Condition, Triggering-State, and Resulting-State.
+### Domain Concept
+
+A domain concept holds state and can be operated on (equates to a class in OO code). Concepts participate as callers, receivers, and collaborators in interactions; state flows through Pre-Condition, Triggering-State, and Resulting-State.
 
 - **Name**
-- **Module** — optional; grouping of tightly related concepts
-- **Base-Concept** — optional
-- **Properties** — with optional collaborating concepts and invariants. Use standard types: String, Number, Boolean, List, Dictionary, UniqueID, Instant. Use `List<T>` or `Dictionary<K,V>` when element types matter. 
+- **Module** — which module this concept belongs to
+- **Base-Concept** — optional; parent concept for inheritance
+- **Foundational** — tag `[foundational]` if this is a core class (see below)
+- **Properties** — with optional collaborating concepts and invariants. Use standard types: String, Number, Boolean, List, Dictionary, UniqueID, Instant. Use `List<T>` or `Dictionary<K,V>` when element types matter.
 - **type selection:** Use `Dictionary<K,V>` when items are accessed by a key (name, type, id) — this applies to most "has many" relationships where you look up by name (e.g. abilities by type, skills by name, features by name). Use `List<T>` only when order matters and items are accessed by position (e.g. turn order, degree progression, sequential steps). Default to `Dictionary` for named domain collections.
 - **Operations** — with optional collaborating concepts and invariants. It should be easy to reverse engineer the interactions in the interaction diagram to at least some level of operations on the Domain Model.
 
 **Concept relationships:** When a concept "has" another concept, use composition (strong has-a; part cannot exist without whole) or aggregation (weak has-a; whole has no meaning without multiple instances of the same part — e.g. crowd, flock, mob). Prefer composition/aggregation over inheritance.
 
----
+### Foundational Classes
 
+A **foundational class** is a domain concept tagged `[foundational]`. Foundational classes are the stable core that everything else hangs off — the base collaborations that repeat across the system. Later slices add concepts that extend or use foundational classes, but the foundational classes themselves remain stable.
 
+There is one domain model, not separate "foundational" and "full" models. The tag distinguishes core classes from extensions.
 
-## Example: Domain Model for Country-Specific Payment (from Interaction Tree)
+Example: in a payments system, Account + Transaction + ValidationRule collaborate the same way whether you're processing a wire transfer, ACH, or direct debit. These three are foundational classes. Wire, ACH, and direct debit are extensions added in later slices.
 
-Based on the Complete Example in the Interaction Tree (Make **Country**-specific **PaymentType**), here are the corresponding domain concepts:
+**How foundational classes emerge:**
 
-### Module: Payment
+Foundational classes are identified through the OOAD pipeline, not by scanning for nouns:
+
+1. **Evidence graph hotspots** — high co-occurrence terms indicate tightly collaborating concepts. These are foundational candidates.
+2. **Concept scan primitives** — core primitives and authority boundaries point to decision owners.
+3. **Behavior packet detection → mechanism synthesis → decision ownership → object candidate formation** — the per-run OOAD steps confirm candidates by demonstrating they own behavior, not just data.
+
+Do NOT trust source document categories. Do NOT group by surface similarity. Group by what objects collaborate and what operations they perform.
+
+**Lifecycle across slices:**
+
+- **Discovery slices** — produce foundational classes (base classes, core collaborations). Tag them `[foundational]`. Skip variations — if a base class has a million specializations, wait for later slices.
+- **Later discovery slices** — add more classes. Some extend foundational classes (e.g., Ability extends Trait). Some become new foundational classes if they establish a new collaboration pattern.
+- **Exploration slices** — add depth to existing classes (operations, invariants, trigger/response). May add new classes but mostly fill in what discovery sketched.
+- **Specification slices** — add examples, scenarios, edge cases. Rarely add new classes.
+
+Foundational classes get extra scrutiny: inheritance test, anemia critique, scenario walkthrough.
+
+### Output Format
+
+```
+**ConceptName** [foundational] : <Base Concept if any>
+- <type> property
+      <collaborating concepts if any>
+- <type> operation(<param>, ...)
+     <collaborating concepts if any>
+- Interactions: interaction nodes this concept is used by
+- examples: list of domain concept tables in interaction tree using this concept
+```
+
+**Output location:** `<session>/domain-model.md` between `<!-- section: foundational_models -->` and `<!-- /section: foundational_models -->` markers.
+
+### Example: Domain Model for Country-Specific Payment
+
+Based on the Complete Example in the Interaction Tree (Make **Country**-specific **PaymentType**):
+
+#### Module: Payment
 
 **Country**
-
 - String country_code
 - String country_name
 - Operations: lookup by code, list available for user
 
 **PaymentType**
-
 - String payment_type (e.g. wire, ach)
 - List fields (from PaymentTypeFieldTypes)
 - Operations: get fields for type, validate availability for country
 
 **UserPaymentAccess**
-
 - String user_name
 - String country_code
 - String payment_type
@@ -981,7 +1014,6 @@ Based on the Complete Example in the Interaction Tree (Make **Country**-specific
 - Operations: check(user, country, payment_type) → available
 
 **PaymentDetails**
-
 - String payment_type
 - Number amount
 - String currency
@@ -990,74 +1022,21 @@ Based on the Complete Example in the Interaction Tree (Make **Country**-specific
 - Operations: validate(), submit()
 
 **User**
-
 - String user_name
 - String user_role
 - Operations: has_session(), has_access(country, payment_type)
 
 **Session**
-
 - String session_id
 - Instant expires_at
 - Operations: is_active(), extend()
 
 **PaymentTypeFieldTypes**
-
 - String payment_type
 - List fields
 - Operations: get_fields(payment_type) → fields
 
-These concepts are referenced in the Interaction Tree via `**Concept**` in Pre-Condition, Trigger, Response, and Examples. The interaction tree tables (Logged In User, Active User Session, User Payment Type Access, Selected Country, PaymentDetails (wire), etc.) are example data for these concepts.
-
----
-
-
-
-## Output Format
-
-Format specification for the Domain Model output. Separate from the Interaction Tree. Concepts referenced via `**Concept**` in labels. See the Example above and the Complete Example in the Interaction piece for a full reference.
-
-```
-Concept : <Base Concept if any>
-- <type> property
-      <collaborating concepts if any>
-- <type> operation(<param>, ...)
-     <collaborating concepts if any>
-- Interactions Interaction Concept used by (root node only)
-- examples: list of domain concept tables in interaction tree using this concept
-```
-
-
-
-
-## Foundational Object Models
-
-A **foundational object model** is a subset of the domain model — a discrete set of objects, their logic, relationships, interactions, and state transitions — that serves as the base for the rest of the model. These models appear repeatedly across the system. Different parts of the system extend foundational objects but specialize with different data or rules. When you see the same objects doing the same things in multiple places, that's one foundational model.
-
-Example: in a payments system, Account + Transaction + ValidationRule collaborate the same way whether you're processing a wire transfer, ACH, or direct debit. The base collaboration (debit account, validate, settle) is the foundational model. Wire vs ACH vs direct debit are extensions — they add different validation rules and settlement timing, but the objects and operations are the same.
-
-Each foundational model likely becomes a distinct module in the domain model.
-
-**How to identify foundational models (OOAD):**
-
-1. **Find the objects.** Read through the context looking for domain nouns — things that hold state and get operated on. Not source document headings — actual things described in the content.
-2. **Find the collaborations.** For each object, what other objects does it work with? What operations do they perform on each other? What state flows between them?
-3. **Find the repetition.** Where do you see the same group of objects collaborating the same way in multiple places? That repetition is a foundational model.
-4. **Do NOT trust the source document's categories.** Read actual content. Group by shared collaborations, not by chapter headings.
-5. **Do NOT group by surface similarity.** Group by what objects collaborate and what operations they perform.
-
-Use the evidence graph hotspot detection to validate — high co-occurrence terms likely belong to the same foundational model.
-
-**One sub-section per foundational model. Each contains:**
-
-- **Domain Model** — Complete typed concept(s) with properties, operations, collaborators, invariants. Same format as domain concepts below. Use `Dictionary<K,V>` for named collections; `List<T>` only when order matters.
-- **Extensions** — List of objects that extend or specialize this model. Names only.
-
-**Output location:** Write to `<session>/domain-model.md` between `<!-- section: foundational_models -->` and `<!-- /section: foundational_models -->` markers.
-
----
-
-The Domain Model holds **modules** (groupings of tightly related concepts) and **domain concepts** — the things that have state and can be operated on. Concepts are referenced in interactions via `**Concept**` in Pre-Condition, Trigger, Response, and Failure-Modes. Every `**Concept**` must exist in the Domain Model; concepts must be placed at the right level in the hierarchy. No drift between tree and model. Use source entity data, not aggregated/calculated values.
+These concepts are referenced in the Interaction Tree via `**Concept**` in Pre-Condition, Trigger, Response, and Examples.
 
 ---
 
@@ -1068,8 +1047,10 @@ Prepared context is a foundational component that must be present before the ski
 
 ## Chunking
 
-Source documents (PDF, PPTX, DOCX) must be chunked into markdown using the `abd-context-to-memory` skill before any analysis. The `get_instructions` command validates this automatically — if documents are unchunked or stale, it warns with the command to run.
+Source documents (PDF, PPTX, DOCX) must be chunked into markdown using the `abd-context-to-memory` skill before any analysis. **Chunk output goes to `story-synthesizer/context/`** — not alongside the PDF. The source (PDF, etc.) stays where it is; only the processed `.md` chunks move into the skill.
 
+- **Source:** Original content can live anywhere. If no path is set, `context/` at workspace root is the default source.
+- **Chunks:** Output of chunking → `<workspace>/story-synthesizer/context/chunks/*.md`
 - **Raw context:** Categorize what you have — source paths, chunk count, chunk types, section mapping. Example: "312 sections; Accounts 12–45, Transactions 46–95, Compliance 150–200; chunk types: account definitions, transaction rules, validation policies."
 - **Existing structure:** If output already exists: "these stories", "all these epics", "Epic 2 and its sub-epics".
 
@@ -1081,16 +1062,16 @@ After chunking, run the evidence extraction pipeline to build structured evidenc
 python scripts/build.py extract_evidence
 ```
 
-This runs scripts 01–07 in sequence:
-1. `01_analyze_chunks.py` — validate and index existing chunks
-2. `02_extract_terms.py` — noun phrases, defined terms, vocabulary index
-3. `03_extract_actions.py` — subject-verb-object behavioral facts
-4. `04_extract_decisions.py` — conditional logic and rules
-5. `05_extract_variations.py` — behavior axes and mode differences
-6. `06_extract_states.py` — stateful entities and explicit relationships
-7. `07_consolidate_evidence.py` — build evidence graph with links, clusters, hotspots
+Requires `chunk_index.json` from abd-context-to-memory. Runs scripts 02–07 in sequence:
+- Chunk index — from abd-context-to-memory (`index_memory.py` or `index_chunks.py`); mandatory
+- `02_extract_terms.py` — noun phrases, defined terms, vocabulary index
+- `03_extract_actions.py` — subject-verb-object behavioral facts
+- `04_extract_decisions.py` — conditional logic and rules
+- `05_extract_variations.py` — behavior axes and mode differences
+- `06_extract_states.py` — stateful entities and explicit relationships
+- `07_consolidate_evidence.py` — build evidence graph with links, clusters, hotspots
 
-**Output:** `evidence_graph.json` and `evidence_summary.md` in `<workspace>/context/consolidated/`.
+**Output:** `evidence_graph.json` and `evidence_summary.md` in `<workspace>/story-synthesizer/evidence/`.
 
 ## Concept Tracking (Optional)
 
@@ -1105,13 +1086,13 @@ python scripts/concept_tracker.py report <context_analysis.json> --min-units 5
 
 The evidence extraction pipeline captures variations (script 05). For deeper analysis, review the extracted variations and formalize: per mechanism, what's consistent, what differs, what extends with new behavior (→ story) vs adds data to same behavior (→ example).
 
-Variation analysis can be saved to `context_analysis.json` under each model's `variation` key for use in session strategy.
+Variation analysis can be saved to `<workspace>/story-synthesizer/context/context_analysis.json` under each model's `variation` key for use in session strategy.
 
 ---
 
 # Process Overview
 
-Your task is to build an **Interaction Tree** and **Domain Model** using a 17-step pipeline that separates mechanical evidence extraction (CODE) from analytical reasoning (AI).
+Your task is to build an **Interaction Tree** and **Domain Model** using a pipeline that separates mechanical evidence extraction (CODE) from analytical reasoning (AI).
 
 The core principle: **Do not go from text to classes. Go from context → mechanisms → behavior owners → object model.**
 
@@ -1119,134 +1100,248 @@ Within each phase: **Human** → **AI** invokes script → **Script** returns in
 
 ---
 
-## The Pipeline
+## The Pipeline (3 Sections)
+
+**Each stage has its own independent checklist.** Kick off the checklist when you start that stage.
 
 ```text
-CODE
- 1. Normalize + segment context               abd-context-to-memory + 01_analyze_chunks
- 3. Extract terms                              02_extract_terms
- 4. Extract actions (subject-verb-object)      03_extract_actions
- 5. Extract decisions (rules/conditions)       04_extract_decisions
- 6. Extract variations (mode/type diffs)       05_extract_variations
- 7. Extract states & explicit relationships    06_extract_states
- 8. Build evidence graph                       07_consolidate_evidence
+1. OVERALL CONTEXT
+   Checklist: overall_context_checklist_template.md → overall-context-checklist.md
+   - Phase 1: Set Skill Space
+   - Phase 2: Prepare Context
+   - Phase 3: Extract Evidence
+   - Phase 4: Map Concepts
+   - Phase 5: Model Discovery and Assessment (on entire concept map and evidence)
+   Outputs: chunk_index.json, evidence graph, concept_scan, foundational-model.md, domain-model.md (foundation)
 
-AI
- 2. Concept scan (primitives & mechanisms)     concept_scan operation
- 9. Behavior packet detection                  --|
-10. Mechanism synthesis                          |
-11. Decision ownership                           |  model_discovery operation (Pass A)
-12. Object candidate formation                   |
-13. Relationship & boundary modeling             |
-14. Inheritance test                           --|
-15. Scenario / message walkthrough             --|
-16. Anemia / centralization critique             |  model_validation operation (Pass B)
-17. Final OO domain model                      --|
+2. SESSION
+   Checklist: session_checklist_template.md → <session>/session-checklist.md
+   - Phase 6: Create Session
+   Outputs: <session>-strategy.md
+   **Before starting:** Go to Overall Context and complete anything not done (chunk index, evidence graph, concept scan, OOAD foundation).
+   **STOP HERE. Do NOT run slices until user says "run slice", "build it", or "proceed"**
+
+3. SLICE-RUNS
+   Checklist: run_checklist_template.md → <session>/runs/run-N-checklist.md (per slice run)
+   - Phase 7: Model Generation (builds on foundation)
+   - Phase 8: Validate Rules and Scanners
+   - Phase 9: Render Diagrams
+   - Phase 10: Make Corrections
+
+  At any time during session and slice-run a user may
+    - Improve Strategy from Corrections
+    - Improve Skill from Corrections
 ```
 
 ---
 
-## Phase 1: Normalize Context and Extract Evidence
+# 1. Overall Context
 
-| Human | AI / Script | AI | Human → AI |
-|-------|-------------|-----|------------|
-| Says "set path", "new workspace", or "continue" | Runs `build.py get_config`, validates context | Reports paths; checks readiness | Confirms or provides new path |
+Everything that prepares the workspace before any session. Run once per workspace (or when context changes).
 
-### Step 1: Normalize + Segment (CODE)
+**Kick off checklist:** Run `python scripts/create-checklist.py overall` when starting this stage. This checklist is independent of Session and Slice-Runs.
 
-Use the `abd-context-to-memory` skill to chunk source documents into markdown. Then run `01_analyze_chunks.py` to validate and index the chunks.
+**CRITICAL:** Create checklist when starting: `create-checklist [overall|session|run]`. Update when step completes: `create-checklist update <path> --step N` or edit the file. A change is not tracked until the checklist is updated.
+
+---
+
+## Phase 1: Set Skill Space
+
+
+| Human                                          | AI / Script                                 | AI                              | Human → AI                    |
+| ---------------------------------------------- | ------------------------------------------- | ------------------------------- | ----------------------------- |
+| Says "set skill space to X" or "new workspace" | Runs `build.py get_config`, validates paths | Reports paths; checks readiness | Confirms or provides new path |
+
+
+Configure the skill space path in `abd-story-synthesizer/conf/abd-config.json` and the context paths in `<skill-space>/conf/abd-config.json`.
 
 ```bash
-python scripts/01_analyze_chunks.py --context-path <path>
+python scripts/build.py get_config
 ```
 
-### Step 2: Concept Scan (AI)
+---
 
-Run `get_instructions concept_scan` to perform the AI concept scan on normalized context. Produces a conceptual map with core primitives, interaction phases, authority boundaries, variation axes, and implicit concepts.
+## Phase 2: Prepare Context
+
+
+| Human                                          | AI / Script                      | AI                                | Human → AI       |
+| ---------------------------------------------- | -------------------------------- | --------------------------------- | ---------------- |
+| Says "prepare context" or provides source docs | Chunks documents, indexes chunks | Reports chunk count and readiness | Confirms sources |
+
+
+Chunk source documents and build chunk index using the `abd-context-to-memory` skill. **Chunk index creation is mandatory** — run `index_memory.py` or `index_chunks.py` from that skill.
+
+**DO NOT use `index_chunks.py` when source has PDF/PPTX/DOCX.** Use `index_memory.py` — it converts, chunks, and indexes. `index_chunks.py` only indexes existing chunks; it does not create them.
 
 ```bash
-python scripts/build.py get_instructions concept_scan
+# From abd-context-to-memory skill:
+python index_memory.py --path <context_folder>
+# or, when chunks already exist:
+python index_chunks.py --context-path <chunk_folder> [--output <path>]
 ```
 
-Output: `<session>/concept_scan.md`. See `pieces/concept_scan.md` for full specification.
+Output: `<workspace>/story-synthesizer/context/chunk_index.json`
 
-### Steps 3–8: Evidence Extraction (CODE)
+---
 
-Run the evidence extraction pipeline. This can be run as a single command or step by step.
+## Phase 3: Extract Evidence
+
+
+| Human                   | AI / Script                              | AI                                   | Human → AI      |
+| ----------------------- | ---------------------------------------- | ------------------------------------ | --------------- |
+| Says "extract evidence" | Runs extraction pipeline (scripts 02–07) | Reports evidence counts and hotspots | Reviews summary |
+
+
+Run the evidence extraction pipeline. Scripts extract structured evidence from normalized chunks — terms, actions, decisions, variations, states, relationships — then consolidate into an evidence graph.
 
 ```bash
 python scripts/build.py extract_evidence
 ```
 
-Output: `evidence_graph.json` and `evidence_summary.md` in `<workspace>/context/consolidated/`. See `pieces/evidence.md` for full specification.
+Requires `chunk_index.json` from abd-context-to-memory. Runs scripts 02–07 in sequence:
+
+- `02_extract_terms.py` — noun phrases, vocabulary index
+- `03_extract_actions.py` — subject-verb-object behavioral facts
+- `04_extract_decisions.py` — conditional logic and rules
+- `05_extract_variations.py` — behavior axes and mode differences
+- `06_extract_states.py` — stateful entities and explicit relationships
+- `07_consolidate_evidence.py` — build evidence graph with links, clusters, hotspots
+
+Output: `evidence_graph.json` and `evidence_summary.md` in `<workspace>/story-synthesizer/evidence/`. See `pieces/evidence.md` for full specification.
 
 ---
 
-## Phase 2: Start Session
+## Phase 4: Map Concepts
 
-| Human | AI / Script | AI | Human → AI |
-|-------|-------------|-----|------------|
-| Says "start a session" or "create a session" | Invokes `get_instructions create_strategy` | Produces session file with strategy and slices | Updates and adjusts |
 
-Create, open, or continue an existing session. The session defines: Level of Detail (discovery/exploration/specification), Scope, and Slices. The evidence graph and concept scan are already available.
+| Human                                 | AI / Script                             | AI                      | Human → AI          |
+| ------------------------------------- | --------------------------------------- | ----------------------- | ------------------- |
+| Says "map concepts" or "concept scan" | Invokes `get_instructions concept_scan` | Produces conceptual map | Reviews and adjusts |
 
-See `pieces/session.md` for session content, slice design, and tag definitions.
+
+AI concept scan on normalized context. Discovers core primitives, interaction phases, authority boundaries, variation axes, rule mechanisms, and implicit concepts. Orients later AI passes (model discovery, validation).
 
 ```bash
-python scripts/build.py get_instructions create_strategy
+python scripts/build.py get_instructions concept_scan
 ```
+
+Output: `<workspace>/story-synthesizer/concept_scan.md`. See `pieces/concept_scan.md` for full specification.
 
 ---
 
-## Phase 3: Execute AI Passes (Run)
+## Phase 5: Model Discovery and Assessment
 
-| Human | AI / Script | AI | Human → AI |
-|-------|-------------|-----|------------|
-| Says "proceed," "build it," "run slice", "discover model" | Invokes `get_instructions model_discovery` or `model_validation` | Produces domain model output | Updates and adjusts |
 
-The AI modeling passes operate on the evidence graph, not raw context. Execute as two operations:
+| Human                                 | AI / Script                                      | AI                                                       | Human → AI          |
+| ------------------------------------- | ------------------------------------------------ | -------------------------------------------------------- | ------------------- |
+| Says "model discovery" or "OOAD"      | Invokes `model_discovery` and `model_validation` | Produces OOAD analysis and validated domain model foundation | Reviews and adjusts |
 
-### Pass A: Discovery (Steps 9–14)
+
+**Runs on the entire concept map and evidence** — not per slice. Produces a foundational domain model that slice runs build on. Do this once per workspace (or when context changes).
+
+### Model Discovery (OOAD)
+
+**Behavior packet adequacy:** Packets must specify enough structure to build the model — concepts, flow (who creates what, who receives), and any mapping/composition rules the domain needs. Do not use a minimal one-liner.
+
+1. **Behavior packet detection** — cluster evidence into coherent mechanisms
+2. **Mechanism synthesis** — find real structural seams from packets
+3. **Decision ownership** — assign each decision to the concept that should own it
+4. **Object candidate formation** — derive candidates from owned behavior and state
+5. **Relationship & boundary modeling** — define relationships based on behavior
+6. **Inheritance test** — verify substitutability and shared protocol; propose base when concepts share acquisition/validation protocol
 
 ```bash
 python scripts/build.py get_instructions model_discovery
 ```
 
-Produces: behavior packets, mechanisms, decision ownership, object candidates, relationships, inheritance test results. See `pieces/ai_passes.md` Pass A.
+**Persist the OOAD analysis** to `<workspace>/story-synthesizer/foundational-model.md`.
 
-### Pass B: Validation + Repair (Steps 15–17)
+### Model Assessment (Validation)
+
+**Verify behavior packets are adequate.** If packets are minimal, reject and redo discovery. **Persist the full assessment** to foundational-model.md. A one-line note is insufficient.
+
+1. **Scenario / message walkthrough** — verify the model can actually behave
+2. **Anemia / centralization critique** — find data bags, fake inheritance, misplaced behavior
+3. **Base and inheritance check** — find concepts that share protocol and should extend a common base
+4. **Final domain model foundation** — produce only after passes stabilize
 
 ```bash
 python scripts/build.py get_instructions model_validation
 ```
 
-Produces: scenario walkthroughs, anemia critique, final OO domain model. See `pieces/ai_passes.md` Pass B.
+Output: `<workspace>/story-synthesizer/foundational-model.md` and `<workspace>/story-synthesizer/domain/domain-model.md` (foundation). Slice runs extend this foundation.
 
-### Interaction Tree
+---
 
-The interaction tree synthesis uses the existing `run_slice` operation and is unchanged. Domain concepts from the AI passes sync into the interaction tree via `**Concept**` references.
+# 2. Session
+
+Create and configure a session. One session per analysis focus (discovery / exploration / specification). Defines level of detail, scope, and slices. **Do not run any slice here.**
+
+**Kick off checklist:** Run `python scripts/create-checklist.py session <name>` when starting this stage. This checklist is independent of Overall Context and Slice-Runs.
+
+---
+
+## Phase 6: Create Session
+
+
+| Human                                    | AI / Script           | AI                            | Human → AI          |
+| ---------------------------------------- | --------------------- | ----------------------------- | ------------------- |
+| Says "start session" or "create session" | Runs `create_session` | Strategy file created on disk | Updates and adjusts |
+
+
+Create, open, or continue an existing session. The session defines: Level of Detail (discovery/exploration/specification), Scope, and Slices. The evidence graph, concept scan, and OOAD foundation are already available.
+
+**CRITICAL: Phase 6 creates the strategy file only. Do NOT run any slice.** The user must explicitly say "run slice", "build it", or "proceed" before Phase 7 (Model Generation).
+
+**After creating strategy:** Run `get_instructions validate_session --strategy <path>` and validate slices against slice rules before running any slice.
+
+**When the user corrects strategy, slices, or scope during session creation:** Apply the fix and record the correction in `runs/run-0.md`. See `pieces/runs.md` § When User Gives a Correction. A change is not complete until the correction is recorded.
+
+See `pieces/session.md` for session content, slice design, and tag definitions.
+
+```bash
+python scripts/build.py create_session [session_name]
+```
+
+Output: `<workspace>/story-synthesizer/<session-name>/<session-name>-strategy.md`
+
+---
+
+# 3. Slice-Runs
+
+Execute one run per slice. Phases 7–10: Model Generation → Validate Rules and Scanners → Render Diagrams → Make Corrections. Each slice run builds on the OOAD foundation from Stage 1. At any time: Improve Strategy or Improve Skill from corrections.
+
+**Kick off checklist:** Run `python scripts/create-checklist.py run <session> <n>` at the start of each slice run. This checklist is independent per run.
+
+---
+
+## Phase 7: Model Generation
+
+
+| Human                         | AI / Script                          | AI                                                 | Human → AI          |
+| ----------------------------- | ------------------------------------ | -------------------------------------------------- | ------------------- |
+| Says "run slice", "build it", "proceed" | Invokes `get_instructions run_slice` | Produces interaction tree + domain model for slice | Reviews and adjusts |
+
+
+**Builds on the OOAD foundation** from Stage 1 (Phase 5). The foundation (foundational-model.md, domain-model.md) provides mechanisms, ownership, and validated concepts. Slice runs produce the interaction tree and domain model extensions for that slice's scope.
+
+Produce the interaction tree and domain model for the slice. Domain concepts from the foundation sync into the interaction tree via `**Concept**` references.
 
 ```bash
 python scripts/build.py get_instructions run_slice
 ```
 
-### Diagram Rendering
-
-After producing domain model output, render changes to the class diagram. See `pieces/diagrams.md`.
-
-### Build Phase Validation
-
-After producing output and rendering diagrams, run `build.py validate`. Fix any violations before marking the run complete. See `pieces/validation.md`.
-
 ---
 
-## Phase 4: Validate
+## Phase 8: Validate Rules and Scanners
 
-| Human | AI / Script | AI | Human → AI |
-|-------|-------------|-----|------------|
-| Says "validate", "check the output" | Invokes `build.py validate` | Reports violations; fixes if build phase | Updates and adjusts |
 
-Run `build.py validate` to execute rule scanners. See `pieces/validation.md` for the full checklist.
+| Human         | AI / Script              | AI                 | Human → AI                   |
+| ------------- | ------------------------ | ------------------ | ---------------------------- |
+| After Phase 7 | Runs `build.py validate` | Reports violations | Fixes and re-runs until pass |
+
+
+Run rule scanners. Fix any violations before marking the run complete. See `pieces/validation.md`.
 
 ```bash
 python scripts/build.py validate
@@ -1256,11 +1351,25 @@ python scripts/build.py get_instructions validate_slice
 
 ---
 
-## Phase 5: Correct
+## Phase 9: Render Diagrams
 
-| Human | AI / Script | AI | Human → AI |
-|-------|-------------|-----|------------|
+
+| Human               | AI / Script           | AI               | Human → AI |
+| ------------------- | --------------------- | ---------------- | ---------- |
+| After model changes | Updates class diagram | Renders diagrams | Reviews    |
+
+
+Update class diagram for domain model changes. See `pieces/diagrams.md`.
+
+---
+
+## Phase 10: Make Corrections
+
+
+| Human                                | AI / Script                            | AI                             | Human → AI          |
+| ------------------------------------ | -------------------------------------- | ------------------------------ | ------------------- |
 | Reviews output and gives corrections | Invokes `get_instructions correct_run` | Applies corrections to run log | Updates and adjusts |
+
 
 See `pieces/runs.md` for corrections format and `pieces/correct.md` for the correction layers.
 
@@ -1271,13 +1380,15 @@ python scripts/build.py get_instructions correct_all
 
 ---
 
-## Phase 6: Adjust
+## Improve Strategy / Improve Skill (at any time)
 
-| Human | AI / Script | AI | Human → AI |
-|-------|-------------|-----|------------|
+
+| Human                                        | AI / Script                                 | AI                                          | Human → AI          |
+| -------------------------------------------- | ------------------------------------------- | ------------------------------------------- | ------------------- |
 | Reviews corrections, decides what to promote | Invokes `get_instructions improve_strategy` | Updates session strategy and/or skill rules | Updates and adjusts |
 
-See `pieces/correct.md` for the three layers of correction (run → session → skill).
+
+**At any time during session and slice-run** a user may Improve Strategy from Corrections or Improve Skill from Corrections. See `pieces/correct.md` for the three layers (run → session → skill).
 
 ```bash
 python scripts/build.py get_instructions improve_strategy
@@ -1285,25 +1396,57 @@ python scripts/build.py get_instructions improve_strategy
 
 ---
 
+## Slice-Run Checklist
+
+**Independent checklist per slice run.** Run `python scripts/create-checklist.py run <session> <n>` at the start of each run. Tick each item when done.
+
+
+| #    | Phase   | Step                                                              | Done |
+| ---- | ------- | ----------------------------------------------------------------- | ---- |
+| 1    | Phase 7 | Model Generation — produce interaction tree + domain model for slice (builds on OOAD foundation) | ☐    |
+| 2    | Phase 8 | Validate Rules and Scanners — `build.py validate`; fix violations | ☐    |
+| 3    | Phase 9 | Render Diagrams — update class diagram                            | ☐    |
+
+
+Phase 10 (Make Corrections) and Improve Strategy / Improve Skill are recorded as needed. See `pieces/run_checklist_template.md` for the full checklist.
+
+---
+
 ## Process Checklist
 
-- **Context chunked** — source docs chunked via `abd-context-to-memory`
-- **Chunks analyzed** — `01_analyze_chunks` validates and indexes
-- **Concept scan done** — AI conceptual map in `concept_scan.md`
-- **Evidence extracted** — scripts 02–07 complete; `evidence_graph.json` exists
-- **Session created** — session file with level of detail, scope, and slices
-- **Pass A complete** — behavior packets, mechanisms, decision ownership, object candidates, relationships, inheritance test
-- **Pass B complete** — scenario walkthroughs, anemia critique, final OO model
-- **Interaction tree produced** — interaction tree synthesized with domain concepts synced
-- **Diagrams rendered** — class diagram updated for domain model changes
-- **Validated** — `build.py validate` passes; violations fixed
-- **Corrections recorded** — all corrections in run logs; promoted to session/skill as needed
+Each stage has an independent checklist. Kick off the checklist when starting that stage.
+
+**1. Overall Context** — `overall-context-checklist.md`
+
+- Phase 1: Skill space set
+- Phase 2: Context prepared (chunk_index.json)
+- Phase 3: Evidence extracted (evidence_graph.json)
+- Phase 4: Concepts mapped (concept_scan.md)
+- Phase 5: Model Discovery and Assessment (foundational-model.md, domain-model.md)
+
+**2. Session** — `<session>/session-checklist.md`
+
+- Phase 6: Session created (`<session>-strategy.md`)
+
+**3. Slice-Runs** — `<session>/runs/run-N-checklist.md` (per run)
+
+- Phase 7: Model Generation
+- Phase 8: Validate Rules and Scanners
+- Phase 9: Render Diagrams
+- Phase 10: Make Corrections
+- Improve Strategy / Improve Skill — at any time from corrections
 
 ---
 
 # Sessions
 
 **A session executes a sequence of runs that follow the same strategy.** Before synthesizing, set up a session (create new or continue existing). Sessions define level of detail, scope, and slices. Context must be prepared before starting a session (see `pieces/context.md`). One run per slice; runs write logs.
+
+**Session location:** `<workspace>/story-synthesizer/<session-name>/`. Strategy: `<session-name>-strategy.md`. Runs: `runs/run-N.md`, `runs/run-N-validation.md`, `runs/run-N-checklist.md`. OOAD foundation is produced in Stage 1 (Phase 5) at workspace level: `story-synthesizer/foundational-model.md`, `domain/domain-model.md`.
+
+## Session Naming
+
+When the user says "run a session called X" (e.g. "run a session called discovery") and does **not** provide a custom name, name the session `X<unique number>` so it does not collide with existing sessions. Examples: `discovery1`, `discovery2`, `exploration1`. If the user specifies a name (e.g. "run a session called my-campaign-discovery"), use that name instead.
 
 ## Session Content
 
@@ -1316,9 +1459,9 @@ How deep the synthesis goes. Each session type defines what a run produces.
 
 | Session Type      | What runs produce                                                                                                                                                                                             | Artifacts                                | Tags                                                                       | Slice size                                                                                                                          |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- | -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| **Discovery**     | Story-Map (Epic/story hierarchy; short names only) as first cut of the **interaction tree. ** Foundational object model portion of the **domain model** (typed state: properties, operations, collaborators). | `interaction-tree.md`, `domain-model.md` | `discovery`, `story_map`, `epic`, `story`, `domain`                        | Large — one or more, foundational model or cross-cutting concernd per slice, all the way thin slice of multiple comcepts end to end |
-| **Exploration**   | Full story fields: Trigger, Response, Pre-Condition, Triggering-State, Resulting-State, domain concepts, Failure-Modes, Constraints. Steps below stories. Completes domain model.                             | `interaction-tree.md`, `domain-model.md` | `exploration`, `story_map`, `epic`, `story`, `domain`, `step`              | Medium — a group of related stories that share state or workflow                                                                    |
-| **Specification** | Steps grouped into scenarios. Examples (tables per concept). Failure-Modes.                                                                                                                                   | `interaction-tree.md`, `domain-model.md` | `specification`, `step`, `step_edge_case`, `scenario`, `example`, `domain` | Small — individual stories or story pairs with shared scenarios                                                                     |
+| **Discovery**     | Story-Map (Epic/story hierarchy; short names only) as first cut of the **interaction tree.** Foundational object model portion of the **domain model** (typed state: properties, operations, collaborators). | `story-synthesizer/interactions/interaction-tree.md`, `story-synthesizer/domain/domain-model.md` | `discovery`, `story_map`, `epic`, `story`, `domain`                        | Large — one or more, foundational model or cross-cutting concern per slice, all the way thin slice of multiple concepts end to end |
+| **Exploration**   | Full story fields: Trigger, Response, Pre-Condition, Triggering-State, Resulting-State, domain concepts, Failure-Modes, Constraints. Steps below stories. Completes domain model.                             | `story-synthesizer/interactions/interaction-tree.md`, `story-synthesizer/domain/domain-model.md` | `exploration`, `story_map`, `epic`, `story`, `domain`, `step`              | Medium — a group of related stories that share state or workflow                                                                    |
+| **Specification** | Steps grouped into scenarios. Examples (tables per concept). Failure-Modes.                                                                                                                                   | `story-synthesizer/interactions/interaction-tree.md`, `story-synthesizer/domain/domain-model.md` | `specification`, `step`, `step_edge_case`, `scenario`, `example`, `domain` | Small — individual stories or story pairs with shared scenarios                                                                     |
 
 
 **Default when no session:** `tags: [discovery, story_map, epic, story, domain]`.
@@ -1337,6 +1480,10 @@ If no scope is set, ask the user. The AI can suggest scope based on the context 
 ### 3 - Slices
 
 Slices define the order of work. Each slice scopes one run. Slice design depends on session type.
+
+**Apply slice rules** when designing slices. Run `get_instructions create_strategy` to load rules. After creating strategy, run `get_instructions validate_session --strategy <path>` to validate slices against slice rules.
+
+**Epics from context (not slices):** Do not name epics after slices. Epics and sub-epics come from the larger context (goal, domain, concept map, evidence). Place slice stories under appropriate sub-epics. See [interaction-epics-from-context](../rules/interaction-epics-from-context.md).
 
 **DO NOT slice by epic.** Each slice must end to end lfe cycle of  a user, product, service or oter aspect of the user-solution journey
 
@@ -1364,6 +1511,8 @@ Specification slices often scope to a couple of stories that need scenarios, exa
 
 One run per slice. See `pieces/runs.md` for run lifecycle, run log structure, corrections format, and patterns.
 
+**During session creation (before any slice runs):** When the user corrects strategy, slices, or scope, apply the fix and record the correction in `runs/run-0.md`. See `pieces/runs.md` § When User Gives a Correction.
+
 What each run produces is defined by the session's level of detail (see § 1). A session has one run type — all runs in a session produce the same kind of output.
 
 ---
@@ -1372,6 +1521,8 @@ What each run produces is defined by the session's level of detail (see § 1). A
 # Runs
 
 During a session you synthesize the scope of a slice through a run. **One run per slice.** Run 1 = slice 1, run 2 = slice 2, etc. A run captures what happened, what changed, when it changed. The session defines level of detail; the slice defines scope for the run.
+
+**Epics from context (not slices):** Do not name epics after slices. Epics and sub-epics come from the larger context (goal, domain, concept map, evidence). Place slice stories under appropriate sub-epics. See [interaction-epics-from-context](../rules/interaction-epics-from-context.md).
 
 **Going deeper on the same slice** (e.g. adding steps to discovered stories) is a **new session** with a different focus, not another run.
 

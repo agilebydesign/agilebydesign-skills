@@ -8,49 +8,58 @@ Within each phase: **Human** → **AI** invokes script → **Script** returns in
 
 ---
 
-## The Pipeline
+## The Pipeline (3 Sections)
+
+**Each stage has its own independent checklist.** Kick off the checklist when you start that stage.
 
 ```text
-Phase 1: Set Skill Space
-  - Configure workspace path and context paths
+1. OVERALL CONTEXT
+   Checklist: overall_context_checklist_template.md → overall-context-checklist.md
+   - Phase 1: Set Skill Space
+   - Phase 2: Prepare Context
+   - Phase 3: Extract Evidence
+   - Phase 4: Map Concepts
+   - Phase 5: Model Discovery and Assessment (on entire concept map and evidence)
+   Outputs: chunk_index.json, evidence graph, concept_scan, foundational-model.md, domain-model.md (foundation)
 
-Phase 2: Prepare Context
-  - Chunk source documents (abd-context-to-memory)
-  - Analyze and index chunks (01_analyze_chunks)
+2. SESSION
+   Checklist: session_checklist_template.md → <session>/session-checklist.md
+   - Phase 6: Create Session
+   Outputs: <session>-strategy.md
+   **Before starting:** Go to Overall Context and complete anything not done (chunk index, evidence graph, concept scan, OOAD foundation).
+   **STOP HERE. Do NOT run slices until user says "run slice", "build it", or "proceed"**
 
-Phase 3: Map Concepts
-  - AI concept scan: primitives, mechanisms, authority boundaries, variation axes
+3. SLICE-RUNS
+   Checklist: run_checklist_template.md → <session>/runs/run-N-checklist.md (per slice run)
+   - Phase 7: Model Generation (builds on foundation)
+   - Phase 8: Validate Rules and Scanners
+   - Phase 9: Render Diagrams
+   - Phase 10: Make Corrections
 
-Phase 4: Extract Evidence
-  - Extract terms, actions, decisions, variations, states, relationships (scripts 02–07)
-  - Build evidence graph (07_consolidate_evidence)
-
-Phase 5: Create Session
-  - Define level of detail, scope, and slices
-  - One session per analysis focus (discovery / exploration / specification)
-
-Phase 6: Run Slice
-  - OOAD modeling (per-run): behavior packets → mechanisms → decision ownership → object candidates
-  - Model validation (per-run): scenario walkthrough, anemia critique
-  - Synthesize: produce interaction tree + domain model
-  - Render class diagrams
-  - Run scanners
-
-Phase 7: Correct
-  - Record corrections in run log
-  - Promote to session strategy or skill rules
-
-Phase 8: Adjust
-  - Review corrections, update strategy, improve skill
+  At any time during session and slice-run a user may
+    - Improve Strategy from Corrections
+    - Improve Skill from Corrections
 ```
+
+---
+
+# 1. Overall Context
+
+Everything that prepares the workspace before any session. Run once per workspace (or when context changes).
+
+**Kick off checklist:** Run `python scripts/create-checklist.py overall` when starting this stage. This checklist is independent of Session and Slice-Runs.
+
+**CRITICAL:** Create checklist when starting: `create-checklist [overall|session|run]`. Update when step completes: `create-checklist update <path> --step N` or edit the file. A change is not tracked until the checklist is updated.
 
 ---
 
 ## Phase 1: Set Skill Space
 
-| Human | AI / Script | AI | Human → AI |
-|-------|-------------|-----|------------|
+
+| Human                                          | AI / Script                                 | AI                              | Human → AI                    |
+| ---------------------------------------------- | ------------------------------------------- | ------------------------------- | ----------------------------- |
 | Says "set skill space to X" or "new workspace" | Runs `build.py get_config`, validates paths | Reports paths; checks readiness | Confirms or provides new path |
+
 
 Configure the skill space path in `abd-story-synthesizer/conf/abd-config.json` and the context paths in `<skill-space>/conf/abd-config.json`.
 
@@ -62,41 +71,34 @@ python scripts/build.py get_config
 
 ## Phase 2: Prepare Context
 
-| Human | AI / Script | AI | Human → AI |
-|-------|-------------|-----|------------|
-| Says "prepare context" or provides source docs | Chunks documents, analyzes chunks | Reports chunk count and readiness | Confirms sources |
 
-Chunk source documents into markdown using the `abd-context-to-memory` skill. Then validate and index the chunks.
+| Human                                          | AI / Script                      | AI                                | Human → AI       |
+| ---------------------------------------------- | -------------------------------- | --------------------------------- | ---------------- |
+| Says "prepare context" or provides source docs | Chunks documents, indexes chunks | Reports chunk count and readiness | Confirms sources |
+
+
+Chunk source documents and build chunk index using the `abd-context-to-memory` skill. **Chunk index creation is mandatory** — run `index_memory.py` or `index_chunks.py` from that skill.
+
+**DO NOT use `index_chunks.py` when source has PDF/PPTX/DOCX.** Use `index_memory.py` — it converts, chunks, and indexes. `index_chunks.py` only indexes existing chunks; it does not create them.
 
 ```bash
-python scripts/01_analyze_chunks.py --context-path <path>
+# From abd-context-to-memory skill:
+python index_memory.py --path <context_folder>
+# or, when chunks already exist:
+python index_chunks.py --context-path <chunk_folder> [--output <path>]
 ```
 
-Output: `<workspace>/normalized/chunk_index.json`
+Output: `<workspace>/story-synthesizer/context/chunk_index.json`
 
 ---
 
-## Phase 3: Map Concepts
+## Phase 3: Extract Evidence
 
-| Human | AI / Script | AI | Human → AI |
-|-------|-------------|-----|------------|
-| Says "map concepts" or "concept scan" | Invokes `get_instructions concept_scan` | Produces conceptual map | Reviews and adjusts |
 
-AI concept scan on normalized context. Discovers core primitives, interaction phases, authority boundaries, variation axes, rule mechanisms, and implicit concepts. This orients the evidence extraction and later AI passes.
-
-```bash
-python scripts/build.py get_instructions concept_scan
-```
-
-Output: `<session>/concept_scan.md`. See `pieces/concept_scan.md` for full specification.
-
----
-
-## Phase 4: Extract Evidence
-
-| Human | AI / Script | AI | Human → AI |
-|-------|-------------|-----|------------|
+| Human                   | AI / Script                              | AI                                   | Human → AI      |
+| ----------------------- | ---------------------------------------- | ------------------------------------ | --------------- |
 | Says "extract evidence" | Runs extraction pipeline (scripts 02–07) | Reports evidence counts and hotspots | Reviews summary |
+
 
 Run the evidence extraction pipeline. Scripts extract structured evidence from normalized chunks — terms, actions, decisions, variations, states, relationships — then consolidate into an evidence graph.
 
@@ -104,7 +106,8 @@ Run the evidence extraction pipeline. Scripts extract structured evidence from n
 python scripts/build.py extract_evidence
 ```
 
-This runs scripts 02–07 in sequence:
+Requires `chunk_index.json` from abd-context-to-memory. Runs scripts 02–07 in sequence:
+
 - `02_extract_terms.py` — noun phrases, vocabulary index
 - `03_extract_actions.py` — subject-verb-object behavioral facts
 - `04_extract_decisions.py` — conditional logic and rules
@@ -112,78 +115,141 @@ This runs scripts 02–07 in sequence:
 - `06_extract_states.py` — stateful entities and explicit relationships
 - `07_consolidate_evidence.py` — build evidence graph with links, clusters, hotspots
 
-Output: `evidence_graph.json` and `evidence_summary.md` in `<workspace>/consolidated/`. See `pieces/evidence.md` for full specification.
+Output: `evidence_graph.json` and `evidence_summary.md` in `<workspace>/story-synthesizer/evidence/`. See `pieces/evidence.md` for full specification.
 
 ---
 
-## Phase 5: Create Session
+## Phase 4: Map Concepts
 
-| Human | AI / Script | AI | Human → AI |
-|-------|-------------|-----|------------|
-| Says "start session" or "create session" | Invokes `get_instructions create_strategy` | Produces session file with strategy and slices | Updates and adjusts |
 
-Create, open, or continue an existing session. The session defines: Level of Detail (discovery/exploration/specification), Scope, and Slices. The evidence graph and concept scan are already available.
+| Human                                 | AI / Script                             | AI                      | Human → AI          |
+| ------------------------------------- | --------------------------------------- | ----------------------- | ------------------- |
+| Says "map concepts" or "concept scan" | Invokes `get_instructions concept_scan` | Produces conceptual map | Reviews and adjusts |
 
-See `pieces/session.md` for session content, slice design, and tag definitions.
+
+AI concept scan on normalized context. Discovers core primitives, interaction phases, authority boundaries, variation axes, rule mechanisms, and implicit concepts. Orients later AI passes (model discovery, validation).
 
 ```bash
-python scripts/build.py get_instructions create_strategy
+python scripts/build.py get_instructions concept_scan
 ```
+
+Output: `<workspace>/story-synthesizer/concept_scan.md`. See `pieces/concept_scan.md` for full specification.
 
 ---
 
-## Phase 6: Run Slice
+## Phase 5: Model Discovery and Assessment
 
-| Human | AI / Script | AI | Human → AI |
-|-------|-------------|-----|------------|
-| Says "run slice", "build it", "proceed" | Invokes `get_instructions run_slice` | Produces interaction tree + domain model for slice | Reviews and adjusts |
 
-Each slice run executes the full pipeline on slice-scoped evidence. The OOAD modeling steps run on every slice — depth varies by session type, not which steps execute (see `pieces/domain.md` § Depth by Session Type).
+| Human                                 | AI / Script                                      | AI                                                       | Human → AI          |
+| ------------------------------------- | ------------------------------------------------ | -------------------------------------------------------- | ------------------- |
+| Says "model discovery" or "OOAD"      | Invokes `model_discovery` and `model_validation` | Produces OOAD analysis and validated domain model foundation | Reviews and adjusts |
 
-### Per-Run OOAD Modeling
 
-Every run that discovers new evidence models it through the OOAD pipeline:
+**Runs on the entire concept map and evidence** — not per slice. Produces a foundational domain model that slice runs build on. Do this once per workspace (or when context changes).
 
-1. **Behavior packet detection** — cluster slice-scoped evidence into coherent mechanisms
+### Model Discovery (OOAD)
+
+**Behavior packet adequacy:** Packets must specify enough structure to build the model — concepts, flow (who creates what, who receives), and any mapping/composition rules the domain needs. Do not use a minimal one-liner.
+
+1. **Behavior packet detection** — cluster evidence into coherent mechanisms
 2. **Mechanism synthesis** — find real structural seams from packets
 3. **Decision ownership** — assign each decision to the concept that should own it
 4. **Object candidate formation** — derive candidates from owned behavior and state
 5. **Relationship & boundary modeling** — define relationships based on behavior
-6. **Inheritance test** — verify substitutability before using inheritance
+6. **Inheritance test** — verify substitutability and shared protocol; propose base when concepts share acquisition/validation protocol
 
 ```bash
 python scripts/build.py get_instructions model_discovery
 ```
 
-See `pieces/domain.md` § Behavior Packet Detection through Inheritance Test.
+**Persist the OOAD analysis** to `<workspace>/story-synthesizer/foundational-model.md`.
 
-### Per-Run Model Validation
+### Model Assessment (Validation)
 
-Attack the candidate model before accepting it:
+**Verify behavior packets are adequate.** If packets are minimal, reject and redo discovery. **Persist the full assessment** to foundational-model.md. A one-line note is insufficient.
 
 1. **Scenario / message walkthrough** — verify the model can actually behave
 2. **Anemia / centralization critique** — find data bags, fake inheritance, misplaced behavior
-3. **Final domain model** — produce the model only after passes stabilize
+3. **Base and inheritance check** — find concepts that share protocol and should extend a common base
+4. **Final domain model foundation** — produce only after passes stabilize
 
 ```bash
 python scripts/build.py get_instructions model_validation
 ```
 
-See `pieces/domain.md` § Model Validation.
+Output: `<workspace>/story-synthesizer/foundational-model.md` and `<workspace>/story-synthesizer/domain/domain-model.md` (foundation). Slice runs extend this foundation.
 
-### Synthesize
+---
 
-Produce the interaction tree and domain model for the slice. Domain concepts from the OOAD steps sync into the interaction tree via `**Concept**` references.
+# 2. Session
+
+Create and configure a session. One session per analysis focus (discovery / exploration / specification). Defines level of detail, scope, and slices. **Do not run any slice here.**
+
+**Kick off checklist:** Run `python scripts/create-checklist.py session <name>` when starting this stage. This checklist is independent of Overall Context and Slice-Runs.
+
+---
+
+## Phase 6: Create Session
+
+
+| Human                                    | AI / Script           | AI                            | Human → AI          |
+| ---------------------------------------- | --------------------- | ----------------------------- | ------------------- |
+| Says "start session" or "create session" | Runs `create_session` | Strategy file created on disk | Updates and adjusts |
+
+
+Create, open, or continue an existing session. The session defines: Level of Detail (discovery/exploration/specification), Scope, and Slices. The evidence graph, concept scan, and OOAD foundation are already available.
+
+**CRITICAL: Phase 6 creates the strategy file only. Do NOT run any slice.** The user must explicitly say "run slice", "build it", or "proceed" before Phase 7 (Model Generation).
+
+**After creating strategy:** Run `get_instructions validate_session --strategy <path>` and validate slices against slice rules before running any slice.
+
+**When the user corrects strategy, slices, or scope during session creation:** Apply the fix and record the correction in `runs/run-0.md`. See `pieces/runs.md` § When User Gives a Correction. A change is not complete until the correction is recorded.
+
+See `pieces/session.md` for session content, slice design, and tag definitions.
+
+```bash
+python scripts/build.py create_session [session_name]
+```
+
+Output: `<workspace>/story-synthesizer/<session-name>/<session-name>-strategy.md`
+
+---
+
+# 3. Slice-Runs
+
+Execute one run per slice. Phases 7–10: Model Generation → Validate Rules and Scanners → Render Diagrams → Make Corrections. Each slice run builds on the OOAD foundation from Stage 1. At any time: Improve Strategy or Improve Skill from corrections.
+
+**Kick off checklist:** Run `python scripts/create-checklist.py run <session> <n>` at the start of each slice run. This checklist is independent per run.
+
+---
+
+## Phase 7: Model Generation
+
+
+| Human                         | AI / Script                          | AI                                                 | Human → AI          |
+| ----------------------------- | ------------------------------------ | -------------------------------------------------- | ------------------- |
+| Says "run slice", "build it", "proceed" | Invokes `get_instructions run_slice` | Produces interaction tree + domain model for slice | Reviews and adjusts |
+
+
+**Builds on the OOAD foundation** from Stage 1 (Phase 5). The foundation (foundational-model.md, domain-model.md) provides mechanisms, ownership, and validated concepts. Slice runs produce the interaction tree and domain model extensions for that slice's scope.
+
+Produce the interaction tree and domain model for the slice. Domain concepts from the foundation sync into the interaction tree via `**Concept**` references.
 
 ```bash
 python scripts/build.py get_instructions run_slice
 ```
 
-### Render & Validate
+---
 
-After producing output:
-1. **Render diagrams** — update class diagram for domain model changes. See `pieces/diagrams.md`.
-2. **Validate** — run `build.py validate`. Fix any violations before marking the run complete. See `pieces/validation.md`.
+## Phase 8: Validate Rules and Scanners
+
+
+| Human         | AI / Script              | AI                 | Human → AI                   |
+| ------------- | ------------------------ | ------------------ | ---------------------------- |
+| After Phase 7 | Runs `build.py validate` | Reports violations | Fixes and re-runs until pass |
+
+
+Run rule scanners. Fix any violations before marking the run complete. See `pieces/validation.md`.
 
 ```bash
 python scripts/build.py validate
@@ -193,11 +259,25 @@ python scripts/build.py get_instructions validate_slice
 
 ---
 
-## Phase 7: Correct
+## Phase 9: Render Diagrams
 
-| Human | AI / Script | AI | Human → AI |
-|-------|-------------|-----|------------|
+
+| Human               | AI / Script           | AI               | Human → AI |
+| ------------------- | --------------------- | ---------------- | ---------- |
+| After model changes | Updates class diagram | Renders diagrams | Reviews    |
+
+
+Update class diagram for domain model changes. See `pieces/diagrams.md`.
+
+---
+
+## Phase 10: Make Corrections
+
+
+| Human                                | AI / Script                            | AI                             | Human → AI          |
+| ------------------------------------ | -------------------------------------- | ------------------------------ | ------------------- |
 | Reviews output and gives corrections | Invokes `get_instructions correct_run` | Applies corrections to run log | Updates and adjusts |
+
 
 See `pieces/runs.md` for corrections format and `pieces/correct.md` for the correction layers.
 
@@ -208,13 +288,15 @@ python scripts/build.py get_instructions correct_all
 
 ---
 
-## Phase 8: Adjust
+## Improve Strategy / Improve Skill (at any time)
 
-| Human | AI / Script | AI | Human → AI |
-|-------|-------------|-----|------------|
+
+| Human                                        | AI / Script                                 | AI                                          | Human → AI          |
+| -------------------------------------------- | ------------------------------------------- | ------------------------------------------- | ------------------- |
 | Reviews corrections, decides what to promote | Invokes `get_instructions improve_strategy` | Updates session strategy and/or skill rules | Updates and adjusts |
 
-See `pieces/correct.md` for the three layers of correction (run → session → skill).
+
+**At any time during session and slice-run** a user may Improve Strategy from Corrections or Improve Skill from Corrections. See `pieces/correct.md` for the three layers (run → session → skill).
 
 ```bash
 python scripts/build.py get_instructions improve_strategy
@@ -222,13 +304,43 @@ python scripts/build.py get_instructions improve_strategy
 
 ---
 
+## Slice-Run Checklist
+
+**Independent checklist per slice run.** Run `python scripts/create-checklist.py run <session> <n>` at the start of each run. Tick each item when done.
+
+
+| #    | Phase   | Step                                                              | Done |
+| ---- | ------- | ----------------------------------------------------------------- | ---- |
+| 1    | Phase 7 | Model Generation — produce interaction tree + domain model for slice (builds on OOAD foundation) | ☐    |
+| 2    | Phase 8 | Validate Rules and Scanners — `build.py validate`; fix violations | ☐    |
+| 3    | Phase 9 | Render Diagrams — update class diagram                            | ☐    |
+
+
+Phase 10 (Make Corrections) and Improve Strategy / Improve Skill are recorded as needed. See `pieces/run_checklist_template.md` for the full checklist.
+
+---
+
 ## Process Checklist
 
-- **Skill space set** — workspace and context paths configured
-- **Context prepared** — source docs chunked; chunks analyzed and indexed
-- **Concepts mapped** — AI conceptual map in `concept_scan.md`
-- **Evidence extracted** — scripts 02–07 complete; `evidence_graph.json` exists
-- **Session created** — session file with level of detail, scope, and slices
-- **Slice run** — per-run OOAD modeling + validation + interaction tree + domain model produced; diagrams rendered; scanners pass
-- **Corrections recorded** — all corrections in run logs; promoted to session/skill as needed
-- **Strategy adjusted** — corrections promoted; skill improved
+Each stage has an independent checklist. Kick off the checklist when starting that stage.
+
+**1. Overall Context** — `overall-context-checklist.md`
+
+- Phase 1: Skill space set
+- Phase 2: Context prepared (chunk_index.json)
+- Phase 3: Evidence extracted (evidence_graph.json)
+- Phase 4: Concepts mapped (concept_scan.md)
+- Phase 5: Model Discovery and Assessment (foundational-model.md, domain-model.md)
+
+**2. Session** — `<session>/session-checklist.md`
+
+- Phase 6: Session created (`<session>-strategy.md`)
+
+**3. Slice-Runs** — `<session>/runs/run-N-checklist.md` (per run)
+
+- Phase 7: Model Generation
+- Phase 8: Validate Rules and Scanners
+- Phase 9: Render Diagrams
+- Phase 10: Make Corrections
+- Improve Strategy / Improve Skill — at any time from corrections
+

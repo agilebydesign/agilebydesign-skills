@@ -18,6 +18,7 @@ Commands:
     add-dependency  Add dependency edge (dashed arrow)
     delete-edge     Remove edge between two classes
     sync-to-model   Sync DrawIO classes back to domain-model.md
+    validate        Run layout validation (overlaps, grid, hierarchy flow)
 """
 
 import argparse
@@ -33,6 +34,7 @@ from drawio_tools import (
     create_edge, delete_class_and_edges, delete_edge_between,
     set_geometry, get_geometry, unescape,
     sync_page_to_model,
+    validate_layout,
 )
 
 
@@ -98,6 +100,39 @@ def cmd_inspect(args):
         output[page_name] = page_data
 
     print(json.dumps(output, indent=2))
+
+
+def cmd_validate(args):
+    """Run layout validation on diagram pages. Exit 1 if any violations."""
+    _, mxfile = load_drawio(args.file)
+
+    pages_to_validate = []
+    if args.page:
+        diagram, root = get_page(mxfile, args.page)
+        if root is None:
+            print(f"Page '{args.page}' not found")
+            sys.exit(1)
+        pages_to_validate.append((args.page, root))
+    else:
+        for d in mxfile.findall("diagram"):
+            name = d.get("name", "(unnamed)")
+            model = d.find("mxGraphModel")
+            root = model.find("root") if model is not None else None
+            if root is not None:
+                pages_to_validate.append((name, root))
+
+    total_violations = 0
+    for page_name, root in pages_to_validate:
+        violations = validate_layout(root)
+        if violations:
+            for rule, msg in violations:
+                print(f"[{page_name}] {rule}: {msg}")
+                total_violations += 1
+
+    if total_violations > 0:
+        print(f"\n{total_violations} layout violation(s)")
+        sys.exit(1)
+    print("OK: no layout violations")
 
 
 def _get_root_or_exit(file_path, page_name):
@@ -313,6 +348,11 @@ def main():
     p.add_argument("file")
     p.add_argument("--page", default=None)
     p.set_defaults(func=cmd_inspect)
+
+    p = sub.add_parser("validate", help="Run layout validation (overlaps, grid, hierarchy)")
+    p.add_argument("file")
+    p.add_argument("--page", default=None)
+    p.set_defaults(func=cmd_validate)
 
     p = sub.add_parser("add-class", help="Add a class box")
     p.add_argument("file")

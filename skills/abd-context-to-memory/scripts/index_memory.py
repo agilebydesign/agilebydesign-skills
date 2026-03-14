@@ -1,15 +1,18 @@
 """
-Orchestrate full pipeline: convert → chunk → embed → index.
+Orchestrate full pipeline: convert → chunk → index chunks → embed → index.
 
 Usage:
-  python index_memory.py --path <source_folder>   # convert, chunk, embed (full pipeline)
-  python index_memory.py --memory <memory_name>   # chunk + embed (chunks already exist or convert ran)
+  python index_memory.py --path <source_folder>   # convert, chunk, index chunks, embed (full pipeline)
+  python index_memory.py --memory <memory_name>   # chunk + index chunks + embed (chunks already exist or convert ran)
   python index_memory.py --replace                # rebuild entire index from all memory
 
 Run from workspace root. Requires: markitdown, openai, faiss-cpu, numpy. Set OPENAI_API_KEY.
 
 ROOT (memory storage) is derived from the source folder: parent of source path.
 Set CONTENT_MEMORY_ROOT only when running --memory without a source (chunk+embed only).
+
+Chunk index: index_chunks runs after chunk; writes chunk_index.json to story-synthesizer/context/
+when that path exists. Required for abd-story-synthesizer evidence extraction.
 """
 
 import os
@@ -17,7 +20,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from _config import ROOT, ensure_root, get_default_context_folder
+from _config import ROOT, MEMORY, ensure_root, get_default_context_folder
 
 ensure_root()
 SCRIPTS = Path(__file__).resolve().parent
@@ -62,12 +65,13 @@ def main():
         src_path = Path(src).resolve()
         content_root = src_path.parent  # memory lives alongside the source project
         memory_name = src_path.name
-        print(f"Pipeline: convert -> chunk -> sync SharePoint -> embed for {src}")
+        print(f"Pipeline: convert -> chunk -> index chunks -> sync SharePoint -> embed for {src}")
         print(f"Memory root: {content_root}\n")
         if not _run("convert_to_markdown.py", ["--memory", src], content_root=content_root):
             sys.exit(1)
         if not _run("chunk_markdown.py", ["--path", src], content_root=content_root):
             sys.exit(1)
+        _run("index_chunks.py", ["--context-path", str(src_path)], content_root=content_root)
         if not _run("sync_sharepoint_urls.py", ["--memory", memory_name], content_root=content_root):
             sys.exit(1)
         embed_args = ["--memory", memory_name]
@@ -87,10 +91,14 @@ def main():
     elif mem_idx is not None and mem_idx + 1 < len(args):
         src = args[mem_idx + 1]
     if src:
-        memory_name = Path(src).name
-        print(f"Pipeline: chunk → sync SharePoint → embed for {src}\n")
+        src_path = Path(src).resolve()
+        memory_name = src_path.name
+        # Chunks go to src when src is "context" folder, else MEMORY/memory_name
+        chunk_folder = src_path if memory_name == "context" else MEMORY / memory_name
+        print(f"Pipeline: chunk -> index chunks -> sync SharePoint -> embed for {src}\n")
         if not _run("chunk_markdown.py", ["--path", src]):
             sys.exit(1)
+        _run("index_chunks.py", ["--context-path", str(chunk_folder)])
         if not _run("sync_sharepoint_urls.py", ["--memory", memory_name]):
             sys.exit(1)
         embed_args = ["--memory", memory_name]

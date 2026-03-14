@@ -1,13 +1,31 @@
 #!/usr/bin/env python3
-"""Analyze and index existing chunks from abd-context-to-memory.
+"""Build chunk index from markdown chunks. Required for abd-story-synthesizer evidence extraction.
 
-Validates chunk readiness, builds a chunk index with stable IDs,
-source locations, and section mapping. Does NOT re-chunk.
+Validates chunk readiness, builds chunk_index.json with stable IDs, source locations,
+and section mapping. Does NOT re-chunk. Run after chunk_markdown (or when chunks exist).
+
+Usage:
+  python index_chunks.py --context-path <chunk_folder> [--output <path>]
+
+When --output is omitted and context-path is under a skill space with story-synthesizer,
+writes to <skill_space>/story-synthesizer/context/chunk_index.json.
 """
 import argparse
 import hashlib
 import json
+import os
+import sys
 from pathlib import Path
+
+# Allow import from sibling scripts
+_SCRIPTS = Path(__file__).resolve().parent
+if str(_SCRIPTS) not in sys.path:
+    sys.path.insert(0, str(_SCRIPTS))
+
+try:
+    from _config import ROOT
+except ImportError:
+    ROOT = Path.cwd()
 
 
 def _stable_id(path: str, content: str) -> str:
@@ -65,23 +83,42 @@ def analyze_chunks(context_path: Path) -> dict:
     }
 
 
+def _default_output_path(context_path: Path) -> Path:
+    """Write to workspace/story-synthesizer/context/chunk_index.json.
+    E.g. mm3e/context -> mm3e/story-synthesizer/context/chunk_index.json
+    """
+    ctx = context_path.resolve()
+    workspace = ctx.parent
+    synth_context = workspace / "story-synthesizer" / "context"
+    synth_context.mkdir(parents=True, exist_ok=True)
+    return synth_context / "chunk_index.json"
+
+
 def main():
-    parser = argparse.ArgumentParser(description="Analyze and index existing context chunks")
+    parser = argparse.ArgumentParser(
+        description="Build chunk index for abd-story-synthesizer. Run after chunk_markdown."
+    )
     parser.add_argument("--context-path", required=True, help="Path to chunked context directory")
     parser.add_argument("--output", default=None, help="Output path for chunk_index.json")
     args = parser.parse_args()
 
     context_path = Path(args.context_path).resolve()
     if not context_path.exists():
-        print(f"Error: context path does not exist: {context_path}")
-        return
+        print(f"Error: context path does not exist: {context_path}", file=sys.stderr)
+        sys.exit(1)
 
     result = analyze_chunks(context_path)
 
-    output_dir = Path(args.output).parent if args.output else context_path.parent / "normalized"
-    output_dir.mkdir(parents=True, exist_ok=True)
-    output_path = Path(args.output) if args.output else output_dir / "chunk_index.json"
+    if "error" in result:
+        print(f"Error: {result['error']}", file=sys.stderr)
+        sys.exit(1)
 
+    if args.output:
+        output_path = Path(args.output).resolve()
+    else:
+        output_path = _default_output_path(context_path)
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(json.dumps(result, indent=2), encoding="utf-8")
     print(f"Chunk index: {result['total_chunks']} chunks, {result['total_duplicates']} duplicates")
     print(f"Written to: {output_path}")

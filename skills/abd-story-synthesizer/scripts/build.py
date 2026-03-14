@@ -277,7 +277,7 @@ if __name__ == "__main__":
     elif args and args[0] == "get_instructions":
         if len(args) < 2:
             print("Usage: python build.py get_instructions <operation> [--strategy path]", file=sys.stderr)
-            print("Operations: prepare_context, create_strategy, run_slice, generate_slice, validate_run, validate_slice, improve_strategy, correct_run, correct_session, correct_skill, correct_all, concept_scan, extract_evidence, model_discovery, model_validation", file=sys.stderr)
+            print("Operations: prepare_context, create_strategy, run_slice, generate_slice, validate_run, validate_slice, validate_session, improve_strategy, correct_run, correct_session, correct_skill, correct_all, concept_scan, extract_evidence, model_discovery, model_validation", file=sys.stderr)
             sys.exit(1)
         strategy_path = None
         rest = args[1:]

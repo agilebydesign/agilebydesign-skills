@@ -193,6 +193,36 @@ def get_all_scanners() -> list[BaseScanner]:
     return [cls(rule_id=rule_stem) for rule_stem, name in RULE_TO_SCANNER.items() for cls in [SCANNER_BY_NAME[name]]]
 
 
+def get_ordered_scanners(skill_path: Path) -> list[BaseScanner]:
+    """Return scanners sorted by explicit order from rule frontmatter. Order is explicit only; tags do not imply order.
+    Rules without order get 999. Uses rules_dir from skill_path."""
+    rules_dir = Path(skill_path).resolve() / "rules"
+    DEFAULT_ORDER = 999
+
+    # Build (rule_stem, order) from rules/*.md, then (rule_stem, order) for RULE_TO_SCANNER not in rules
+    order_by_rule: dict[str, int] = {}
+    if rules_dir.exists():
+        for md in rules_dir.glob("*.md"):
+            content = md.read_text(encoding="utf-8")
+            meta = _parse_rule_frontmatter(content)
+            rule_stem = md.stem.replace("_", "-")
+            raw = meta.get("order", "")
+            try:
+                order_by_rule[rule_stem] = int(raw) if raw else DEFAULT_ORDER
+            except ValueError:
+                order_by_rule[rule_stem] = DEFAULT_ORDER
+
+    # Include all RULE_TO_SCANNER; use order from rules or default
+    pairs: list[tuple[int, str, type[BaseScanner]]] = []
+    for rule_stem, name in RULE_TO_SCANNER.items():
+        order = order_by_rule.get(rule_stem, DEFAULT_ORDER)
+        cls = SCANNER_BY_NAME[name]
+        pairs.append((order, rule_stem, cls))
+
+    pairs.sort(key=lambda x: (x[0], x[1]))
+    return [cls(rule_id=rule_stem) for _, rule_stem, cls in pairs]
+
+
 def run_scanners(
     content: str,
     source_path: str | Path | None = None,

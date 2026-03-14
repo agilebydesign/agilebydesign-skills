@@ -32,6 +32,7 @@ class DomainModule:
 
 
 CONCEPT_HEADING = re.compile(r"^\*\*(\w[\w\s]*)\*\*\s*$")
+CONCEPT_HEADING_MD = re.compile(r"^#{2,4}\s+(?!Module:)(\w[\w\s]*?)(?:\s*:\s*(\w[\w\s]*))?\s*$")
 CONCEPT_WITH_BASE = re.compile(r"^(\w[\w\s]*)\s*:\s*(\w[\w\s]*)$")
 MODULE_HEADING = re.compile(r"^#{2,4}\s+Module:\s*(.+)", re.IGNORECASE)
 PROPERTY_LINE = re.compile(r"^[-*]\s+(String|Number|Boolean|List|Dictionary|UniqueID|Instant|List<\w+>|Dictionary<\w+,\s*\w+>)\s+(\w+)", re.IGNORECASE)
@@ -58,6 +59,15 @@ def parse_domain_model(content: str) -> list[DomainModule]:
             if current_module.concepts:
                 modules.append(current_module)
             current_module = DomainModule(name=mm.group(1).strip(), line_no=i)
+            continue
+
+        cm_md = CONCEPT_HEADING_MD.match(stripped)
+        if cm_md:
+            if current_concept:
+                current_module.concepts.append(current_concept)
+            name = cm_md.group(1).strip()
+            base = (cm_md.group(2) or "").strip()
+            current_concept = DomainConcept(name=name, base_concept=base, line_no=i)
             continue
 
         cm = CONCEPT_HEADING.match(stripped)

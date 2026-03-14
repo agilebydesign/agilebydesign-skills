@@ -71,7 +71,7 @@ def main():
 
     states, relationships = extract_states(chunks_path, chunk_index)
 
-    output_dir = Path(args.output_dir) if args.output_dir else index_path.parent.parent / "extracted"
+    output_dir = Path(args.output_dir) if args.output_dir else index_path.parent.parent / "evidence"
     output_dir.mkdir(parents=True, exist_ok=True)
 
     (output_dir / "states.json").write_text(json.dumps(states, indent=2), encoding="utf-8")

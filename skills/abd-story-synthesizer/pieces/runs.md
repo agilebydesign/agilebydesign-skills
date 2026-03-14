@@ -3,6 +3,8 @@
 
 During a session you synthesize the scope of a slice through a run. **One run per slice.** Run 1 = slice 1, run 2 = slice 2, etc. A run captures what happened, what changed, when it changed. The session defines level of detail; the slice defines scope for the run.
 
+**Epics from context (not slices):** Do not name epics after slices. Epics and sub-epics come from the larger context (goal, domain, concept map, evidence). Place slice stories under appropriate sub-epics. See [interaction-epics-from-context](../rules/interaction-epics-from-context.md).
+
 **Going deeper on the same slice** (e.g. adding steps to discovered stories) is a **new session** with a different focus, not another run.
 
 Each run writes a **run log** to its own file under the session's runs folder. A run may require **multiple iterations** (user reviews → corrections added → re-run). The run log is updated on each iteration; corrections accumulate in the Corrections section.

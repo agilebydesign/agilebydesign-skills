@@ -71,7 +71,7 @@ def main():
 
     terms = extract_terms(chunks_path, chunk_index)
 
-    output_path = Path(args.output) if args.output else index_path.parent.parent / "extracted" / "terms.json"
+    output_path = Path(args.output) if args.output else index_path.parent.parent / "evidence" / "terms.json"
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(json.dumps(terms, indent=2), encoding="utf-8")
     print(f"Extracted {len(terms)} terms -> {output_path}")

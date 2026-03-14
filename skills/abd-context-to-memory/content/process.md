@@ -25,7 +25,18 @@
 - Other docs (>200 lines): Split at `#` or `##` boundaries
 - Small files (<200 lines): Kept as single chunk
 
-## Step 3: Sync Workspace to Memory (full pipeline)
+## Step 2b: Index Chunks
+
+**Story: Build chunk index**
+
+- **Required State**: Chunks produced (Step 2)
+- **Response**: Skill runs `index_chunks.py`; builds chunk_index.json with stable IDs, paths, section mapping
+- **Resulting State**: chunk_index.json written to `<workspace>/story-synthesizer/context/` (when that path exists)
+- **Failure Modes**: No chunks found; output path invalid
+
+**Mandatory for abd-story-synthesizer**: Chunk index is required for evidence extraction. Run automatically in `index_memory --path` pipeline.
+
+## Step 3: Sync Workspace to Memory (full pipeline; includes index chunks)
 
 **Story: Sync workspace to memory (convert + copy + chunk)**
 

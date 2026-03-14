@@ -42,7 +42,7 @@ class Instructions:
             parts.insert(0, context + "\n\n---\n\n")
 
         strategy_path = self.engine.strategy_path_override or self.engine.strategy_path
-        if operation in ("generate_slice", "run_slice", "improve_strategy") and strategy_path:
+        if operation in ("generate_slice", "run_slice", "improve_strategy", "validate_session") and strategy_path:
             if Path(strategy_path).exists():
                 strategy_content = Path(strategy_path).read_text(encoding="utf-8").strip()
                 parts.append("## Strategy Document\n\n")

@@ -44,6 +44,9 @@ class VerbNounScanner(BaseScanner):
     def scan(self, content: str, source_path: str | Path | None = None) -> list[Violation]:
         violations: list[Violation] = []
         source = str(source_path) if source_path else "content"
+        # Rule applies to interaction tree (epic/story/step) — not domain model properties/operations
+        if "domain-model" in source.lower():
+            return violations
         lines = content.split("\n")
         use_grammar = has_grammar_support()
 

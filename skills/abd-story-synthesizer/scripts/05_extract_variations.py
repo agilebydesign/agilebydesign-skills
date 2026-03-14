@@ -55,7 +55,7 @@ def main():
 
     variations = extract_variations(chunks_path, chunk_index)
 
-    output_path = Path(args.output) if args.output else index_path.parent.parent / "extracted" / "variations.json"
+    output_path = Path(args.output) if args.output else index_path.parent.parent / "evidence" / "variations.json"
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(json.dumps(variations, indent=2), encoding="utf-8")
     print(f"Extracted {len(variations)} variations -> {output_path}")

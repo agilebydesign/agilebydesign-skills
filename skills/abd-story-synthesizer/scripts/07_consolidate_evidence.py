@@ -127,7 +127,7 @@ def main():
     args = parser.parse_args()
 
     extracted_dir = Path(args.extracted_path).resolve()
-    output_dir = Path(args.output_dir) if args.output_dir else extracted_dir.parent / "consolidated"
+    output_dir = Path(args.output_dir) if args.output_dir else extracted_dir
     output_dir.mkdir(parents=True, exist_ok=True)
 
     graph = consolidate(extracted_dir)

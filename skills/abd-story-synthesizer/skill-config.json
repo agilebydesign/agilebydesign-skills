@@ -5,7 +5,6 @@
     "introduction.md",
     "concept_scan.md",
     "evidence.md",
-    "ai_passes.md",
     "interaction.md",
     "domain.md",
     "context.md",
@@ -44,6 +43,12 @@
       "story_synthesizer.session",
       "story_synthesizer.interaction.model",
       "story_synthesizer.domain",
+      "story_synthesizer.validation.rules",
+      "story_synthesizer.validation.checklist"
+    ],
+    "validate_session": [
+      "story_synthesizer.session",
+      "story_synthesizer.validation.rules",
       "story_synthesizer.validation.checklist"
     ],
     "run_slice": [

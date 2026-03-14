@@ -90,4 +90,4 @@ Missing or implicit concepts that appear necessary to explain the rules but are 
 
 ## Output Location
 
-Write to `<session>/concept_scan.md`.
+Write to `<workspace>/story-synthesizer/concept_scan.md`.

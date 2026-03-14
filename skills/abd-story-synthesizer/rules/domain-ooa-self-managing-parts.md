@@ -13,3 +13,5 @@ tags: [discovery, domain]
 **DO NOT** put `configure_X()`, `set_X()`, or orchestration methods on the container that delegate to owned objects. If Ability knows how to compute its cost from its rank, that's Ability's concern.
 
 - Example (wrong): Character has `configure_ability(name, rank) → Ability`, `configure_defense(name, ranks) → Defense`, `validate_power_level() → Boolean`. Character is orchestrating what each part should do instead of letting parts manage themselves.
+
+**Related rules:** [domain-ooa-traverse-from-root](domain-ooa-traverse-from-root.md) — traverse from root; source owns creation. [domain-ooa-model-instances-not-smashed](domain-ooa-model-instances-not-smashed.md) — model instances, not smashed properties.

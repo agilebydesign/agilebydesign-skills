@@ -16,7 +16,9 @@ tags: [discovery, story_map, story, domain]
 ---
 ```
 
-**Tag set:** `discovery`, `exploration`, `specification`, `story_map`, `stories`, `domain`, `steps`, `steps_edge_cases`, `examples`, `scenarios`, `class_diagram`
+**Tag set:** `discovery`, `exploration`, `specification`, `story_map`, `stories`, `domain`, `steps`, `steps_edge_cases`, `examples`, `scenarios`, `class_diagram`, `session`, `slices`, `interaction`, `story_map`, `ai_pass`
+
+**`session` and `slices` tags:** Rules tagged `session` or `slices` govern slice design and session creation. They are injected for `create_strategy` and `validate_session`. Use them when designing slices (size, cross-cutting, ordering, foundation inclusion).
 
 **`class_diagram` tag:** Rules tagged `class_diagram` govern DrawIO class diagram rendering — positioning, edge routing, import conventions, hierarchy layout. These rules are injected when using the class diagram CLI tool (`drawio_class_cli.py`), not during synthesis runs. They apply alongside `domain` rules when rendering domain model changes to diagrams.
 
@@ -37,6 +39,7 @@ python scripts/build.py get_instructions run_slice [--strategy path/to/strategy.
 | Operation       | When to use                          | Injects rules |
 |----------------|--------------------------------------|----------------|
 | `create_strategy` | Strategy phase, identification criteria | Yes            |
+| `validate_session` | After creating strategy; validate slices against slice rules | Yes (with --strategy) |
 | `run_slice`       | Runs, slice output                   | Yes            |
 | `generate_slice`  | Alias for run_slice                   | Yes            |
 | `correct_run`     | Record missed corrections to run log  | No             |

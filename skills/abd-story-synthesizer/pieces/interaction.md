@@ -20,6 +20,8 @@ An interaction is a single meaningful exchange between two actors that results i
 
 ### Interaction Tree Rules
 
+**Epics from context (not slices):** **DO NOT** name epics after slices. Epics and sub-epics come from the larger context (goal, domain, concept map, evidence) — they are functional. Place slice stories under appropriate sub-epics. Mark remainder as estimated.
+
 **Node Hierarchy**
 - Epic - Can nest to have epic children or story children. An epic whose parent is an epic is sometimes called a sub-epic. Names are typically simple verb-noun.
 - Story - Smallest unit of testable value that is independently delivered. Names are typically simple verb-noun.
@@ -344,6 +346,8 @@ A typical reference hierarchy for making a country-specific payment (trigger, ma
 
 <!-- section: story_synthesizer.interaction.output -->
 ## Output Format
+
+**Output path:** `<workspace>/story-synthesizer/interactions/interaction-tree.md`
 
 Format specification for the Interaction Tree output. See the Complete Example above for a full reference.
 

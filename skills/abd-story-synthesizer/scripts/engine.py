@@ -119,8 +119,11 @@ class AgileContextEngine:
             skill_name = skill.path.name
             output_folder = self._output_folder_for_skill(skill_name)
             output_root = self.workspace_path / output_folder
-            output_root.mkdir(parents=True, exist_ok=True)
-            (output_root / "runs").mkdir(parents=True, exist_ok=True)
+            (output_root / "context").mkdir(parents=True, exist_ok=True)
+            (output_root / "evidence").mkdir(parents=True, exist_ok=True)
+            (output_root / "interactions").mkdir(parents=True, exist_ok=True)
+            (output_root / "domain").mkdir(parents=True, exist_ok=True)
+            (output_root / "default" / "runs").mkdir(parents=True, exist_ok=True)
 
     def _update_strategy_path(self) -> None:
         if not self.workspace_path:
@@ -129,16 +132,21 @@ class AgileContextEngine:
         if self.strategy_path_override and self.strategy_path_override.exists():
             self.strategy_path = self.strategy_path_override
             return
+        synth = self.workspace_path / "story-synthesizer"
         candidates = [
-            self.workspace_path / "story-synthesizer" / "strategy.md",
-            self.workspace_path / "story-synthesizer" / "strategy.md",
-            self.workspace_path / "docs" / "strategy.md",
+            synth / "docs" / "strategy.md",
         ]
+        for session_dir in (synth).iterdir() if synth.exists() else []:
+            if session_dir.is_dir():
+                strategy_file = session_dir / f"{session_dir.name}-strategy.md"
+                if strategy_file.exists():
+                    candidates.insert(0, strategy_file)
+        candidates.insert(0, synth / "default" / "default-strategy.md")
         for p in candidates:
             if p.exists():
                 self.strategy_path = p
                 return
-        self.strategy_path = self.workspace_path / "story-synthesizer" / "strategy.md"
+        self.strategy_path = synth / "default" / "default-strategy.md"
 
 
 CONTENT_ORDER = [

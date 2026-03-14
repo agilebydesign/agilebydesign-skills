@@ -125,12 +125,9 @@ def cmd_scan(args):
         sys.exit(1)
 
     synth_dir = context_path.parent / "story-synthesizer"
-    if synth_dir.exists():
-        default_output = synth_dir / "context_analysis.json"
-        default_glossary = synth_dir / "glossary.json"
-    else:
-        default_output = context_path.parent / "context_analysis.json"
-        default_glossary = context_path.parent / "glossary.json"
+    context_dir = synth_dir / "context"
+    default_output = context_dir / "context_analysis.json"
+    default_glossary = context_dir / "glossary.json"
     output_path = Path(args.output) if args.output else default_output
     glossary_path = Path(args.glossary) if args.glossary else default_glossary
     glossary = _load_glossary(glossary_path)
@@ -258,7 +255,17 @@ def cmd_seed(args):
         print(f"ERROR: source not found: {source_path}", file=sys.stderr)
         sys.exit(1)
 
-    output_path = Path(args.output) if args.output else source_path.parent / "glossary.json"
+    if args.output:
+        output_path = Path(args.output).resolve()
+    else:
+        p = source_path.parent
+        while p != p.parent:
+            if (p / "story-synthesizer").is_dir():
+                output_path = p / "story-synthesizer" / "context" / "glossary.json"
+                break
+            p = p.parent
+        else:
+            output_path = source_path.parent / "glossary.json"
 
     text = source_path.read_text(encoding="utf-8", errors="replace")
     terms = set()
