@@ -6,6 +6,8 @@ The core principle: **Do not go from text to classes. Go from context → mechan
 
 Within each phase: **Human** → **AI** invokes script → **Script** returns instructions → **AI** produces output → **Human** updates and adjusts → **AI** incorporates changes. Do not rely on AGENTS.md alone.
 
+**Stop for review (default):** After each phase that produces human-reviewable output (concept scan, evidence summary, foundational model, etc.), **STOP and ask the user to review.** Present the output, then **pose questions** for the user to consider (e.g., completeness, gaps, overlaps, scope, authority). Do not proceed to the next phase until the user explicitly says to continue (e.g., "proceed", "continue", "looks good", "next phase"). The user must override the default by confirming before the AI moves on.
+
 ---
 
 ## The Pipeline (3 Sections)
@@ -20,7 +22,7 @@ Within each phase: **Human** → **AI** invokes script → **Script** returns in
    - Phase 3: Extract Evidence
    - Phase 4: Map Concepts
    - Phase 5: Model Discovery and Assessment (on entire concept map and evidence)
-   Outputs: chunk_index.json, evidence graph, concept_scan, foundational-model.md, domain-model.md (foundation)
+   Outputs: chunk_index.json, evidence graph, concept_scan, foundational-model.md
 
 2. SESSION
    Checklist: session_checklist_template.md → <session>/session-checklist.md
@@ -135,6 +137,8 @@ python scripts/build.py get_instructions concept_scan
 
 Output: `<workspace>/story-synthesizer/concept_scan.md`. See `pieces/concept_scan.md` for full specification.
 
+**STOP for review.** Present the concept scan to the user and pose questions (e.g., completeness, overlaps, scope, authority, variation axes). Do not proceed to Phase 5 until the user confirms (e.g., "proceed", "continue", "looks good").
+
 ---
 
 ## Phase 5: Model Discovery and Assessment
@@ -177,7 +181,7 @@ python scripts/build.py get_instructions model_discovery
 python scripts/build.py get_instructions model_validation
 ```
 
-Output: `<workspace>/story-synthesizer/foundational-model.md` and `<workspace>/story-synthesizer/domain/domain-model.md` (foundation). Slice runs extend this foundation.
+Output: `<workspace>/story-synthesizer/foundational-model.md`. Slice runs extend this foundation and produce domain-model.md.
 
 ---
 
@@ -202,6 +206,8 @@ Create, open, or continue an existing session. The session defines: Level of Det
 **CRITICAL: Phase 6 creates the strategy file only. Do NOT run any slice.** The user must explicitly say "run slice", "build it", or "proceed" before Phase 7 (Model Generation).
 
 **After creating strategy:** Run `get_instructions validate_session --strategy <path>` and validate slices against slice rules before running any slice.
+
+**When user says "validate session" or "validate the session":** Run `get_instructions validate_session --strategy <path>` (path = session's strategy file, e.g. `discovery1/discovery1-strategy.md`). Apply those instructions: load rules, validate slices against slice rules. Report pass/fail and any violations. Do NOT run `build.py validate` (scanners).
 
 **When the user corrects strategy, slices, or scope during session creation:** Apply the fix and record the correction in `runs/run-0.md`. See `pieces/runs.md` § When User Gives a Correction. A change is not complete until the correction is recorded.
 
@@ -231,7 +237,7 @@ Execute one run per slice. Phases 7–10: Model Generation → Validate Rules an
 | Says "run slice", "build it", "proceed" | Invokes `get_instructions run_slice` | Produces interaction tree + domain model for slice | Reviews and adjusts |
 
 
-**Builds on the OOAD foundation** from Stage 1 (Phase 5). The foundation (foundational-model.md, domain-model.md) provides mechanisms, ownership, and validated concepts. Slice runs produce the interaction tree and domain model extensions for that slice's scope.
+**Builds on the OOAD foundation** from Stage 1 (Phase 5). The foundation (foundational-model.md) provides mechanisms, ownership, and validated concepts. Slice runs produce the interaction tree and domain model (domain-model.md) for that slice's scope.
 
 Produce the interaction tree and domain model for the slice. Domain concepts from the foundation sync into the interaction tree via `**Concept**` references.
 
@@ -241,20 +247,22 @@ python scripts/build.py get_instructions run_slice
 
 ---
 
-## Phase 8: Validate Rules and Scanners
+## Phase 8: Validate Rules
 
 
-| Human         | AI / Script              | AI                 | Human → AI                   |
-| ------------- | ------------------------ | ------------------ | ---------------------------- |
-| After Phase 7 | Runs `build.py validate` | Reports violations | Fixes and re-runs until pass |
+| Human         | AI / Script                              | AI                 | Human → AI                   |
+| ------------- | ---------------------------------------- | ------------------ | ---------------------------- |
+| After Phase 7 | Invokes `get_instructions validate_slice` | Loads rules, validates | Fixes and re-runs until pass |
+| Says "validate slice" | Invokes `get_instructions validate_slice` | Loads rules, validates slice output | Reports violations |
 
 
-Run rule scanners. Fix any violations before marking the run complete. See `pieces/validation.md`.
+**When user says "validate slice" or "validate the slice":** Run `get_instructions validate_slice`. Apply those instructions: load rules, validate interaction-tree and domain-model against rules. Report pass/fail and any violations. Do NOT run `build.py validate` (scanners).
+
+See `pieces/validation.md`.
 
 ```bash
-python scripts/build.py validate
-python scripts/build.py get_instructions validate_run
 python scripts/build.py get_instructions validate_slice
+python scripts/build.py get_instructions validate_run
 ```
 
 ---
@@ -312,7 +320,7 @@ python scripts/build.py get_instructions improve_strategy
 | #    | Phase   | Step                                                              | Done |
 | ---- | ------- | ----------------------------------------------------------------- | ---- |
 | 1    | Phase 7 | Model Generation — produce interaction tree + domain model for slice (builds on OOAD foundation) | ☐    |
-| 2    | Phase 8 | Validate Rules and Scanners — `build.py validate`; fix violations | ☐    |
+| 2    | Phase 8 | Validate Rules — `get_instructions validate_slice`; apply rules, fix violations | ☐    |
 | 3    | Phase 9 | Render Diagrams — update class diagram                            | ☐    |
 
 
@@ -330,7 +338,7 @@ Each stage has an independent checklist. Kick off the checklist when starting th
 - Phase 2: Context prepared (chunk_index.json)
 - Phase 3: Evidence extracted (evidence_graph.json)
 - Phase 4: Concepts mapped (concept_scan.md)
-- Phase 5: Model Discovery and Assessment (foundational-model.md, domain-model.md)
+- Phase 5: Model Discovery and Assessment (foundational-model.md)
 
 **2. Session** — `<session>/session-checklist.md`
 

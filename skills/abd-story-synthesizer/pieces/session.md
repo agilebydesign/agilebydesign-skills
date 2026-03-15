@@ -2,7 +2,7 @@
 
 **A session executes a sequence of runs that follow the same strategy.** Before synthesizing, set up a session (create new or continue existing). Sessions define level of detail, scope, and slices. Context must be prepared before starting a session (see `pieces/context.md`). One run per slice; runs write logs.
 
-**Session location:** `<workspace>/story-synthesizer/<session-name>/`. Strategy: `<session-name>-strategy.md`. Runs: `runs/run-N.md`, `runs/run-N-validation.md`, `runs/run-N-checklist.md`. OOAD foundation is produced in Stage 1 (Phase 5) at workspace level: `story-synthesizer/foundational-model.md`, `domain/domain-model.md`.
+**Session location:** `<workspace>/story-synthesizer/<session-name>/`. Strategy: `<session-name>-strategy.md`. Runs: `runs/run-N.md`, `runs/run-N-validation.md`, `runs/run-N-checklist.md`. OOAD foundation is produced in Stage 1 (Phase 5) at workspace level: `story-synthesizer/foundational-model.md`. Slice runs produce `domain-model.md`.
 
 ## Session Naming
 
@@ -16,6 +16,13 @@ A session has:
 
 How deep the synthesis goes. Each session type defines what a run produces.
 
+**Pipeline mapping:**
+
+| Session Type      | Pipeline phases | Interaction detail | Domain model detail |
+| ----------------- | --------------- | ------------------ | ------------------- |
+| **Discovery**     | 2, 5, 6 (skeleton) | Epic/story hierarchy; short names only | Foundational concepts; names + interactions only |
+| **Exploration**   | 6 (full), 7–9   | Trigger, Response, Pre-Condition; Steps; Failure-Modes, Constraints | Complete: properties, operations, collaborators |
+| **Specification** | 6 (full), 12    | Steps in scenarios; Examples (tables per concept); Failure-Modes | Refinements from walkthrough |
 
 | Session Type      | What runs produce                                                                                                                                                                                             | Artifacts                                | Tags                                                                       | Slice size                                                                                                                          |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- | -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
@@ -42,6 +49,8 @@ If no scope is set, ask the user. The AI can suggest scope based on the context 
 Slices define the order of work. Each slice scopes one run. Slice design depends on session type.
 
 **Apply slice rules** when designing slices. Run `get_instructions create_strategy` to load rules. After creating strategy, run `get_instructions validate_session --strategy <path>` to validate slices against slice rules.
+
+**When user says "validate session" or "validate the session":** Run `get_instructions validate_session --strategy <path>` (path = session's strategy file). Apply those instructions: load rules, validate slices against slice rules (size, cross-cutting, foundation inclusion). Report pass/fail and any violations.
 
 **Epics from context (not slices):** Do not name epics after slices. Epics and sub-epics come from the larger context (goal, domain, concept map, evidence). Place slice stories under appropriate sub-epics. See [interaction-epics-from-context](../rules/interaction-epics-from-context.md).
 

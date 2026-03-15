@@ -263,6 +263,45 @@ def check_overlaps(classes):
     return overlaps
 
 
+def validate_layout(root):
+    """Validate diagram against class_diagram rules. Returns list of (rule, message) violations."""
+    violations = []
+    classes = get_all_classes(root)
+    edges = get_all_edges(root)
+    id_to_cell = {c.get("id"): c for c in root.findall("mxCell") if c.get("vertex") == "1"}
+    id_to_name = {cid: name for cid, name, *_ in classes}
+    name_to_geo = {name: (x, y, w, h) for cid, name, x, y, w, h in classes}
+
+    # Rule: no overlapping classes (domain-ooa-diagram-edge-routing / layout)
+    overlaps = check_overlaps(classes)
+    for name_a, name_b in overlaps:
+        violations.append(("no_overlaps", f"{name_a} overlaps {name_b}"))
+
+    # Rule: inheritance flows top-down — parent (base) has lower Y than child
+    for eid, etype, src_id, tgt_id in edges:
+        if etype != "inheritance":
+            continue
+        src_name = id_to_name.get(src_id)
+        tgt_name = id_to_name.get(tgt_id)
+        if src_name is None or tgt_name is None:
+            continue
+        src_geo = name_to_geo.get(src_name)
+        tgt_geo = name_to_geo.get(tgt_name)
+        if src_geo is None or tgt_geo is None:
+            continue
+        _, child_y, _, _ = src_geo
+        _, parent_y, _, _ = tgt_geo
+        if child_y <= parent_y:
+            violations.append(
+                (
+                    "hierarchy_flow",
+                    f"Inheritance: {src_name} (y={child_y}) should be below parent {tgt_name} (y={parent_y}); base at top, children below",
+                )
+            )
+
+    return violations
+
+
 # ---------------------------------------------------------------------------
 # Class cell builder
 # ---------------------------------------------------------------------------

@@ -14,4 +14,4 @@ Run `python scripts/create-checklist.py overall` to create. Tick (☑) each item
 | 4 | Phase 4 | **Map Concepts** — concept_scan.md produced | ☐ |
 | 5 | Phase 5 | **Model Discovery** — `get_instructions model_discovery`; cluster evidence into mechanisms, ownership, candidates | ☐ |
 | 6 | Phase 5 | **Model Assessment** — `get_instructions model_validation`; scenario walkthrough, anemia critique, base check | ☐ |
-| 7 | Phase 5 | **Persist OOAD foundation** — foundational-model.md and domain/domain-model.md written; do not proceed to Session until stable | ☐ |
+| 7 | Phase 5 | **Persist OOAD foundation** — foundational-model.md written; do not proceed to Session until stable (domain-model.md is produced during slice runs, not here) | ☐ |

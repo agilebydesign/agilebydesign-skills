@@ -1,0 +1,1663 @@
+[
+  {
+    "state_id": "st_0000",
+    "entity": "Character",
+    "state_description": "Alien, robotic, or artificial life form Shapeshifters often become heroes to win acceptance from the people of their new world.",
+    "source_chunk": "5c2248bc6b32",
+    "raw": "Alien, robotic, or artificial life form Shapeshifters often become heroes to win acceptance from the people of their new world.",
+    "matched_concepts": [
+      "Character"
+    ],
+    "matched_aliases": [
+      "hero",
+      "heroes"
+    ],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0001",
+    "entity": "Advantage",
+    "state_description": "Streetwise 4, Sleight of Hand 8, Stealth 8 Set-up, Teamwork ADVANTAGES - RAGING Daze (Intimidation), Power Attack ADVANTAGES - SOVEREIGN Benefit (Status), Connected SKILLS Expertise:",
+    "source_chunk": "f1b61b84c3d4",
+    "raw": "Streetwise 4, Sleight of Hand 8, Stealth 8 Set-up, Teamwork ADVANTAGES - RAGING Daze (Intimidation), Power Attack ADVANTAGES - SOVEREIGN Benefit (Status), Connected SKILLS Expertise:",
+    "matched_concepts": [
+      "Advantage",
+      "Attack",
+      "Power",
+      "Skill"
+    ],
+    "matched_aliases": [
+      "advantages",
+      "expertise",
+      "skills"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "state_id": "st_0002",
+    "entity": "Ability",
+    "state_description": "When the action starts hap- pening, such as when the heroes are staving off a disaster or fighting villains, time becomes more crucial and is broken down into action rounds, and the players generally have to make die rolls to see how their heroes do.",
+    "source_chunk": "e763ed2b6df3",
+    "raw": "When the action starts hap- pening, such as when the heroes are staving off a disaster or fighting villains, time becomes more crucial and is broken down into action rounds, and the players generally have to make die rolls to see how their heroes do.",
+    "matched_concepts": [
+      "Ability",
+      "Character"
+    ],
+    "matched_aliases": [
+      "fighting",
+      "hero",
+      "heroes",
+      "villain"
+    ],
+    "confidence": 0.86
+  },
+  {
+    "state_id": "st_0003",
+    "entity": "Ability",
+    "state_description": "Gain 2 bonus power points per -1 to an ability rank.",
+    "source_chunk": "224894ebe3cd",
+    "raw": "Gain 2 bonus power points per -1 to an ability rank.",
+    "matched_concepts": [
+      "Ability",
+      "Power",
+      "PowerPoint"
+    ],
+    "matched_aliases": [
+      "power point",
+      "power points"
+    ],
+    "confidence": 0.94
+  },
+  {
+    "state_id": "st_0004",
+    "entity": "Ability",
+    "state_description": "Debilitated Intellect, Awareness, or Presence means the hero is unaware and remains so until re- stored to at least a –5 rank in the ability.",
+    "source_chunk": "1bd7d0c16d7f",
+    "raw": "Debilitated Intellect, Awareness, or Presence means the hero is unaware and remains so until re- stored to at least a –5 rank in the ability.",
+    "matched_concepts": [
+      "Ability",
+      "Character"
+    ],
+    "matched_aliases": [
+      "awareness",
+      "hero",
+      "intellect",
+      "presence"
+    ],
+    "confidence": 0.86
+  },
+  {
+    "state_id": "st_0005",
+    "entity": "Attack",
+    "state_description": "If your Deception check opposed by Decep- tion or Insight succeeds, your opponent is heedless of the potential danger and may hit the junction box or lose his balance and fall, if his attack against you fails.",
+    "source_chunk": "b8143d2fc323",
+    "raw": "If your Deception check opposed by Decep- tion or Insight succeeds, your opponent is heedless of the potential danger and may hit the junction box or lose his balance and fall, if his attack against you fails.",
+    "matched_concepts": [
+      "Attack",
+      "Check"
+    ],
+    "matched_aliases": [],
+    "confidence": 0.86
+  },
+  {
+    "state_id": "st_0006",
+    "entity": "Check",
+    "state_description": "If you perform some action that makes you more impos- ing, you gain a circumstance bonus on your Intimidation check.",
+    "source_chunk": "c6d96bb8e77d",
+    "raw": "If you perform some action that makes you more impos- ing, you gain a circumstance bonus on your Intimidation check.",
+    "matched_concepts": [
+      "Check"
+    ],
+    "matched_aliases": [],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0007",
+    "entity": "Character",
+    "state_description": "SKILLS 121121 MUTANTS & MASTERMINDS MUTANTS & MASTERMINDS DELUXE HERO’S HANDBOOK DELUXE HERO’S HANDBOOK ceed or fail, a target’s true attitude towards you generally becomes hostile after you attempt an Intimidation check, even if they go along with you for the moment.",
+    "source_chunk": "b917f59e3ab3",
+    "raw": "SKILLS 121121 MUTANTS & MASTERMINDS MUTANTS & MASTERMINDS DELUXE HERO’S HANDBOOK DELUXE HERO’S HANDBOOK ceed or fail, a target’s true attitude towards you generally becomes hostile after you attempt an Intimidation check, even if they go along with you for the moment.",
+    "matched_concepts": [
+      "Character",
+      "Check",
+      "Skill"
+    ],
+    "matched_aliases": [
+      "hero",
+      "skills"
+    ],
+    "confidence": 0.94
+  },
+  {
+    "state_id": "st_0008",
+    "entity": "Advantage",
+    "state_description": "In negotiations, all participants roll Persuasion checks to see who gains the advantage.",
+    "source_chunk": "5b4b684b0fca",
+    "raw": "In negotiations, all participants roll Persuasion checks to see who gains the advantage.",
+    "matched_concepts": [
+      "Advantage",
+      "Check"
+    ],
+    "matched_aliases": [
+      "checks"
+    ],
+    "confidence": 0.86
+  },
+  {
+    "state_id": "st_0009",
+    "entity": "Ability",
+    "state_description": "If others are aware of your presence, you can’t use Stealth to remain undetected.",
+    "source_chunk": "eaa343687d24",
+    "raw": "If others are aware of your presence, you can’t use Stealth to remain undetected.",
+    "matched_concepts": [
+      "Ability"
+    ],
+    "matched_aliases": [
+      "presence"
+    ],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0010",
+    "entity": "Condition",
+    "state_description": "Other conditions the patient may have remain, so reviving someone inca- pacitated due to fatigue still leaves the patient exhaust- ed, for example, while awakening someone incapacitat- ed due to damage still leaves the patient staggered.",
+    "source_chunk": "b263cedb1da2",
+    "raw": "Other conditions the patient may have remain, so reviving someone inca- pacitated due to fatigue still leaves the patient exhaust- ed, for example, while awakening someone incapacitat- ed due to damage still leaves the patient staggered.",
+    "matched_concepts": [
+      "Condition",
+      "Effect"
+    ],
+    "matched_aliases": [
+      "conditions",
+      "damage"
+    ],
+    "confidence": 0.86
+  },
+  {
+    "state_id": "st_0011",
+    "entity": "Advantage",
+    "state_description": "ADVANTAGES MUTANTS & MASTERMINDS MUTANTS & MASTERMINDS DELUXE HERO’S HANDBOOK DELUXE HERO’S HANDBOOK ADVANTAGE Beginner’s Luck Inspire Leadership Luck Seize Initiative Ultimate Effort ADVANTAGE Assessment Benefit Diehard Eidetic Memory Equipment Extraordinary Effort Fearless Great Endurance Instant Up Interpose Minion Second Chance Sidekick Teamwork Trance ADVANTAGE Agile Feint Animal Empathy Artificer Attractive Connected Contacts Daze Fascinate Favored Foe Hide in Plain Sight Improvised Tools Inventor Jack-of-all-trades Languages Ritualist Skill Mastery Startle Taunt Tracking Well-informed FORTUNE ADVANTAGES EFFECT Spend a hero point to gain 5 temporary ranks in a skill.",
+    "source_chunk": "97b47b8c1c24",
+    "raw": "ADVANTAGES MUTANTS & MASTERMINDS MUTANTS & MASTERMINDS DELUXE HERO’S HANDBOOK DELUXE HERO’S HANDBOOK ADVANTAGE Beginner’s Luck Inspire Leadership Luck Seize Initiative Ultimate Effort ADVANTAGE Assessment Benefit Diehard Eidetic Memory Equipment Extraordinary Effort Fearless Great Endurance Instant Up Interpose Minion Second Chance Sidekick Teamwork Trance ADVANTAGE Agile Feint Animal Empathy Artificer Attractive Connected Contacts Daze Fascinate Favored Foe Hide in Plain Sight Improvised Tools Inventor Jack-of-all-trades Languages Ritualist Skill Mastery Startle Taunt Tracking Well-informed FORTUNE ADVANTAGES EFFECT Spend a hero point to gain 5 temporary ranks in a skill.",
+    "matched_concepts": [
+      "Advantage",
+      "Character",
+      "Effect",
+      "Equipment",
+      "Modifier",
+      "Skill"
+    ],
+    "matched_aliases": [
+      "advantages",
+      "extra",
+      "hero"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "state_id": "st_0012",
+    "entity": "Modifier",
+    "state_description": "Gain two benefits when using extra effort.",
+    "source_chunk": "97b47b8c1c24",
+    "raw": "Gain two benefits when using extra effort.",
+    "matched_concepts": [
+      "Modifier"
+    ],
+    "matched_aliases": [
+      "extra"
+    ],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0013",
+    "entity": "Power",
+    "state_description": "Gain a follower or minion with (15 x rank) power points.",
+    "source_chunk": "97b47b8c1c24",
+    "raw": "Gain a follower or minion with (15 x rank) power points.",
+    "matched_concepts": [
+      "Power",
+      "PowerPoint"
+    ],
+    "matched_aliases": [
+      "power point",
+      "power points"
+    ],
+    "confidence": 0.86
+  },
+  {
+    "state_id": "st_0014",
+    "entity": "Power",
+    "state_description": "Gain a sidekick with (5 x rank) power points.",
+    "source_chunk": "97b47b8c1c24",
+    "raw": "Gain a sidekick with (5 x rank) power points.",
+    "matched_concepts": [
+      "Power",
+      "PowerPoint"
+    ],
+    "matched_aliases": [
+      "power point",
+      "power points"
+    ],
+    "confidence": 0.86
+  },
+  {
+    "state_id": "st_0015",
+    "entity": "Attack",
+    "state_description": "While you are in your favored environment, you gain a +2 circumstance bonus to attack checks or your active defenses.",
+    "source_chunk": "2461c6ec4a3a",
+    "raw": "While you are in your favored environment, you gain a +2 circumstance bonus to attack checks or your active defenses.",
+    "matched_concepts": [
+      "Attack",
+      "Check",
+      "Defense"
+    ],
+    "matched_aliases": [
+      "checks",
+      "defenses"
+    ],
+    "confidence": 0.94
+  },
+  {
+    "state_id": "st_0016",
+    "entity": "When",
+    "state_description": "When you take a standard action to aim, you gain double the normal circumstance bonus:",
+    "source_chunk": "2461c6ec4a3a",
+    "raw": "When you take a standard action to aim, you gain double the normal circumstance bonus:",
+    "matched_concepts": [],
+    "matched_aliases": [],
+    "confidence": 0.7
+  },
+  {
+    "state_id": "st_0017",
+    "entity": "Check",
+    "state_description": "IMPROVED DEFENSE COMBAT When you take the defend action in combat (see Defend in the Action & Adventure chapter) you gain a +2 cir- cumstance bonus to your active defense checks for the round.",
+    "source_chunk": "2461c6ec4a3a",
+    "raw": "IMPROVED DEFENSE COMBAT When you take the defend action in combat (see Defend in the Action & Adventure chapter) you gain a +2 cir- cumstance bonus to your active defense checks for the round.",
+    "matched_concepts": [
+      "Check",
+      "Defense"
+    ],
+    "matched_aliases": [
+      "checks"
+    ],
+    "confidence": 0.86
+  },
+  {
+    "state_id": "st_0018",
+    "entity": "Character",
+    "state_description": "Once per scene, by taking a standard action and spending a hero point, allies able to interact with you gain a +1 circumstance bonus per Inspire rank on all checks until the start of your next round, with a maximum bonus of +5.",
+    "source_chunk": "5221648cb625",
+    "raw": "Once per scene, by taking a standard action and spending a hero point, allies able to interact with you gain a +1 circumstance bonus per Inspire rank on all checks until the start of your next round, with a maximum bonus of +5.",
+    "matched_concepts": [
+      "Character",
+      "Check"
+    ],
+    "matched_aliases": [
+      "checks",
+      "hero"
+    ],
+    "confidence": 0.86
+  },
+  {
+    "state_id": "st_0019",
+    "entity": "Skill",
+    "state_description": "Use the guidelines for gathering information in the Investigation skill description to determine the lev- el of information you gain.",
+    "source_chunk": "b54b40cd0a56",
+    "raw": "Use the guidelines for gathering information in the Investigation skill description to determine the lev- el of information you gain.",
+    "matched_concepts": [
+      "Skill"
+    ],
+    "matched_aliases": [],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0020",
+    "entity": "Effect",
+    "state_description": "Once an effect is activated or deactivated, it remains so until your next turn.",
+    "source_chunk": "c175efaf2ce7",
+    "raw": "Once an effect is activated or deactivated, it remains so until your next turn.",
+    "matched_concepts": [
+      "Effect"
+    ],
+    "matched_aliases": [],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0021",
+    "entity": "Effect",
+    "state_description": "2 points per rank You gain total concealment from a particular sense while this effect is active, although you are still detectable to other senses (even other senses of the same sense type;",
+    "source_chunk": "d53ace0b38b4",
+    "raw": "2 points per rank You gain total concealment from a particular sense while this effect is active, although you are still detectable to other senses (even other senses of the same sense type;",
+    "matched_concepts": [
+      "Effect"
+    ],
+    "matched_aliases": [],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0022",
+    "entity": "Ability",
+    "state_description": "So, for example, if you lose Intellect while you gain in Strength, treat the value of the lost Intellect ranks as the value of the flaw.",
+    "source_chunk": "47711ef2a387",
+    "raw": "So, for example, if you lose Intellect while you gain in Strength, treat the value of the lost Intellect ranks as the value of the flaw.",
+    "matched_concepts": [
+      "Ability",
+      "Modifier"
+    ],
+    "matched_aliases": [
+      "flaw",
+      "intellect",
+      "strength"
+    ],
+    "confidence": 0.86
+  },
+  {
+    "state_id": "st_0023",
+    "entity": "Ability",
+    "state_description": "However, if Rebound is hit again on the following turn for Dam- age 4, he gains up to 4 ranks of Strength, up to his maximum again.",
+    "source_chunk": "47711ef2a387",
+    "raw": "However, if Rebound is hit again on the following turn for Dam- age 4, he gains up to 4 ranks of Strength, up to his maximum again.",
+    "matched_concepts": [
+      "Ability"
+    ],
+    "matched_aliases": [
+      "strength"
+    ],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0024",
+    "entity": "you gain a UNDER THE HOOD",
+    "state_description": "If you apply all of your limbs to a grab attempt (rather than taking the option to leave some of them free), you gain a UNDER THE HOOD:",
+    "source_chunk": "a155210c4ef4",
+    "raw": "If you apply all of your limbs to a grab attempt (rather than taking the option to leave some of them free), you gain a UNDER THE HOOD:",
+    "matched_concepts": [],
+    "matched_aliases": [],
+    "confidence": 0.7
+  },
+  {
+    "state_id": "st_0025",
+    "entity": "Condition",
+    "state_description": "Continuous Extra Limbs are a power effect you can turn on and off at will, but that remain until you choose to deactivate them, even if you are stunned or in- capacitated .",
+    "source_chunk": "a155210c4ef4",
+    "raw": "Continuous Extra Limbs are a power effect you can turn on and off at will, but that remain until you choose to deactivate them, even if you are stunned or in- capacitated .",
+    "matched_concepts": [
+      "Condition",
+      "Defense",
+      "Effect",
+      "Modifier",
+      "Power"
+    ],
+    "matched_aliases": [
+      "extra",
+      "stunned",
+      "will"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "state_id": "st_0026",
+    "entity": "The",
+    "state_description": "The user remains hanging in the air, maintaining relative position to the ground, if necessary.",
+    "source_chunk": "1ba4dd314456",
+    "raw": "The user remains hanging in the air, maintaining relative position to the ground, if necessary.",
+    "matched_concepts": [],
+    "matched_aliases": [],
+    "confidence": 0.7
+  },
+  {
+    "state_id": "st_0027",
+    "entity": "Condition",
+    "state_description": "If successful, the pa- tient’s condition becomes incapacitated, as if just stabi- lized.",
+    "source_chunk": "7af2891fe7e5",
+    "raw": "If successful, the pa- tient’s condition becomes incapacitated, as if just stabi- lized.",
+    "matched_concepts": [
+      "Condition"
+    ],
+    "matched_aliases": [],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0028",
+    "entity": "Effect",
+    "state_description": "Area Healing may have this extra, allowing you to choose who in the area does and does not gain the benefits.",
+    "source_chunk": "7af2891fe7e5",
+    "raw": "Area Healing may have this extra, allowing you to choose who in the area does and does not gain the benefits.",
+    "matched_concepts": [
+      "Effect",
+      "Modifier"
+    ],
+    "matched_aliases": [
+      "extra",
+      "healing"
+    ],
+    "confidence": 0.86
+  },
+  {
+    "state_id": "st_0029",
+    "entity": "RANK",
+    "state_description": "RANK 2 - GASEOUS You become a cloud of gas or fine particles.",
+    "source_chunk": "def2c790176b",
+    "raw": "RANK 2 - GASEOUS You become a cloud of gas or fine particles.",
+    "matched_concepts": [],
+    "matched_aliases": [],
+    "confidence": 0.7
+  },
+  {
+    "state_id": "st_0030",
+    "entity": "RANK",
+    "state_description": "RANK 3 - ENERGY You become coherent energy.",
+    "source_chunk": "def2c790176b",
+    "raw": "RANK 3 - ENERGY You become coherent energy.",
+    "matched_concepts": [],
+    "matched_aliases": [],
+    "confidence": 0.7
+  },
+  {
+    "state_id": "st_0031",
+    "entity": "Ability",
+    "state_description": "This modifier is most effective for ranks 2 through 4, since the victim loses some or all ability to interact with the physical world.",
+    "source_chunk": "def2c790176b",
+    "raw": "This modifier is most effective for ranks 2 through 4, since the victim loses some or all ability to interact with the physical world.",
+    "matched_concepts": [
+      "Ability",
+      "Effect",
+      "Modifier"
+    ],
+    "matched_aliases": [],
+    "confidence": 0.94
+  },
+  {
+    "state_id": "st_0032",
+    "entity": "Effect",
+    "state_description": "Extending the effect’s duration to continu- ous allows you to remain Insubstantial until you choose to return to your corporeal form.",
+    "source_chunk": "1b11b981522c",
+    "raw": "Extending the effect’s duration to continu- ous allows you to remain Insubstantial until you choose to return to your corporeal form.",
+    "matched_concepts": [
+      "Effect"
+    ],
+    "matched_aliases": [],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0033",
+    "entity": "This",
+    "state_description": "This allows you to do things like reach through a wall, solidify your hand to pick up an ob- ject or tap someone on the shoulder (or punch them in the face), and become incorporeal again to withdraw it on the following round.",
+    "source_chunk": "1b11b981522c",
+    "raw": "This allows you to do things like reach through a wall, solidify your hand to pick up an ob- ject or tap someone on the shoulder (or punch them in the face), and become incorporeal again to withdraw it on the following round.",
+    "matched_concepts": [],
+    "matched_aliases": [],
+    "confidence": 0.7
+  },
+  {
+    "state_id": "st_0034",
+    "entity": "Effect",
+    "state_description": "Effectively the GM gains a “free” complication against you.",
+    "source_chunk": "276f68471be0",
+    "raw": "Effectively the GM gains a “free” complication against you.",
+    "matched_concepts": [
+      "Effect"
+    ],
+    "matched_aliases": [],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0035",
+    "entity": "Check",
+    "state_description": "Targets failing a Will resistance check against your effect DC first become dazed, then compelled, as they try to fight off your influence.",
+    "source_chunk": "276f68471be0",
+    "raw": "Targets failing a Will resistance check against your effect DC first become dazed, then compelled, as they try to fight off your influence.",
+    "matched_concepts": [
+      "Check",
+      "Condition",
+      "Defense",
+      "DifficultyClass",
+      "Effect",
+      "Resistance"
+    ],
+    "matched_aliases": [
+      "dazed",
+      "dc",
+      "will"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "state_id": "st_0036",
+    "entity": "Check",
+    "state_description": "If you lose the opposed check, you cannot read the tar- get’s mind.",
+    "source_chunk": "276f68471be0",
+    "raw": "If you lose the opposed check, you cannot read the tar- get’s mind.",
+    "matched_concepts": [
+      "Check"
+    ],
+    "matched_aliases": [],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0037",
+    "entity": "Character",
+    "state_description": "When the character gains this condition, immediately make a Fortitude check (DC 15).",
+    "source_chunk": "dff9b24208a1",
+    "raw": "When the character gains this condition, immediately make a Fortitude check (DC 15).",
+    "matched_concepts": [
+      "Character",
+      "Check",
+      "Condition",
+      "Defense",
+      "DifficultyClass"
+    ],
+    "matched_aliases": [
+      "dc",
+      "fortitude"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "state_id": "st_0038",
+    "entity": "Character",
+    "state_description": "If the check fails, the character remains dying.",
+    "source_chunk": "dff9b24208a1",
+    "raw": "If the check fails, the character remains dying.",
+    "matched_concepts": [
+      "Character",
+      "Check"
+    ],
+    "matched_aliases": [],
+    "confidence": 0.86
+  },
+  {
+    "state_id": "st_0039",
+    "entity": "Character",
+    "state_description": "A hero using extra effort gains one of the following benefits:",
+    "source_chunk": "dff9b24208a1",
+    "raw": "A hero using extra effort gains one of the following benefits:",
+    "matched_concepts": [
+      "Character",
+      "Modifier"
+    ],
+    "matched_aliases": [
+      "extra",
+      "hero"
+    ],
+    "confidence": 0.86
+  },
+  {
+    "state_id": "st_0040",
+    "entity": "Check",
+    "state_description": "If you lose the opposed check, you do not Nullify the effect.",
+    "source_chunk": "cd71e815d8be",
+    "raw": "If you lose the opposed check, you do not Nullify the effect.",
+    "matched_concepts": [
+      "Check",
+      "Effect"
+    ],
+    "matched_aliases": [],
+    "confidence": 0.86
+  },
+  {
+    "state_id": "st_0041",
+    "entity": "Effect",
+    "state_description": "If your Area Nullify has a duration longer than instant, choose whether or not the effect remains in the chosen area (af- fecting anyone entering or leaving it) or moves with the targets hit with the initial effect.",
+    "source_chunk": "cd71e815d8be",
+    "raw": "If your Area Nullify has a duration longer than instant, choose whether or not the effect remains in the chosen area (af- fecting anyone entering or leaving it) or moves with the targets hit with the initial effect.",
+    "matched_concepts": [
+      "Effect"
+    ],
+    "matched_aliases": [],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0042",
+    "entity": "Check",
+    "state_description": "The user of the countered effect may use extra effort to gain another opposed Nullify check.",
+    "source_chunk": "cd71e815d8be",
+    "raw": "The user of the countered effect may use extra effort to gain another opposed Nullify check.",
+    "matched_concepts": [
+      "Check",
+      "Effect",
+      "Modifier"
+    ],
+    "matched_aliases": [
+      "extra"
+    ],
+    "confidence": 0.94
+  },
+  {
+    "state_id": "st_0043",
+    "entity": "Modifier",
+    "state_description": "As usual, the sense must lose about half its utility to qualify for this flaw, less than that is more likely a particular de- scriptor associated with the sense and may constitute a complication at the GM’s discretion when it comes up in play.",
+    "source_chunk": "c0330de2f25d",
+    "raw": "As usual, the sense must lose about half its utility to qualify for this flaw, less than that is more likely a particular de- scriptor associated with the sense and may constitute a complication at the GM’s discretion when it comes up in play.",
+    "matched_concepts": [
+      "Modifier"
+    ],
+    "matched_aliases": [
+      "flaw"
+    ],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0044",
+    "entity": "Character",
+    "state_description": "Treating minions the same as heroes can greatly slow down combat, especially if there are more than a couple of them, since it becomes that much harder to take them out of a fight.",
+    "source_chunk": "ac576f99b729",
+    "raw": "Treating minions the same as heroes can greatly slow down combat, especially if there are more than a couple of them, since it becomes that much harder to take them out of a fight.",
+    "matched_concepts": [
+      "Character"
+    ],
+    "matched_aliases": [
+      "hero",
+      "heroes"
+    ],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0045",
+    "entity": "Check",
+    "state_description": "Targets failing the Fortitude resistance check against your effect DC become fatigued, then exhausted, and finally asleep as they succumb.",
+    "source_chunk": "2ed161a0cff3",
+    "raw": "Targets failing the Fortitude resistance check against your effect DC become fatigued, then exhausted, and finally asleep as they succumb.",
+    "matched_concepts": [
+      "Check",
+      "Defense",
+      "DifficultyClass",
+      "Effect",
+      "Resistance"
+    ],
+    "matched_aliases": [
+      "dc",
+      "fortitude"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "state_id": "st_0046",
+    "entity": "Check",
+    "state_description": "Targets fail- ing the Fortitude resistance check against your effect DC become dazed, stunned, and finally incapacitated, passing out from the lack of oxygen.",
+    "source_chunk": "a90a747ad5f5",
+    "raw": "Targets fail- ing the Fortitude resistance check against your effect DC become dazed, stunned, and finally incapacitated, passing out from the lack of oxygen.",
+    "matched_concepts": [
+      "Check",
+      "Condition",
+      "Defense",
+      "DifficultyClass",
+      "Effect",
+      "Resistance"
+    ],
+    "matched_aliases": [
+      "dazed",
+      "dc",
+      "fortitude",
+      "stunned"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "state_id": "st_0047",
+    "entity": "Effect",
+    "state_description": "POWER STUNT Temporarily gain and use an Alternate Effect (see Alter- nate Effect in the Powers chapter).",
+    "source_chunk": "4ab4344a64ec",
+    "raw": "POWER STUNT Temporarily gain and use an Alternate Effect (see Alter- nate Effect in the Powers chapter).",
+    "matched_concepts": [
+      "Effect",
+      "Power"
+    ],
+    "matched_aliases": [
+      "powers"
+    ],
+    "confidence": 0.86
+  },
+  {
+    "state_id": "st_0048",
+    "entity": "Check",
+    "state_description": "RESISTANCE Gain an immediate additional resistance check against an ongoing effect.",
+    "source_chunk": "4ab4344a64ec",
+    "raw": "RESISTANCE Gain an immediate additional resistance check against an ongoing effect.",
+    "matched_concepts": [
+      "Check",
+      "Effect",
+      "Resistance"
+    ],
+    "matched_aliases": [],
+    "confidence": 0.94
+  },
+  {
+    "state_id": "st_0049",
+    "entity": "Character",
+    "state_description": "COST OF EXTRA EFFORT At the start of the turn immediately after using extra ef- fort, the hero becomes fatigued.",
+    "source_chunk": "4ab4344a64ec",
+    "raw": "COST OF EXTRA EFFORT At the start of the turn immediately after using extra ef- fort, the hero becomes fatigued.",
+    "matched_concepts": [
+      "Character",
+      "Modifier"
+    ],
+    "matched_aliases": [
+      "extra",
+      "hero"
+    ],
+    "confidence": 0.86
+  },
+  {
+    "state_id": "st_0050",
+    "entity": "Character",
+    "state_description": "A fatigued hero who uses extra effort becomes exhausted and an exhausted hero who uses extra effort is incapacitated.",
+    "source_chunk": "4ab4344a64ec",
+    "raw": "A fatigued hero who uses extra effort becomes exhausted and an exhausted hero who uses extra effort is incapacitated.",
+    "matched_concepts": [
+      "Character",
+      "Modifier"
+    ],
+    "matched_aliases": [
+      "extra",
+      "hero"
+    ],
+    "confidence": 0.86
+  },
+  {
+    "state_id": "st_0051",
+    "entity": "Advantage",
+    "state_description": "HEROIC FEAT You can spend a hero point to gain the benefits of one rank of a advantage you don’t already have until the end of your next turn (see the Advantages chapter).",
+    "source_chunk": "4ab4344a64ec",
+    "raw": "HEROIC FEAT You can spend a hero point to gain the benefits of one rank of a advantage you don’t already have until the end of your next turn (see the Advantages chapter).",
+    "matched_concepts": [
+      "Advantage",
+      "Character"
+    ],
+    "matched_aliases": [
+      "advantages",
+      "hero"
+    ],
+    "confidence": 0.86
+  },
+  {
+    "state_id": "st_0052",
+    "entity": "Descriptor",
+    "state_description": "7 points per rank You can gain or use potentially any effect of the appropri- ate type and descriptor!",
+    "source_chunk": "d9fba2b50d62",
+    "raw": "7 points per rank You can gain or use potentially any effect of the appropri- ate type and descriptor!",
+    "matched_concepts": [
+      "Descriptor",
+      "Effect"
+    ],
+    "matched_aliases": [],
+    "confidence": 0.86
+  },
+  {
+    "state_id": "st_0053",
+    "entity": "Effect",
+    "state_description": "The effects you gain from your Variable effect are subject to the normal power level and series limits.",
+    "source_chunk": "d9fba2b50d62",
+    "raw": "The effects you gain from your Variable effect are subject to the normal power level and series limits.",
+    "matched_concepts": [
+      "Effect",
+      "Power"
+    ],
+    "matched_aliases": [
+      "effects"
+    ],
+    "confidence": 0.86
+  },
+  {
+    "state_id": "st_0054",
+    "entity": "Effect",
+    "state_description": "The allocation of your Variable points is sustained, so if you stop maintaining your Variable effect for any reason, your allo- cated points “reset” to a “null” state:",
+    "source_chunk": "d45f955a560f",
+    "raw": "The allocation of your Variable points is sustained, so if you stop maintaining your Variable effect for any reason, your allo- cated points “reset” to a “null” state:",
+    "matched_concepts": [
+      "Effect"
+    ],
+    "matched_aliases": [],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0055",
+    "entity": "Effect",
+    "state_description": "Points in a Continuous Variable effect remain where you set them without maintenance, unless the Variable effect itself is countered or nul- lified.",
+    "source_chunk": "d45f955a560f",
+    "raw": "Points in a Continuous Variable effect remain where you set them without maintenance, unless the Variable effect itself is countered or nul- lified.",
+    "matched_concepts": [
+      "Effect"
+    ],
+    "matched_aliases": [],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0056",
+    "entity": "Check",
+    "state_description": "The target loses power points from the affected trait equal to the difference between the check result and the DC, up to a maximum of the Weaken rank.",
+    "source_chunk": "36d5c09fb9c0",
+    "raw": "The target loses power points from the affected trait equal to the difference between the check result and the DC, up to a maximum of the Weaken rank.",
+    "matched_concepts": [
+      "Check",
+      "DifficultyClass",
+      "Effect",
+      "Power",
+      "PowerPoint"
+    ],
+    "matched_aliases": [
+      "dc",
+      "power point",
+      "power points",
+      "weaken"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "state_id": "st_0057",
+    "entity": "Ability",
+    "state_description": "WEAKENING ABILITIES Abilities weakened below a rank of –5 become debilitated.",
+    "source_chunk": "36d5c09fb9c0",
+    "raw": "WEAKENING ABILITIES Abilities weakened below a rank of –5 become debilitated.",
+    "matched_concepts": [
+      "Ability",
+      "Effect"
+    ],
+    "matched_aliases": [
+      "abilities",
+      "weaken"
+    ],
+    "confidence": 0.86
+  },
+  {
+    "state_id": "st_0058",
+    "entity": "Check",
+    "state_description": "Each trait loses the difference between the resistance check result and the DC in power points on a failed check.",
+    "source_chunk": "2bb530bba6d2",
+    "raw": "Each trait loses the difference between the resistance check result and the DC in power points on a failed check.",
+    "matched_concepts": [
+      "Check",
+      "DifficultyClass",
+      "Power",
+      "PowerPoint",
+      "Resistance"
+    ],
+    "matched_aliases": [
+      "dc",
+      "power point",
+      "power points"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "state_id": "st_0059",
+    "entity": "Attack",
+    "state_description": "Attack effect gains additional chances to hit.",
+    "source_chunk": "430efde05932",
+    "raw": "Attack effect gains additional chances to hit.",
+    "matched_concepts": [
+      "Attack",
+      "Effect"
+    ],
+    "matched_aliases": [],
+    "confidence": 0.86
+  },
+  {
+    "state_id": "st_0060",
+    "entity": "Advantage",
+    "state_description": "THE BASICS MUTANTS & MASTERMINDS MUTANTS & MASTERMINDS DELUXE HERO’S HANDBOOK DELUXE HERO’S HANDBOOK be capable of using the advantage and cannot gain the benefits of fortune advantages, only other types.",
+    "source_chunk": "00c39321c729",
+    "raw": "THE BASICS MUTANTS & MASTERMINDS MUTANTS & MASTERMINDS DELUXE HERO’S HANDBOOK DELUXE HERO’S HANDBOOK be capable of using the advantage and cannot gain the benefits of fortune advantages, only other types.",
+    "matched_concepts": [
+      "Advantage",
+      "Character"
+    ],
+    "matched_aliases": [
+      "advantages",
+      "hero"
+    ],
+    "confidence": 0.86
+  },
+  {
+    "state_id": "st_0061",
+    "entity": "Advantage",
+    "state_description": "If the advantage has any prerequisites, you must have them to gain the benefits of the advantage as a heroic feat.",
+    "source_chunk": "00c39321c729",
+    "raw": "If the advantage has any prerequisites, you must have them to gain the benefits of the advantage as a heroic feat.",
+    "matched_concepts": [
+      "Advantage",
+      "Character"
+    ],
+    "matched_aliases": [
+      "hero"
+    ],
+    "confidence": 0.86
+  },
+  {
+    "state_id": "st_0062",
+    "entity": "Character",
+    "state_description": "The heroes gain ad- ditional hero points as an adventure progresses.",
+    "source_chunk": "00c39321c729",
+    "raw": "The heroes gain ad- ditional hero points as an adventure progresses.",
+    "matched_concepts": [
+      "Character"
+    ],
+    "matched_aliases": [
+      "hero",
+      "heroes"
+    ],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0063",
+    "entity": "Effect",
+    "state_description": "The effect fills a volume of 30 cubic feet (volume rank 5), and you may shape the volume as you wish, so long as it all remains contiguous.",
+    "source_chunk": "b64b85e5e125",
+    "raw": "The effect fills a volume of 30 cubic feet (volume rank 5), and you may shape the volume as you wish, so long as it all remains contiguous.",
+    "matched_concepts": [
+      "Effect"
+    ],
+    "matched_aliases": [],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0064",
+    "entity": "Attack",
+    "state_description": "If a Homing attack is countered before it hits, it loses any remaining chances to hit.",
+    "source_chunk": "37629eb34eaf",
+    "raw": "If a Homing attack is countered before it hits, it loses any remaining chances to hit.",
+    "matched_concepts": [
+      "Attack"
+    ],
+    "matched_aliases": [],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0065",
+    "entity": "Effect",
+    "state_description": "A target of an Insidious effect may remain unaware of the danger until it’s too late!",
+    "source_chunk": "fa974bf8354c",
+    "raw": "A target of an Insidious effect may remain unaware of the danger until it’s too late!",
+    "matched_concepts": [
+      "Effect"
+    ],
+    "matched_aliases": [],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0066",
+    "entity": "Character",
+    "state_description": "If the check succeeds, the character gains the use of 1 ef- fect rank per point the check exceeds the DC.",
+    "source_chunk": "cdce6775ac7a",
+    "raw": "If the check succeeds, the character gains the use of 1 ef- fect rank per point the check exceeds the DC.",
+    "matched_concepts": [
+      "Character",
+      "Check",
+      "DifficultyClass"
+    ],
+    "matched_aliases": [
+      "dc"
+    ],
+    "confidence": 0.94
+  },
+  {
+    "state_id": "st_0067",
+    "entity": "Effect",
+    "state_description": "Concentration –1 per rank Sustained effect becomes concentration duration.",
+    "source_chunk": "13914a2c42c6",
+    "raw": "Concentration –1 per rank Sustained effect becomes concentration duration.",
+    "matched_concepts": [
+      "Effect"
+    ],
+    "matched_aliases": [],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0068",
+    "entity": "Effect",
+    "state_description": "Effect loses 1 rank each time it is used.",
+    "source_chunk": "13914a2c42c6",
+    "raw": "Effect loses 1 rank each time it is used.",
+    "matched_concepts": [
+      "Effect"
+    ],
+    "matched_aliases": [],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0069",
+    "entity": "Effect",
+    "state_description": "Effect loses about half its effectiveness.",
+    "source_chunk": "13914a2c42c6",
+    "raw": "Effect loses about half its effectiveness.",
+    "matched_concepts": [
+      "Effect"
+    ],
+    "matched_aliases": [],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0070",
+    "entity": "Check",
+    "state_description": "–1 per rank –1 per rank –1-2 per rank –1 per rank –1 per rank –1 per rank Effect gains a resistance check.",
+    "source_chunk": "13914a2c42c6",
+    "raw": "–1 per rank –1 per rank –1-2 per rank –1 per rank –1 per rank –1 per rank Effect gains a resistance check.",
+    "matched_concepts": [
+      "Check",
+      "Effect",
+      "Resistance"
+    ],
+    "matched_aliases": [],
+    "confidence": 0.94
+  },
+  {
+    "state_id": "st_0071",
+    "entity": "Condition",
+    "state_description": "DISTRACTING -1 COST PER RANK Using a Distracting effect requires more concentration than usual, causing you become vulnerable when you use the effect, until the start of your next turn.",
+    "source_chunk": "13914a2c42c6",
+    "raw": "DISTRACTING -1 COST PER RANK Using a Distracting effect requires more concentration than usual, causing you become vulnerable when you use the effect, until the start of your next turn.",
+    "matched_concepts": [
+      "Condition",
+      "Effect"
+    ],
+    "matched_aliases": [
+      "vulnerable"
+    ],
+    "confidence": 0.86
+  },
+  {
+    "state_id": "st_0072",
+    "entity": "Effect",
+    "state_description": "Each time you use an effect with this flaw, it loses 1 rank of effectiveness.",
+    "source_chunk": "13914a2c42c6",
+    "raw": "Each time you use an effect with this flaw, it loses 1 rank of effectiveness.",
+    "matched_concepts": [
+      "Effect",
+      "Modifier"
+    ],
+    "matched_aliases": [
+      "flaw"
+    ],
+    "confidence": 0.86
+  },
+  {
+    "state_id": "st_0073",
+    "entity": "Effect",
+    "state_description": "As a gen- eral rule, the effect must lose about half its usefulness to qualify for this modifier.",
+    "source_chunk": "9bbb164a1a94",
+    "raw": "As a gen- eral rule, the effect must lose about half its usefulness to qualify for this modifier.",
+    "matched_concepts": [
+      "Effect",
+      "Modifier"
+    ],
+    "matched_aliases": [],
+    "confidence": 0.86
+  },
+  {
+    "state_id": "st_0074",
+    "entity": "Effect",
+    "state_description": "PERMANENT -1 COST PER RANK A continuous effect with this flaw becomes permanent in duration.",
+    "source_chunk": "9bbb164a1a94",
+    "raw": "PERMANENT -1 COST PER RANK A continuous effect with this flaw becomes permanent in duration.",
+    "matched_concepts": [
+      "Effect",
+      "Modifier"
+    ],
+    "matched_aliases": [
+      "flaw"
+    ],
+    "confidence": 0.86
+  },
+  {
+    "state_id": "st_0075",
+    "entity": "Descriptor",
+    "state_description": "However, “an in- duced trance where the human brain becomes capable of accepting neurolin- guistic programming inputs” is also a valid descriptor for that same effect.",
+    "source_chunk": "a4fc6d509ade",
+    "raw": "However, “an in- duced trance where the human brain becomes capable of accepting neurolin- guistic programming inputs” is also a valid descriptor for that same effect.",
+    "matched_concepts": [
+      "Descriptor",
+      "Effect"
+    ],
+    "matched_aliases": [],
+    "confidence": 0.86
+  },
+  {
+    "state_id": "st_0076",
+    "entity": "Character",
+    "state_description": "The GM awards the player a hero point for the unexpected set- back and now the source of the heroine’s powers is known, although their origin still remains a mystery….",
+    "source_chunk": "e140dadbec40",
+    "raw": "The GM awards the player a hero point for the unexpected set- back and now the source of the heroine’s powers is known, although their origin still remains a mystery….",
+    "matched_concepts": [
+      "Character",
+      "Power"
+    ],
+    "matched_aliases": [
+      "hero",
+      "powers"
+    ],
+    "confidence": 0.86
+  },
+  {
+    "state_id": "st_0077",
+    "entity": "Effect",
+    "state_description": "Equipment suffering damage loses some effectiveness.",
+    "source_chunk": "ebf55c831046",
+    "raw": "Equipment suffering damage loses some effectiveness.",
+    "matched_concepts": [
+      "Effect",
+      "Equipment"
+    ],
+    "matched_aliases": [
+      "damage"
+    ],
+    "confidence": 0.86
+  },
+  {
+    "state_id": "st_0078",
+    "entity": "Check",
+    "state_description": "The item loses 1 Feature or suffers a –1 circumstance pen- alty on checks involving it each time it is damaged.",
+    "source_chunk": "ebf55c831046",
+    "raw": "The item loses 1 Feature or suffers a –1 circumstance pen- alty on checks involving it each time it is damaged.",
+    "matched_concepts": [
+      "Check",
+      "Effect"
+    ],
+    "matched_aliases": [
+      "checks",
+      "damage"
+    ],
+    "confidence": 0.86
+  },
+  {
+    "state_id": "st_0079",
+    "entity": "Effect",
+    "state_description": "Only the lair’s owner and designated guests may enter, although the GM should determine means by which trespassers might do so, including effects like Di- mensional Travel, Insubstantial, Permeate, and Teleport.",
+    "source_chunk": "59c4821ca9f4",
+    "raw": "Only the lair’s owner and designated guests may enter, although the GM should determine means by which trespassers might do so, including effects like Di- mensional Travel, Insubstantial, Permeate, and Teleport.",
+    "matched_concepts": [
+      "Effect"
+    ],
+    "matched_aliases": [
+      "effects"
+    ],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0080",
+    "entity": "Character",
+    "state_description": "If characters enter a conflict after it’s begun, they roll ini- tiative when they join-in and act when their turn comes up in the existing order.",
+    "source_chunk": "3f5ee5c6b758",
+    "raw": "If characters enter a conflict after it’s begun, they roll ini- tiative when they join-in and act when their turn comes up in the existing order.",
+    "matched_concepts": [
+      "Character"
+    ],
+    "matched_aliases": [],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0081",
+    "entity": "Character",
+    "state_description": "Fatigued characters who fail a check become exhausted, then incapacitated, at which point the charac- ter’s condition becomes dying after another failed Forti- tude check.",
+    "source_chunk": "18aac4b32b12",
+    "raw": "Fatigued characters who fail a check become exhausted, then incapacitated, at which point the charac- ter’s condition becomes dying after another failed Forti- tude check.",
+    "matched_concepts": [
+      "Character",
+      "Check",
+      "Condition"
+    ],
+    "matched_aliases": [],
+    "confidence": 0.94
+  },
+  {
+    "state_id": "st_0082",
+    "entity": "Character",
+    "state_description": "Failure on the Fortitude check means the character becomes incapaci- tated .",
+    "source_chunk": "18aac4b32b12",
+    "raw": "Failure on the Fortitude check means the character becomes incapaci- tated .",
+    "matched_concepts": [
+      "Character",
+      "Check",
+      "Defense"
+    ],
+    "matched_aliases": [
+      "fortitude"
+    ],
+    "confidence": 0.94
+  },
+  {
+    "state_id": "st_0083",
+    "entity": "Ability",
+    "state_description": "the DC increases by 1 each round, and on a successful check the character loses a rank of Stamina (from the pressure on the linings of his lungs).",
+    "source_chunk": "e9bf76039763",
+    "raw": "the DC increases by 1 each round, and on a successful check the character loses a rank of Stamina (from the pressure on the linings of his lungs).",
+    "matched_concepts": [
+      "Ability",
+      "Character",
+      "Check",
+      "DifficultyClass"
+    ],
+    "matched_aliases": [
+      "dc",
+      "stamina"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "state_id": "st_0084",
+    "entity": "Attack",
+    "state_description": "ACTION & ADVENTURE MUTANTS & MASTERMINDS MUTANTS & MASTERMINDS DELUXE HERO’S HANDBOOK DELUXE HERO’S HANDBOOK NO COVER PARTIAL COVER TOTAL COVER COVER Targets may also hide behind obstructions to gain cover against your attacks.",
+    "source_chunk": "fcdf12b11867",
+    "raw": "ACTION & ADVENTURE MUTANTS & MASTERMINDS MUTANTS & MASTERMINDS DELUXE HERO’S HANDBOOK DELUXE HERO’S HANDBOOK NO COVER PARTIAL COVER TOTAL COVER COVER Targets may also hide behind obstructions to gain cover against your attacks.",
+    "matched_concepts": [
+      "Attack",
+      "Character"
+    ],
+    "matched_aliases": [
+      "attacks",
+      "hero"
+    ],
+    "confidence": 0.86
+  },
+  {
+    "state_id": "st_0085",
+    "entity": "Check",
+    "state_description": "So someone behind total cover also gains a +5 to Dodge checks against area effects.",
+    "source_chunk": "fcdf12b11867",
+    "raw": "So someone behind total cover also gains a +5 to Dodge checks against area effects.",
+    "matched_concepts": [
+      "Check",
+      "Defense",
+      "Effect"
+    ],
+    "matched_aliases": [
+      "checks",
+      "dodge",
+      "effects"
+    ],
+    "confidence": 0.94
+  },
+  {
+    "state_id": "st_0086",
+    "entity": "Attack",
+    "state_description": "If you succeed, you don’t actu- ally hit or affect the opponent, but success grants your ally gains a +2 circumstance bonus on an attack check against that opponent or a +2 circumstance bonus to DELUXE HERO’S HANDBOOK DELUXE HERO’S HANDBOOK Defense against that opponent (your choice) until the end of your ally’s next turn.",
+    "source_chunk": "f1ccf74bdeb0",
+    "raw": "If you succeed, you don’t actu- ally hit or affect the opponent, but success grants your ally gains a +2 circumstance bonus on an attack check against that opponent or a +2 circumstance bonus to DELUXE HERO’S HANDBOOK DELUXE HERO’S HANDBOOK Defense against that opponent (your choice) until the end of your ally’s next turn.",
+    "matched_concepts": [
+      "Attack",
+      "Character",
+      "Check",
+      "Defense"
+    ],
+    "matched_aliases": [
+      "hero"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "state_id": "st_0087",
+    "entity": "Check",
+    "state_description": "If you make a disarm attempt with a melee weapon and lose the opposed check, the defender may immedi- ately make an attempt to disarm you as a reaction;",
+    "source_chunk": "be882463e1c0",
+    "raw": "If you make a disarm attempt with a melee weapon and lose the opposed check, the defender may immedi- ately make an attempt to disarm you as a reaction;",
+    "matched_concepts": [
+      "Check"
+    ],
+    "matched_aliases": [],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0088",
+    "entity": "Any",
+    "state_description": "Any result- ing degrees of success are cumulative, but if you lose, the target escapes.",
+    "source_chunk": "fb40cc2d82f8",
+    "raw": "Any result- ing degrees of success are cumulative, but if you lose, the target escapes.",
+    "matched_concepts": [],
+    "matched_aliases": [],
+    "confidence": 0.7
+  },
+  {
+    "state_id": "st_0089",
+    "entity": "Defense",
+    "state_description": "When you recover, you gain +2 to your active defenses un- til the start of your next turn.",
+    "source_chunk": "fb40cc2d82f8",
+    "raw": "When you recover, you gain +2 to your active defenses un- til the start of your next turn.",
+    "matched_concepts": [
+      "Defense"
+    ],
+    "matched_aliases": [
+      "defenses"
+    ],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0090",
+    "entity": "Check",
+    "state_description": "If you lose, the defender immediately gets another opposed check to try and trip you.",
+    "source_chunk": "fb40cc2d82f8",
+    "raw": "If you lose, the defender immediately gets another opposed check to try and trip you.",
+    "matched_concepts": [
+      "Check"
+    ],
+    "matched_aliases": [],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0091",
+    "entity": "Your",
+    "state_description": "Your place in the initia- tive order then becomes the point where you took your readied action.",
+    "source_chunk": "fb40cc2d82f8",
+    "raw": "Your place in the initia- tive order then becomes the point where you took your readied action.",
+    "matched_concepts": [],
+    "matched_aliases": [],
+    "confidence": 0.7
+  },
+  {
+    "state_id": "st_0092",
+    "entity": "Attack",
+    "state_description": "The changes to attack and defense bonus last until the start of your next turn.",
+    "source_chunk": "4469820ea224",
+    "raw": "The changes to attack and defense bonus last until the start of your next turn.",
+    "matched_concepts": [
+      "Attack",
+      "Defense"
+    ],
+    "matched_aliases": [],
+    "confidence": 0.86
+  },
+  {
+    "state_id": "st_0093",
+    "entity": "Attack",
+    "state_description": "The changes to attack and defense bonus are declared before you make the attack check and last until the start of your next turn.",
+    "source_chunk": "4469820ea224",
+    "raw": "The changes to attack and defense bonus are declared before you make the attack check and last until the start of your next turn.",
+    "matched_concepts": [
+      "Attack",
+      "Check",
+      "Defense"
+    ],
+    "matched_aliases": [],
+    "confidence": 0.94
+  },
+  {
+    "state_id": "st_0094",
+    "entity": "Attack",
+    "state_description": "The changes to attack and effect are decided before you make your attack check and last until the start of your next turn.",
+    "source_chunk": "10ee561d6478",
+    "raw": "The changes to attack and effect are decided before you make your attack check and last until the start of your next turn.",
+    "matched_concepts": [
+      "Attack",
+      "Check",
+      "Effect"
+    ],
+    "matched_aliases": [],
+    "confidence": 0.94
+  },
+  {
+    "state_id": "st_0095",
+    "entity": "Character",
+    "state_description": "The tendency of comic book characters to return from the dead has become so commonplace it is cliché, with various stories and characters poking fun at it.",
+    "source_chunk": "adf74ef44f21",
+    "raw": "The tendency of comic book characters to return from the dead has become so commonplace it is cliché, with various stories and characters poking fun at it.",
+    "matched_concepts": [
+      "Character"
+    ],
+    "matched_aliases": [],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0096",
+    "entity": "The",
+    "state_description": "The following sections give you the basics, but experience is the best tool to help you become a better Gamemaster.",
+    "source_chunk": "b62c67f03b5b",
+    "raw": "The following sections give you the basics, but experience is the best tool to help you become a better Gamemaster.",
+    "matched_concepts": [],
+    "matched_aliases": [],
+    "confidence": 0.7
+  },
+  {
+    "state_id": "st_0097",
+    "entity": "Character",
+    "state_description": "Suggest some possible changes to make the character balance out better.",
+    "source_chunk": "f1ee192fd82e",
+    "raw": "Suggest some possible changes to make the character balance out better.",
+    "matched_concepts": [
+      "Character"
+    ],
+    "matched_aliases": [],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0098",
+    "entity": "Effect",
+    "state_description": "the target has to first be incapacitated, then further damage causes them to become dying and potentially die.",
+    "source_chunk": "278b7fbae904",
+    "raw": "the target has to first be incapacitated, then further damage causes them to become dying and potentially die.",
+    "matched_concepts": [
+      "Effect"
+    ],
+    "matched_aliases": [
+      "damage"
+    ],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0099",
+    "entity": "Character",
+    "state_description": "This is a particularly harsh option to impose, but heroes still gain the benefit of hero points to help them avoid this fate.",
+    "source_chunk": "278b7fbae904",
+    "raw": "This is a particularly harsh option to impose, but heroes still gain the benefit of hero points to help them avoid this fate.",
+    "matched_concepts": [
+      "Character"
+    ],
+    "matched_aliases": [
+      "hero",
+      "heroes"
+    ],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0100",
+    "entity": "Character",
+    "state_description": "GAMEMASTERING MUTANTS & MASTERMINDS MUTANTS & MASTERMINDS DELUXE HERO’S HANDBOOK DELUXE HERO’S HANDBOOK can quickly become a problem (especially when the he- roes feel honor-bound to see their “teammate” answer for his crimes).",
+    "source_chunk": "68ca880df0fc",
+    "raw": "GAMEMASTERING MUTANTS & MASTERMINDS MUTANTS & MASTERMINDS DELUXE HERO’S HANDBOOK DELUXE HERO’S HANDBOOK can quickly become a problem (especially when the he- roes feel honor-bound to see their “teammate” answer for his crimes).",
+    "matched_concepts": [
+      "Character"
+    ],
+    "matched_aliases": [
+      "hero"
+    ],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0101",
+    "entity": "Character",
+    "state_description": "While NPCs don’t “earn” power points, and aren’t even subject to the same power level limits as the heroes, you should feel free to improve the traits of non-player characters in the series to keep pace with the heroes, ensuring those antagonists remain a suit- able challenge.",
+    "source_chunk": "a3cc9d2ccbe4",
+    "raw": "While NPCs don’t “earn” power points, and aren’t even subject to the same power level limits as the heroes, you should feel free to improve the traits of non-player characters in the series to keep pace with the heroes, ensuring those antagonists remain a suit- able challenge.",
+    "matched_concepts": [
+      "Character",
+      "Power",
+      "PowerPoint"
+    ],
+    "matched_aliases": [
+      "hero",
+      "heroes",
+      "npc",
+      "pc",
+      "player character",
+      "power point",
+      "power points"
+    ],
+    "confidence": 0.94
+  },
+  {
+    "state_id": "st_0102",
+    "entity": "Character",
+    "state_description": "They’re good examples of how heroes can develop in a series where the power level has become “fixed” but the GM still provides power point awards for advancement.",
+    "source_chunk": "a3cc9d2ccbe4",
+    "raw": "They’re good examples of how heroes can develop in a series where the power level has become “fixed” but the GM still provides power point awards for advancement.",
+    "matched_concepts": [
+      "Character",
+      "Power",
+      "PowerPoint"
+    ],
+    "matched_aliases": [
+      "hero",
+      "heroes",
+      "power point"
+    ],
+    "confidence": 0.94
+  },
+  {
+    "state_id": "st_0103",
+    "entity": "Ability",
+    "state_description": "Generally any device a player intends to become a regular part of a hero’s abilities should be paid for using earned power points.",
+    "source_chunk": "a3cc9d2ccbe4",
+    "raw": "Generally any device a player intends to become a regular part of a hero’s abilities should be paid for using earned power points.",
+    "matched_concepts": [
+      "Ability",
+      "Character",
+      "Device",
+      "Power",
+      "PowerPoint"
+    ],
+    "matched_aliases": [
+      "abilities",
+      "hero",
+      "power point",
+      "power points"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "state_id": "st_0104",
+    "entity": "Character",
+    "state_description": "Superheroes often become famous and Gamemasters can reward the heroes with increased fame and popularity.",
+    "source_chunk": "a3cc9d2ccbe4",
+    "raw": "Superheroes often become famous and Gamemasters can reward the heroes with increased fame and popularity.",
+    "matched_concepts": [
+      "Character"
+    ],
+    "matched_aliases": [
+      "hero",
+      "heroes"
+    ],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0105",
+    "entity": "Character",
+    "state_description": "As the heroes become better known for their heroism and good deeds, the authorities become more cooperative, people start recognizing them every- where, and fan mail starts arriving by the truckload.",
+    "source_chunk": "a3cc9d2ccbe4",
+    "raw": "As the heroes become better known for their heroism and good deeds, the authorities become more cooperative, people start recognizing them every- where, and fan mail starts arriving by the truckload.",
+    "matched_concepts": [
+      "Character"
+    ],
+    "matched_aliases": [
+      "hero",
+      "heroes"
+    ],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0106",
+    "entity": "Character",
+    "state_description": "The hero feels different or isolated (perhaps for being a non-human in human society) and does good to gain the trust and acceptance of others and perhaps discover what it means to be hu- man.",
+    "source_chunk": "311e7c6e0d06",
+    "raw": "The hero feels different or isolated (perhaps for being a non-human in human society) and does good to gain the trust and acceptance of others and perhaps discover what it means to be hu- man.",
+    "matched_concepts": [
+      "Character"
+    ],
+    "matched_aliases": [
+      "hero"
+    ],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0107",
+    "entity": "Character",
+    "state_description": "For some justice becomes a thirst for vengeance for injury done to the hero in the past, like the death of a loved one.",
+    "source_chunk": "311e7c6e0d06",
+    "raw": "For some justice becomes a thirst for vengeance for injury done to the hero in the past, like the death of a loved one.",
+    "matched_concepts": [
+      "Character"
+    ],
+    "matched_aliases": [
+      "hero"
+    ],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0108",
+    "entity": "Ability",
+    "state_description": "exceptional abilities and have decided, either independently, or as a group, to become heroes!",
+    "source_chunk": "c397183e6cb9",
+    "raw": "exceptional abilities and have decided, either independently, or as a group, to become heroes!",
+    "matched_concepts": [
+      "Ability",
+      "Character"
+    ],
+    "matched_aliases": [
+      "abilities",
+      "hero",
+      "heroes"
+    ],
+    "confidence": 0.86
+  },
+  {
+    "state_id": "st_0109",
+    "entity": "Character",
+    "state_description": "That could become a complication if somebody else starts imitating it, or uses it to cause trouble for the hero.",
+    "source_chunk": "3bcf2816d1f2",
+    "raw": "That could become a complication if somebody else starts imitating it, or uses it to cause trouble for the hero.",
+    "matched_concepts": [
+      "Character"
+    ],
+    "matched_aliases": [
+      "hero"
+    ],
+    "confidence": 0.78
+  },
+  {
+    "state_id": "st_0110",
+    "entity": "When",
+    "state_description": "When you lose your temper you lash out at whatever provoked you.",
+    "source_chunk": "3bcf2816d1f2",
+    "raw": "When you lose your temper you lash out at whatever provoked you.",
+    "matched_concepts": [],
+    "matched_aliases": [],
+    "confidence": 0.7
+  },
+  {
+    "state_id": "st_0111",
+    "entity": "Character",
+    "state_description": "Just like starting power points, once earned power points have been allocated to a trait, they remain that way, un- less some effect (such as a transformed condition) causes the character’s point allocation to change.",
+    "source_chunk": "1b7430a8e0d3",
+    "raw": "Just like starting power points, once earned power points have been allocated to a trait, they remain that way, un- less some effect (such as a transformed condition) causes the character’s point allocation to change.",
+    "matched_concepts": [
+      "Character",
+      "Condition",
+      "Effect",
+      "Power",
+      "PowerPoint"
+    ],
+    "matched_aliases": [
+      "power point",
+      "power points"
+    ],
+    "confidence": 0.95
+  },
+  {
+    "state_id": "st_0112",
+    "entity": "Character",
+    "state_description": "While NPCs don’t earn additional power points as such, and aren’t even subject to the same power level limits as the heroes, you should feel free to improve the traits of some non-player characters to keep pace with the heroes, ensuring those antagonists remain a suitable challenge.",
+    "source_chunk": "1b7430a8e0d3",
+    "raw": "While NPCs don’t earn additional power points as such, and aren’t even subject to the same power level limits as the heroes, you should feel free to improve the traits of some non-player characters to keep pace with the heroes, ensuring those antagonists remain a suitable challenge.",
+    "matched_concepts": [
+      "Character",
+      "Power",
+      "PowerPoint"
+    ],
+    "matched_aliases": [
+      "hero",
+      "heroes",
+      "npc",
+      "pc",
+      "player character",
+      "power point",
+      "power points"
+    ],
+    "confidence": 0.94
+  }
+]

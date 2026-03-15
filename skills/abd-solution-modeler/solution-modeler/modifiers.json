@@ -1,0 +1,1538 @@
+[
+  {
+    "modifier_id": "mod_0000",
+    "axis": "either from scratch using the game\u2019s system of power points, or working with one",
+    "source_chunk": "afaf49392009",
+    "raw": "options on creating your own heroes, either from scratch using the game\u2019s system of power points, or working with one"
+  },
+  {
+    "modifier_id": "mod_0001",
+    "axis": "different types",
+    "source_chunk": "afaf49392009",
+    "raw": "for some examples of different types of M&M characters."
+  },
+  {
+    "modifier_id": "mod_0002",
+    "axis": "various  types",
+    "source_chunk": "afaf49392009",
+    "raw": "throughout  the  rules  for  various  types  of  checks.  One"
+  },
+  {
+    "modifier_id": "mod_0003",
+    "axis": "either die or stabilize.",
+    "source_chunk": "afaf49392009",
+    "raw": "until they either die or stabilize. Another character"
+  },
+  {
+    "modifier_id": "mod_0004",
+    "axis": "one of the following",
+    "source_chunk": "afaf49392009",
+    "raw": "gains one of the following benefits:"
+  },
+  {
+    "modifier_id": "mod_0005",
+    "axis": "different kind",
+    "source_chunk": "afaf49392009",
+    "raw": "different kind of hero. For example, the Crime Fighter archetype has options for a hero with less equipment, but super-"
+  },
+  {
+    "modifier_id": "mod_0006",
+    "axis": "different types",
+    "source_chunk": "afaf49392009",
+    "raw": "ideas of the different types of heroes you can create. You"
+  },
+  {
+    "modifier_id": "mod_0007",
+    "axis": "either remove or add traits to your",
+    "source_chunk": "afaf49392009",
+    "raw": "check your math and either remove or add traits to your"
+  },
+  {
+    "modifier_id": "mod_0008",
+    "axis": "depending on a hero\u2019s background.",
+    "source_chunk": "afaf49392009",
+    "raw": "possibly much older, depending on a hero\u2019s background."
+  },
+  {
+    "modifier_id": "mod_0009",
+    "axis": "either Dodge or Parry.",
+    "source_chunk": "afaf49392009",
+    "raw": "increase to either Dodge or Parry."
+  },
+  {
+    "modifier_id": "mod_0010",
+    "axis": "Choose one of Business, Engineering, or Science) 5 (+10),",
+    "source_chunk": "afaf49392009",
+    "raw": "Expertise: (Choose one of Business, Engineering, or Science) 5 (+10),"
+  },
+  {
+    "modifier_id": "mod_0011",
+    "axis": "one of the following",
+    "source_chunk": "afaf49392009",
+    "raw": "Choose one of the following \u2022 20 points."
+  },
+  {
+    "modifier_id": "mod_0012",
+    "axis": "one of the following",
+    "source_chunk": "afaf49392009",
+    "raw": "To customize, choose one of the following options with"
+  },
+  {
+    "modifier_id": "mod_0013",
+    "axis": "one of the following",
+    "source_chunk": "afaf49392009",
+    "raw": "Plus choose one of the following \u2022 10 points."
+  },
+  {
+    "modifier_id": "mod_0014",
+    "axis": "one of the following",
+    "source_chunk": "afaf49392009",
+    "raw": "To customize, choose one of the following options"
+  },
+  {
+    "modifier_id": "mod_0015",
+    "axis": "one of the following",
+    "source_chunk": "afaf49392009",
+    "raw": "Weapon: Choose one of the following \u2022 15 points."
+  },
+  {
+    "modifier_id": "mod_0016",
+    "axis": "depending on Advantages and Weapon chosen.",
+    "source_chunk": "afaf49392009",
+    "raw": "* Varies depending on Advantages and Weapon chosen."
+  },
+  {
+    "modifier_id": "mod_0017",
+    "axis": "choose a different advantage, or if you like the effect the",
+    "source_chunk": "afaf49392009",
+    "raw": "choose a different advantage, or if you like the effect the"
+  },
+  {
+    "modifier_id": "mod_0018",
+    "axis": "choose to delete a rank or two",
+    "source_chunk": "afaf49392009",
+    "raw": "fect, but remember, if you choose to delete a rank or two"
+  },
+  {
+    "modifier_id": "mod_0019",
+    "axis": "Choose One: Expertise: Magic 8 or Technology 8",
+    "source_chunk": "afaf49392009",
+    "raw": "Perception 4, Choose One: Expertise: Magic 8 or Technology 8"
+  },
+  {
+    "modifier_id": "mod_0020",
+    "axis": "Form: Flight 3 (16 MPH);",
+    "source_chunk": "afaf49392009",
+    "raw": "Gaseous Form: Flight 3 (16 MPH);"
+  },
+  {
+    "modifier_id": "mod_0021",
+    "axis": "Form: Concealment 10 (All",
+    "source_chunk": "afaf49392009",
+    "raw": "Liquid Form: Concealment 10 (All"
+  },
+  {
+    "modifier_id": "mod_0022",
+    "axis": "Form: Elongation 2 (30",
+    "source_chunk": "afaf49392009",
+    "raw": "Particulate Form: Elongation 2 (30"
+  },
+  {
+    "modifier_id": "mod_0023",
+    "axis": "Choose One: Power Attack or Accurate Attack",
+    "source_chunk": "afaf49392009",
+    "raw": "Improved Grab, Choose One: Power Attack or Accurate Attack"
+  },
+  {
+    "modifier_id": "mod_0024",
+    "axis": "Choose One: Power Attack or Accurate Attack",
+    "source_chunk": "afaf49392009",
+    "raw": "Choose One: Power Attack or Accurate Attack"
+  },
+  {
+    "modifier_id": "mod_0025",
+    "axis": "Choose One: Deception or Intimidation)",
+    "source_chunk": "afaf49392009",
+    "raw": "Daze (Choose One: Deception or Intimidation)"
+  },
+  {
+    "modifier_id": "mod_0026",
+    "axis": "Choose One: Startle or Taunt",
+    "source_chunk": "afaf49392009",
+    "raw": "Choose One: Startle or Taunt"
+  },
+  {
+    "modifier_id": "mod_0027",
+    "axis": "Choose One: Acrobatics 4, or Athletics 4, or Close Combat:",
+    "source_chunk": "afaf49392009",
+    "raw": "Choose One: Acrobatics 4, or Athletics 4, or Close Combat:"
+  },
+  {
+    "modifier_id": "mod_0028",
+    "axis": "Choose One: Deception 6 or Intimidation 6",
+    "source_chunk": "afaf49392009",
+    "raw": "Choose One: Deception 6 or Intimidation 6"
+  },
+  {
+    "modifier_id": "mod_0029",
+    "axis": "Form: Visual Concealment 4, Partial;",
+    "source_chunk": "afaf49392009",
+    "raw": "Gaseous Form: Visual Concealment 4, Partial;"
+  },
+  {
+    "modifier_id": "mod_0030",
+    "axis": "Form: Elongation 4;",
+    "source_chunk": "afaf49392009",
+    "raw": "Clay Form: Elongation 4; Insubstantial 1; Morph 4"
+  },
+  {
+    "modifier_id": "mod_0031",
+    "axis": "Form: Burrowing 6 (4 MPH);",
+    "source_chunk": "afaf49392009",
+    "raw": "Earth Form: Burrowing 6 (4 MPH); Movement 2"
+  },
+  {
+    "modifier_id": "mod_0032",
+    "axis": "Form: Elongation 7;",
+    "source_chunk": "afaf49392009",
+    "raw": "Particulate Form: Elongation 7; Insubstantial 2;"
+  },
+  {
+    "modifier_id": "mod_0033",
+    "axis": "Form: Visual Concealment 4, Limited: in",
+    "source_chunk": "afaf49392009",
+    "raw": "Plant Form: Visual Concealment 4, Limited: in"
+  },
+  {
+    "modifier_id": "mod_0034",
+    "axis": "Form: Reaction Damage 7 (to being hit),",
+    "source_chunk": "afaf49392009",
+    "raw": "Rock Form: Reaction Damage 7 (to being hit),"
+  },
+  {
+    "modifier_id": "mod_0035",
+    "axis": "Form: Immunity 5 (Fire Damage);",
+    "source_chunk": "afaf49392009",
+    "raw": "Flame Form: Immunity 5 (Fire Damage); Insubstantial 3,"
+  },
+  {
+    "modifier_id": "mod_0036",
+    "axis": "Form: Visual Concealment 4, Limited: in",
+    "source_chunk": "afaf49392009",
+    "raw": "Liquid Form: Visual Concealment 4, Limited: in"
+  },
+  {
+    "modifier_id": "mod_0037",
+    "axis": "Form: Enhanced Strength 8;",
+    "source_chunk": "afaf49392009",
+    "raw": "Ice Form: Enhanced Strength 8; Immunity 7 (cold"
+  },
+  {
+    "modifier_id": "mod_0038",
+    "axis": "Form: Roll for the powers of an Air Elemental",
+    "source_chunk": "afaf49392009",
+    "raw": "Vapor Form: Roll for the powers of an Air Elemental"
+  },
+  {
+    "modifier_id": "mod_0039",
+    "axis": "Choose One Extra: Burst Area or Cloud Area \u2022 1 point",
+    "source_chunk": "afaf49392009",
+    "raw": "Choose One Extra: Burst Area or Cloud Area \u2022 1 point"
+  },
+  {
+    "modifier_id": "mod_0040",
+    "axis": "Form: Insubstantial 3 (Energy Control type),",
+    "source_chunk": "afaf49392009",
+    "raw": "Energy Form: Insubstantial 3 (Energy Control type),"
+  },
+  {
+    "modifier_id": "mod_0041",
+    "axis": "different forms",
+    "source_chunk": "afaf49392009",
+    "raw": "take on many different forms, from a jetpack and blaster"
+  },
+  {
+    "modifier_id": "mod_0042",
+    "axis": "either a natural athlete or have had",
+    "source_chunk": "afaf49392009",
+    "raw": "Athlete: You\u2019re either a natural athlete or have had"
+  },
+  {
+    "modifier_id": "mod_0043",
+    "axis": "Form: You are made of a highly resistant",
+    "source_chunk": "afaf49392009",
+    "raw": "Alternate Form: You are made of a highly resistant"
+  },
+  {
+    "modifier_id": "mod_0044",
+    "axis": "Choose One: Accurate Attack or All-out Attack",
+    "source_chunk": "afaf49392009",
+    "raw": "Choose One: Accurate Attack or All-out Attack"
+  },
+  {
+    "modifier_id": "mod_0045",
+    "axis": "Form: Activation (Move Action, -1 point),",
+    "source_chunk": "afaf49392009",
+    "raw": "Solid Form: Activation (Move Action, -1 point),"
+  },
+  {
+    "modifier_id": "mod_0046",
+    "axis": "Depending on the Movement Power you",
+    "source_chunk": "afaf49392009",
+    "raw": "Faster: Depending on the Movement Power you"
+  },
+  {
+    "modifier_id": "mod_0047",
+    "axis": "Form: Elongation 1 (15 feet);",
+    "source_chunk": "afaf49392009",
+    "raw": "Pliable Form: Elongation 1 (15 feet); Movement 2"
+  },
+  {
+    "modifier_id": "mod_0048",
+    "axis": "choose this motivation even if he or she doesn\u2019t look",
+    "source_chunk": "afaf49392009",
+    "raw": "choose this motivation even if he or she doesn\u2019t look"
+  },
+  {
+    "modifier_id": "mod_0049",
+    "axis": "Choose either: Inspire, Leadership, and Teamwork, or Inspire 2",
+    "source_chunk": "afaf49392009",
+    "raw": "Choose either: Inspire, Leadership, and Teamwork, or Inspire 2"
+  },
+  {
+    "modifier_id": "mod_0050",
+    "axis": "either  by  running  or  flying  at  superhuman",
+    "source_chunk": "afaf49392009",
+    "raw": "They  do  this  either  by  running  or  flying  at  superhuman"
+  },
+  {
+    "modifier_id": "mod_0051",
+    "axis": "Choose One: Artificer, Ritualist, or Inventor",
+    "source_chunk": "afaf49392009",
+    "raw": "Defensive Roll 4 and Choose One: Artificer, Ritualist, or Inventor"
+  },
+  {
+    "modifier_id": "mod_0052",
+    "axis": "Form: Insubstantial 3 (Hellfire) \u2022 15 points",
+    "source_chunk": "afaf49392009",
+    "raw": "Hellfire Form: Insubstantial 3 (Hellfire) \u2022 15 points"
+  },
+  {
+    "modifier_id": "mod_0053",
+    "axis": "Form: Insubstantial 2, Linked to Flight 5 (60",
+    "source_chunk": "afaf49392009",
+    "raw": "Mist Form: Insubstantial 2, Linked to Flight 5 (60"
+  },
+  {
+    "modifier_id": "mod_0054",
+    "axis": "Choose One: Magic or Mythology) 6, Insight 6",
+    "source_chunk": "afaf49392009",
+    "raw": "Expertise: (Choose One: Magic or Mythology) 6, Insight 6"
+  },
+  {
+    "modifier_id": "mod_0055",
+    "axis": "Close or Ranged",
+    "source_chunk": "afaf49392009",
+    "raw": "Evasion, Precise Attack (Choose One: Close or Ranged;"
+  },
+  {
+    "modifier_id": "mod_0056",
+    "axis": "Choose One: Close or Ranged;",
+    "source_chunk": "afaf49392009",
+    "raw": "Evasion, Precise Attack (Choose One: Close or Ranged;"
+  },
+  {
+    "modifier_id": "mod_0057",
+    "axis": "depending on the situation.",
+    "source_chunk": "afaf49392009",
+    "raw": "apply modifiers depending on the situation. The general"
+  },
+  {
+    "modifier_id": "mod_0058",
+    "axis": "depending on circumstances.",
+    "source_chunk": "afaf49392009",
+    "raw": "hour or day thereafter, depending on circumstances."
+  },
+  {
+    "modifier_id": "mod_0059",
+    "axis": "either because of the player\u2019s life experience or knowledge",
+    "source_chunk": "afaf49392009",
+    "raw": "However, players may know things their characters do not, either because of the player\u2019s life experience or knowledge"
+  },
+  {
+    "modifier_id": "mod_0060",
+    "axis": "depending on the task involved.",
+    "source_chunk": "afaf49392009",
+    "raw": "haps depending on the task involved. For example, a tech-"
+  },
+  {
+    "modifier_id": "mod_0061",
+    "axis": "depending on the situation and the Gamemaster\u2019s judg-",
+    "source_chunk": "afaf49392009",
+    "raw": "depending on the situation and the Gamemaster\u2019s judg-"
+  },
+  {
+    "modifier_id": "mod_0062",
+    "axis": "either cover or concealment.",
+    "source_chunk": "afaf49392009",
+    "raw": "Ignore attack check penalties for either cover or concealment."
+  },
+  {
+    "modifier_id": "mod_0063",
+    "axis": "depending on whether or not they",
+    "source_chunk": "afaf49392009",
+    "raw": "ries, but not in others, depending on whether or not they"
+  },
+  {
+    "modifier_id": "mod_0064",
+    "axis": "one  of  the  following",
+    "source_chunk": "afaf49392009",
+    "raw": "move  one  of  the  following  conditions  from  an  ally  with"
+  },
+  {
+    "modifier_id": "mod_0065",
+    "axis": "depending on the series.",
+    "source_chunk": "afaf49392009",
+    "raw": "depending on the series."
+  },
+  {
+    "modifier_id": "mod_0066",
+    "axis": "close or ranged",
+    "source_chunk": "afaf49392009",
+    "raw": "When you make close or ranged attacks (choose one) you"
+  },
+  {
+    "modifier_id": "mod_0067",
+    "axis": "depending on the na-",
+    "source_chunk": "afaf49392009",
+    "raw": "(and what, if anything, that means) depending on the na-"
+  },
+  {
+    "modifier_id": "mod_0068",
+    "axis": "different modes",
+    "source_chunk": "afaf49392009",
+    "raw": "others offer different modes of movement, like walking on"
+  },
+  {
+    "modifier_id": "mod_0069",
+    "axis": "Type: The type of effect.",
+    "source_chunk": "afaf49392009",
+    "raw": "Type: The type of effect."
+  },
+  {
+    "modifier_id": "mod_0070",
+    "axis": "Form: if it requires a move action, subtract 1 power point from the total cost of the effects.",
+    "source_chunk": "afaf49392009",
+    "raw": "your Alternate Form: if it requires a move action, subtract 1 power point from the total cost of the effects. If it requires a"
+  },
+  {
+    "modifier_id": "mod_0071",
+    "axis": "close or ranged",
+    "source_chunk": "afaf49392009",
+    "raw": "Energy: You are made up of energy, such as fire or electricity: Damage (close or ranged), Flight, Immunity, Insub-"
+  },
+  {
+    "modifier_id": "mod_0072",
+    "axis": "depending on their",
+    "source_chunk": "afaf49392009",
+    "raw": "subjects \u201cout of range\u201d of the effect, depending on their"
+  },
+  {
+    "modifier_id": "mod_0073",
+    "axis": "either speak to or comprehend animals.",
+    "source_chunk": "afaf49392009",
+    "raw": "You can either speak to or comprehend animals. You can"
+  },
+  {
+    "modifier_id": "mod_0074",
+    "axis": "either speak or understand the language of any",
+    "source_chunk": "afaf49392009",
+    "raw": "You can either speak or understand the language of any"
+  },
+  {
+    "modifier_id": "mod_0075",
+    "axis": "depending on the context",
+    "source_chunk": "afaf49392009",
+    "raw": "tain extradimensional entities, depending on the context"
+  },
+  {
+    "modifier_id": "mod_0076",
+    "axis": "depending on the",
+    "source_chunk": "afaf49392009",
+    "raw": "demons, or other supernatural entities, depending on the"
+  },
+  {
+    "modifier_id": "mod_0077",
+    "axis": "Type: You can only comprehend a broad type of subject",
+    "source_chunk": "afaf49392009",
+    "raw": "Type: You can only comprehend a broad type of subject"
+  },
+  {
+    "modifier_id": "mod_0078",
+    "axis": "depending on the effect\u2019s descriptors.",
+    "source_chunk": "afaf49392009",
+    "raw": "medium, depending on the effect\u2019s descriptors."
+  },
+  {
+    "modifier_id": "mod_0079",
+    "axis": "depending on whether or not the selec-",
+    "source_chunk": "afaf49392009",
+    "raw": "ited modifiers (depending on whether or not the selec-"
+  },
+  {
+    "modifier_id": "mod_0080",
+    "axis": "Depending  on  your  descriptors,",
+    "source_chunk": "afaf49392009",
+    "raw": "Depending  on  your  descriptors,  you  may  also  apply  cir-"
+  },
+  {
+    "modifier_id": "mod_0081",
+    "axis": "choose to deactivate them, even if you are stunned or in-",
+    "source_chunk": "afaf49392009",
+    "raw": "choose to deactivate them, even if you are stunned or in-"
+  },
+  {
+    "modifier_id": "mod_0082",
+    "axis": "form: Your Flight is reliant on some sort of platform on",
+    "source_chunk": "afaf49392009",
+    "raw": "Platform: Your Flight is reliant on some sort of platform on"
+  },
+  {
+    "modifier_id": "mod_0083",
+    "axis": "choose whether or not to project the illusion into a par-",
+    "source_chunk": "afaf49392009",
+    "raw": "choose whether or not to project the illusion into a par-"
+  },
+  {
+    "modifier_id": "mod_0084",
+    "axis": "Choose one other reasonably common effect or de-",
+    "source_chunk": "afaf49392009",
+    "raw": "fier. Choose one other reasonably common effect or de-"
+  },
+  {
+    "modifier_id": "mod_0085",
+    "axis": "one of the following",
+    "source_chunk": "afaf49392009",
+    "raw": "you have in this effect, choose one of the following capa-"
+  },
+  {
+    "modifier_id": "mod_0086",
+    "axis": "choose who in the area is or is not affected by it.",
+    "source_chunk": "afaf49392009",
+    "raw": "you to choose who in the area is or is not affected by it. +1"
+  },
+  {
+    "modifier_id": "mod_0087",
+    "axis": "one of the following",
+    "source_chunk": "afaf49392009",
+    "raw": "effect, choose one of the following options:"
+  },
+  {
+    "modifier_id": "mod_0088",
+    "axis": "Type:  Your  Quickness  applies  to  only",
+    "source_chunk": "afaf49392009",
+    "raw": "Limited  to  One  Type:  Your  Quickness  applies  to  only"
+  },
+  {
+    "modifier_id": "mod_0089",
+    "axis": "different  forms",
+    "source_chunk": "afaf49392009",
+    "raw": "You  can  transform  into  different  forms,  gaining  the"
+  },
+  {
+    "modifier_id": "mod_0090",
+    "axis": "either breaking the effect or slipping out of it.",
+    "source_chunk": "afaf49392009",
+    "raw": "either breaking the effect or slipping out of it. This is part of"
+  },
+  {
+    "modifier_id": "mod_0091",
+    "axis": "Type:  Minions  are  normally  identical  in  terms",
+    "source_chunk": "afaf49392009",
+    "raw": "Variable  Type:  Minions  are  normally  identical  in  terms"
+  },
+  {
+    "modifier_id": "mod_0092",
+    "axis": "Type: +1",
+    "source_chunk": "afaf49392009",
+    "raw": "(like animals, demons, humanoids, etc.). General Type: +1"
+  },
+  {
+    "modifier_id": "mod_0093",
+    "axis": "Type: +2 cost per rank.",
+    "source_chunk": "afaf49392009",
+    "raw": "cost per rank. Broad Type: +2 cost per rank."
+  },
+  {
+    "modifier_id": "mod_0094",
+    "axis": "depending on the effect\u2019s de-",
+    "source_chunk": "afaf49392009",
+    "raw": "at the GM\u2019s discretion and depending on the effect\u2019s de-"
+  },
+  {
+    "modifier_id": "mod_0095",
+    "axis": "depending on how subtle the effect",
+    "source_chunk": "afaf49392009",
+    "raw": "costs only 1 or 2 points, depending on how subtle the effect"
+  },
+  {
+    "modifier_id": "mod_0096",
+    "axis": "depending on how long the power takes to activate.",
+    "source_chunk": "afaf49392009",
+    "raw": "points, depending on how long the power takes to activate."
+  },
+  {
+    "modifier_id": "mod_0097",
+    "axis": "one of the following",
+    "source_chunk": "afaf49392009",
+    "raw": "Choose one of the following options:"
+  },
+  {
+    "modifier_id": "mod_0098",
+    "axis": "one of the following",
+    "source_chunk": "afaf49392009",
+    "raw": "ration. Choose one of the following options:"
+  },
+  {
+    "modifier_id": "mod_0099",
+    "axis": "either  voluntarily  or  involuntarily  via  effects  like",
+    "source_chunk": "afaf49392009",
+    "raw": "vated\u2014either  voluntarily  or  involuntarily  via  effects  like"
+  },
+  {
+    "modifier_id": "mod_0100",
+    "axis": "one of the following",
+    "source_chunk": "afaf49392009",
+    "raw": "Using an effect requires one of the following types of ac-"
+  },
+  {
+    "modifier_id": "mod_0101",
+    "axis": "different  forms",
+    "source_chunk": "afaf49392009",
+    "raw": "Descriptors  come  in  many  different  forms.  The  break-"
+  },
+  {
+    "modifier_id": "mod_0102",
+    "axis": "depending on the",
+    "source_chunk": "afaf49392009",
+    "raw": "power it, or it might be biological, depending on the"
+  },
+  {
+    "modifier_id": "mod_0103",
+    "axis": "different forms",
+    "source_chunk": "afaf49392009",
+    "raw": "are different forms of energy, from electro-"
+  },
+  {
+    "modifier_id": "mod_0104",
+    "axis": "different modes",
+    "source_chunk": "afaf49392009",
+    "raw": "such as a weapon capable of different modes of opera-"
+  },
+  {
+    "modifier_id": "mod_0105",
+    "axis": "either due to running out of fuel or simple malfunction\u2014is",
+    "source_chunk": "afaf49392009",
+    "raw": "heroes with a complication or two. Thus equipment failure\u2014either due to running out of fuel or simple malfunction\u2014is"
+  },
+  {
+    "modifier_id": "mod_0106",
+    "axis": "either remember to bring it along or use the guide-",
+    "source_chunk": "afaf49392009",
+    "raw": "must either remember to bring it along or use the guide-"
+  },
+  {
+    "modifier_id": "mod_0107",
+    "axis": "Category: Melee weapons are categorized as simple, ar-",
+    "source_chunk": "afaf49392009",
+    "raw": "Category: Melee weapons are categorized as simple, ar-"
+  },
+  {
+    "modifier_id": "mod_0108",
+    "axis": "choose to wear armor, ranging from ancient metal armors to modern composites or ultra-modern battlesuits.",
+    "source_chunk": "afaf49392009",
+    "raw": "Others choose to wear armor, ranging from ancient metal armors to modern composites or ultra-modern battlesuits."
+  },
+  {
+    "modifier_id": "mod_0109",
+    "axis": "Category:  Armors  are  categorized  as  archaic  (ancient",
+    "source_chunk": "afaf49392009",
+    "raw": "Category:  Armors  are  categorized  as  archaic  (ancient"
+  },
+  {
+    "modifier_id": "mod_0110",
+    "axis": "choose to rebuild it or build a new headquarters with different",
+    "source_chunk": "afaf49392009",
+    "raw": "character\u2019s headquarters is destroyed, the character can choose to rebuild it or build a new headquarters with different"
+  },
+  {
+    "modifier_id": "mod_0111",
+    "axis": "either the headquarters or its",
+    "source_chunk": "afaf49392009",
+    "raw": "fects are assumed to affect either the headquarters or its"
+  },
+  {
+    "modifier_id": "mod_0112",
+    "axis": "either slowed or sped up compared to the nor-",
+    "source_chunk": "afaf49392009",
+    "raw": "structure is either slowed or sped up compared to the nor-"
+  },
+  {
+    "modifier_id": "mod_0113",
+    "axis": "form: Affliction with dazed, stunned, and incapacitated effects.",
+    "source_chunk": "afaf49392009",
+    "raw": "Chloroform: Affliction with dazed, stunned, and incapacitated effects."
+  },
+  {
+    "modifier_id": "mod_0114",
+    "axis": "one of the following",
+    "source_chunk": "afaf49392009",
+    "raw": "A critical hit can have one of the following three effects,"
+  },
+  {
+    "modifier_id": "mod_0115",
+    "axis": "depending on the type",
+    "source_chunk": "afaf49392009",
+    "raw": "or more conditions on the target, depending on the type"
+  },
+  {
+    "modifier_id": "mod_0116",
+    "axis": "choose a particular city or area as the heroes\u2019",
+    "source_chunk": "afaf49392009",
+    "raw": "may want to choose a particular city or area as the heroes\u2019"
+  },
+  {
+    "modifier_id": "mod_0117",
+    "axis": "either independently, or as a group, to",
+    "source_chunk": "afaf49392009",
+    "raw": "and have decided, either independently, or as a group, to"
+  },
+  {
+    "modifier_id": "mod_0118",
+    "axis": "depending on your series.",
+    "source_chunk": "afaf49392009",
+    "raw": "to help or harm the character in some way depending on your series. They\u2019re also meant to represent a wide range of"
+  },
+  {
+    "modifier_id": "mod_0119",
+    "axis": "depending on the location",
+    "source_chunk": "afaf49392009",
+    "raw": "corrupt politicians on the take, depending on the location"
+  },
+  {
+    "modifier_id": "mod_0120",
+    "axis": "Depending on how the heroes are organized,",
+    "source_chunk": "afaf49392009",
+    "raw": "Depending on how the heroes are organized, they can get"
+  },
+  {
+    "modifier_id": "mod_0121",
+    "axis": "depending on what\u2019s already",
+    "source_chunk": "afaf49392009",
+    "raw": "Other openings are possible depending on what\u2019s already"
+  },
+  {
+    "modifier_id": "mod_0122",
+    "axis": "Depending on how the heroes are organized,",
+    "source_chunk": "afaf49392009",
+    "raw": "Depending on how the heroes are organized, they can get"
+  },
+  {
+    "modifier_id": "mod_0123",
+    "axis": "depending  on  what\u2019s  al-",
+    "source_chunk": "afaf49392009",
+    "raw": "Other  openings  are  possible,  depending  on  what\u2019s  al-"
+  },
+  {
+    "modifier_id": "mod_0124",
+    "axis": "either  make  a  hostile  move  or  get  within  Su-",
+    "source_chunk": "afaf49392009",
+    "raw": "characters  either  make  a  hostile  move  or  get  within  Su-"
+  },
+  {
+    "modifier_id": "mod_0125",
+    "axis": "type:  A  pre-generated  character  representing  a",
+    "source_chunk": "afaf49392009",
+    "raw": "archetype:  A  pre-generated  character  representing  a"
+  },
+  {
+    "modifier_id": "mod_0126",
+    "axis": "depending  on  the  attack  being  used)  and",
+    "source_chunk": "afaf49392009",
+    "raw": "attack  check,  depending  on  the  attack  being  used)  and"
+  },
+  {
+    "modifier_id": "mod_0127",
+    "axis": "either die or stabilize.",
+    "source_chunk": "afaf49392009",
+    "raw": "they either die or stabilize. Another character can stabilize a"
+  },
+  {
+    "modifier_id": "mod_0128",
+    "axis": "either from scratch using the game\u2019s system of power points, or working with one",
+    "source_chunk": "155515ff73f3",
+    "raw": "options on creating your own heroes, either from scratch using the game\u2019s system of power points, or working with one"
+  },
+  {
+    "modifier_id": "mod_0129",
+    "axis": "different types",
+    "source_chunk": "155515ff73f3",
+    "raw": "for some examples of different types of M&M characters."
+  },
+  {
+    "modifier_id": "mod_0130",
+    "axis": "Choose One Extra: Burst Area or Cloud Area \u2022 1 point",
+    "source_chunk": "b66f735677a8",
+    "raw": "Choose One Extra: Burst Area or Cloud Area \u2022 1 point"
+  },
+  {
+    "modifier_id": "mod_0131",
+    "axis": "Form: Insubstantial 3 (Energy Control type),",
+    "source_chunk": "b66f735677a8",
+    "raw": "Energy Form: Insubstantial 3 (Energy Control type),"
+  },
+  {
+    "modifier_id": "mod_0132",
+    "axis": "different forms",
+    "source_chunk": "b66f735677a8",
+    "raw": "take on many different forms, from a jetpack and blaster"
+  },
+  {
+    "modifier_id": "mod_0133",
+    "axis": "either a natural athlete or have had",
+    "source_chunk": "7f359d0c42f3",
+    "raw": "Athlete: You\u2019re either a natural athlete or have had"
+  },
+  {
+    "modifier_id": "mod_0134",
+    "axis": "Form: You are made of a highly resistant",
+    "source_chunk": "c93e5d4367ae",
+    "raw": "Alternate Form: You are made of a highly resistant"
+  },
+  {
+    "modifier_id": "mod_0135",
+    "axis": "Choose One: Accurate Attack or All-out Attack",
+    "source_chunk": "c93e5d4367ae",
+    "raw": "Choose One: Accurate Attack or All-out Attack"
+  },
+  {
+    "modifier_id": "mod_0136",
+    "axis": "Form: Activation (Move Action, -1 point),",
+    "source_chunk": "8b7eebfa2dbd",
+    "raw": "Solid Form: Activation (Move Action, -1 point),"
+  },
+  {
+    "modifier_id": "mod_0137",
+    "axis": "Depending on the Movement Power you",
+    "source_chunk": "2d15853a1a97",
+    "raw": "Faster: Depending on the Movement Power you"
+  },
+  {
+    "modifier_id": "mod_0138",
+    "axis": "Form: Elongation 1 (15 feet);",
+    "source_chunk": "2d15853a1a97",
+    "raw": "Pliable Form: Elongation 1 (15 feet); Movement 2"
+  },
+  {
+    "modifier_id": "mod_0139",
+    "axis": "choose this motivation even if he or she doesn\u2019t look",
+    "source_chunk": "2d15853a1a97",
+    "raw": "choose this motivation even if he or she doesn\u2019t look"
+  },
+  {
+    "modifier_id": "mod_0140",
+    "axis": "Choose either: Inspire, Leadership, and Teamwork, or Inspire 2",
+    "source_chunk": "e7a113da6577",
+    "raw": "Choose either: Inspire, Leadership, and Teamwork, or Inspire 2"
+  },
+  {
+    "modifier_id": "mod_0141",
+    "axis": "either  by  running  or  flying  at  superhuman",
+    "source_chunk": "9c9a530cde08",
+    "raw": "They  do  this  either  by  running  or  flying  at  superhuman"
+  },
+  {
+    "modifier_id": "mod_0142",
+    "axis": "Choose One: Artificer, Ritualist, or Inventor",
+    "source_chunk": "9a53776bed32",
+    "raw": "Defensive Roll 4 and Choose One: Artificer, Ritualist, or Inventor"
+  },
+  {
+    "modifier_id": "mod_0143",
+    "axis": "Form: Insubstantial 3 (Hellfire) \u2022 15 points",
+    "source_chunk": "0d8caeb775ca",
+    "raw": "Hellfire Form: Insubstantial 3 (Hellfire) \u2022 15 points"
+  },
+  {
+    "modifier_id": "mod_0144",
+    "axis": "Form: Insubstantial 2, Linked to Flight 5 (60",
+    "source_chunk": "f186c5cfc393",
+    "raw": "Mist Form: Insubstantial 2, Linked to Flight 5 (60"
+  },
+  {
+    "modifier_id": "mod_0145",
+    "axis": "Choose One: Magic or Mythology) 6, Insight 6",
+    "source_chunk": "2081c06a79b7",
+    "raw": "Expertise: (Choose One: Magic or Mythology) 6, Insight 6"
+  },
+  {
+    "modifier_id": "mod_0146",
+    "axis": "Close or Ranged",
+    "source_chunk": "b962a5b0f40f",
+    "raw": "Evasion, Precise Attack (Choose One: Close or Ranged;"
+  },
+  {
+    "modifier_id": "mod_0147",
+    "axis": "Choose One: Close or Ranged;",
+    "source_chunk": "b962a5b0f40f",
+    "raw": "Evasion, Precise Attack (Choose One: Close or Ranged;"
+  },
+  {
+    "modifier_id": "mod_0148",
+    "axis": "depending on the situation.",
+    "source_chunk": "fec2a65e09f9",
+    "raw": "apply modifiers depending on the situation. The general"
+  },
+  {
+    "modifier_id": "mod_0149",
+    "axis": "depending on circumstances.",
+    "source_chunk": "1eebe8c3a137",
+    "raw": "hour or day thereafter, depending on circumstances."
+  },
+  {
+    "modifier_id": "mod_0150",
+    "axis": "either because of the player\u2019s life experience or knowledge",
+    "source_chunk": "a44d7d1b62bf",
+    "raw": "However, players may know things their characters do not, either because of the player\u2019s life experience or knowledge"
+  },
+  {
+    "modifier_id": "mod_0151",
+    "axis": "depending on the task involved.",
+    "source_chunk": "a44d7d1b62bf",
+    "raw": "haps depending on the task involved. For example, a tech-"
+  },
+  {
+    "modifier_id": "mod_0152",
+    "axis": "depending on the situation and the Gamemaster\u2019s judg-",
+    "source_chunk": "4115d3a02b56",
+    "raw": "depending on the situation and the Gamemaster\u2019s judg-"
+  },
+  {
+    "modifier_id": "mod_0153",
+    "axis": "various  types",
+    "source_chunk": "a72ac55e91e5",
+    "raw": "throughout  the  rules  for  various  types  of  checks.  One"
+  },
+  {
+    "modifier_id": "mod_0154",
+    "axis": "either cover or concealment.",
+    "source_chunk": "79d21de6e702",
+    "raw": "Ignore attack check penalties for either cover or concealment."
+  },
+  {
+    "modifier_id": "mod_0155",
+    "axis": "depending on whether or not they",
+    "source_chunk": "2567c151b0af",
+    "raw": "ries, but not in others, depending on whether or not they"
+  },
+  {
+    "modifier_id": "mod_0156",
+    "axis": "one  of  the  following",
+    "source_chunk": "2823eb75860a",
+    "raw": "move  one  of  the  following  conditions  from  an  ally  with"
+  },
+  {
+    "modifier_id": "mod_0157",
+    "axis": "depending on the series.",
+    "source_chunk": "2823eb75860a",
+    "raw": "depending on the series."
+  },
+  {
+    "modifier_id": "mod_0158",
+    "axis": "close or ranged",
+    "source_chunk": "2823eb75860a",
+    "raw": "When you make close or ranged attacks (choose one) you"
+  },
+  {
+    "modifier_id": "mod_0159",
+    "axis": "depending on the na-",
+    "source_chunk": "a8d48fefcfb7",
+    "raw": "(and what, if anything, that means) depending on the na-"
+  },
+  {
+    "modifier_id": "mod_0160",
+    "axis": "different modes",
+    "source_chunk": "f6a0093da917",
+    "raw": "others offer different modes of movement, like walking on"
+  },
+  {
+    "modifier_id": "mod_0161",
+    "axis": "Type: The type of effect.",
+    "source_chunk": "eedb03cdf1aa",
+    "raw": "Type: The type of effect."
+  },
+  {
+    "modifier_id": "mod_0162",
+    "axis": "Form: if it requires a move action, subtract 1 power point from the total cost of the effects.",
+    "source_chunk": "911582897d2d",
+    "raw": "your Alternate Form: if it requires a move action, subtract 1 power point from the total cost of the effects. If it requires a"
+  },
+  {
+    "modifier_id": "mod_0163",
+    "axis": "close or ranged",
+    "source_chunk": "911582897d2d",
+    "raw": "Energy: You are made up of energy, such as fire or electricity: Damage (close or ranged), Flight, Immunity, Insub-"
+  },
+  {
+    "modifier_id": "mod_0164",
+    "axis": "depending on their",
+    "source_chunk": "acdcbf7217fe",
+    "raw": "subjects \u201cout of range\u201d of the effect, depending on their"
+  },
+  {
+    "modifier_id": "mod_0165",
+    "axis": "either speak to or comprehend animals.",
+    "source_chunk": "acdcbf7217fe",
+    "raw": "You can either speak to or comprehend animals. You can"
+  },
+  {
+    "modifier_id": "mod_0166",
+    "axis": "either speak or understand the language of any",
+    "source_chunk": "acdcbf7217fe",
+    "raw": "You can either speak or understand the language of any"
+  },
+  {
+    "modifier_id": "mod_0167",
+    "axis": "depending on the context",
+    "source_chunk": "0b569be3b88a",
+    "raw": "tain extradimensional entities, depending on the context"
+  },
+  {
+    "modifier_id": "mod_0168",
+    "axis": "depending on the",
+    "source_chunk": "0b569be3b88a",
+    "raw": "demons, or other supernatural entities, depending on the"
+  },
+  {
+    "modifier_id": "mod_0169",
+    "axis": "Type: You can only comprehend a broad type of subject",
+    "source_chunk": "0b569be3b88a",
+    "raw": "Type: You can only comprehend a broad type of subject"
+  },
+  {
+    "modifier_id": "mod_0170",
+    "axis": "depending on the effect\u2019s descriptors.",
+    "source_chunk": "c576c2ec67f0",
+    "raw": "medium, depending on the effect\u2019s descriptors."
+  },
+  {
+    "modifier_id": "mod_0171",
+    "axis": "depending on whether or not the selec-",
+    "source_chunk": "f70caca2969f",
+    "raw": "ited modifiers (depending on whether or not the selec-"
+  },
+  {
+    "modifier_id": "mod_0172",
+    "axis": "Depending  on  your  descriptors,",
+    "source_chunk": "f70caca2969f",
+    "raw": "Depending  on  your  descriptors,  you  may  also  apply  cir-"
+  },
+  {
+    "modifier_id": "mod_0173",
+    "axis": "choose to deactivate them, even if you are stunned or in-",
+    "source_chunk": "634c7782595c",
+    "raw": "choose to deactivate them, even if you are stunned or in-"
+  },
+  {
+    "modifier_id": "mod_0174",
+    "axis": "form: Your Flight is reliant on some sort of platform on",
+    "source_chunk": "9ab2a424a8a3",
+    "raw": "Platform: Your Flight is reliant on some sort of platform on"
+  },
+  {
+    "modifier_id": "mod_0175",
+    "axis": "choose whether or not to project the illusion into a par-",
+    "source_chunk": "b1fcdc2a9908",
+    "raw": "choose whether or not to project the illusion into a par-"
+  },
+  {
+    "modifier_id": "mod_0176",
+    "axis": "Choose one other reasonably common effect or de-",
+    "source_chunk": "641f3d779d1e",
+    "raw": "fier. Choose one other reasonably common effect or de-"
+  },
+  {
+    "modifier_id": "mod_0177",
+    "axis": "one of the following",
+    "source_chunk": "660ae154c01a",
+    "raw": "you have in this effect, choose one of the following capa-"
+  },
+  {
+    "modifier_id": "mod_0178",
+    "axis": "choose who in the area is or is not affected by it.",
+    "source_chunk": "a583a1edaa83",
+    "raw": "you to choose who in the area is or is not affected by it. +1"
+  },
+  {
+    "modifier_id": "mod_0179",
+    "axis": "either die or stabilize.",
+    "source_chunk": "1fba306fd0ff",
+    "raw": "until they either die or stabilize. Another character"
+  },
+  {
+    "modifier_id": "mod_0180",
+    "axis": "one of the following",
+    "source_chunk": "1fba306fd0ff",
+    "raw": "gains one of the following benefits:"
+  },
+  {
+    "modifier_id": "mod_0181",
+    "axis": "one of the following",
+    "source_chunk": "6c9cbb9ca1c9",
+    "raw": "effect, choose one of the following options:"
+  },
+  {
+    "modifier_id": "mod_0182",
+    "axis": "Type:  Your  Quickness  applies  to  only",
+    "source_chunk": "abc414aa8a2e",
+    "raw": "Limited  to  One  Type:  Your  Quickness  applies  to  only"
+  },
+  {
+    "modifier_id": "mod_0183",
+    "axis": "different  forms",
+    "source_chunk": "109e5a49dacc",
+    "raw": "You  can  transform  into  different  forms,  gaining  the"
+  },
+  {
+    "modifier_id": "mod_0184",
+    "axis": "either breaking the effect or slipping out of it.",
+    "source_chunk": "3a3de859c62b",
+    "raw": "either breaking the effect or slipping out of it. This is part of"
+  },
+  {
+    "modifier_id": "mod_0185",
+    "axis": "Type:  Minions  are  normally  identical  in  terms",
+    "source_chunk": "3a3de859c62b",
+    "raw": "Variable  Type:  Minions  are  normally  identical  in  terms"
+  },
+  {
+    "modifier_id": "mod_0186",
+    "axis": "Type: +1",
+    "source_chunk": "3a3de859c62b",
+    "raw": "(like animals, demons, humanoids, etc.). General Type: +1"
+  },
+  {
+    "modifier_id": "mod_0187",
+    "axis": "Type: +2 cost per rank.",
+    "source_chunk": "3a3de859c62b",
+    "raw": "cost per rank. Broad Type: +2 cost per rank."
+  },
+  {
+    "modifier_id": "mod_0188",
+    "axis": "depending on the effect\u2019s de-",
+    "source_chunk": "72b85801e381",
+    "raw": "at the GM\u2019s discretion and depending on the effect\u2019s de-"
+  },
+  {
+    "modifier_id": "mod_0189",
+    "axis": "depending on how subtle the effect",
+    "source_chunk": "1fb74f5fe881",
+    "raw": "costs only 1 or 2 points, depending on how subtle the effect"
+  },
+  {
+    "modifier_id": "mod_0190",
+    "axis": "depending on how long the power takes to activate.",
+    "source_chunk": "1fb74f5fe881",
+    "raw": "points, depending on how long the power takes to activate."
+  },
+  {
+    "modifier_id": "mod_0191",
+    "axis": "one of the following",
+    "source_chunk": "deeb5002242f",
+    "raw": "Choose one of the following options:"
+  },
+  {
+    "modifier_id": "mod_0192",
+    "axis": "one of the following",
+    "source_chunk": "5894d31d864e",
+    "raw": "ration. Choose one of the following options:"
+  },
+  {
+    "modifier_id": "mod_0193",
+    "axis": "either  voluntarily  or  involuntarily  via  effects  like",
+    "source_chunk": "35a17114e9b9",
+    "raw": "vated\u2014either  voluntarily  or  involuntarily  via  effects  like"
+  },
+  {
+    "modifier_id": "mod_0194",
+    "axis": "one of the following",
+    "source_chunk": "e5cb32db3ccf",
+    "raw": "Using an effect requires one of the following types of ac-"
+  },
+  {
+    "modifier_id": "mod_0195",
+    "axis": "different  forms",
+    "source_chunk": "8b0775da1653",
+    "raw": "Descriptors  come  in  many  different  forms.  The  break-"
+  },
+  {
+    "modifier_id": "mod_0196",
+    "axis": "depending on the",
+    "source_chunk": "9a88291c2cba",
+    "raw": "power it, or it might be biological, depending on the"
+  },
+  {
+    "modifier_id": "mod_0197",
+    "axis": "different forms",
+    "source_chunk": "6201e279c774",
+    "raw": "are different forms of energy, from electro-"
+  },
+  {
+    "modifier_id": "mod_0198",
+    "axis": "different modes",
+    "source_chunk": "e957fc3d20b6",
+    "raw": "such as a weapon capable of different modes of opera-"
+  },
+  {
+    "modifier_id": "mod_0199",
+    "axis": "either due to running out of fuel or simple malfunction\u2014is",
+    "source_chunk": "e957fc3d20b6",
+    "raw": "heroes with a complication or two. Thus equipment failure\u2014either due to running out of fuel or simple malfunction\u2014is"
+  },
+  {
+    "modifier_id": "mod_0200",
+    "axis": "either remember to bring it along or use the guide-",
+    "source_chunk": "efae0f7875b0",
+    "raw": "must either remember to bring it along or use the guide-"
+  },
+  {
+    "modifier_id": "mod_0201",
+    "axis": "different kind",
+    "source_chunk": "16ef340aa347",
+    "raw": "different kind of hero. For example, the Crime Fighter archetype has options for a hero with less equipment, but super-"
+  },
+  {
+    "modifier_id": "mod_0202",
+    "axis": "different types",
+    "source_chunk": "16ef340aa347",
+    "raw": "ideas of the different types of heroes you can create. You"
+  },
+  {
+    "modifier_id": "mod_0203",
+    "axis": "Category: Melee weapons are categorized as simple, ar-",
+    "source_chunk": "9fc3e1dccdd5",
+    "raw": "Category: Melee weapons are categorized as simple, ar-"
+  },
+  {
+    "modifier_id": "mod_0204",
+    "axis": "choose to wear armor, ranging from ancient metal armors to modern composites or ultra-modern battlesuits.",
+    "source_chunk": "450ebdc88c5f",
+    "raw": "Others choose to wear armor, ranging from ancient metal armors to modern composites or ultra-modern battlesuits."
+  },
+  {
+    "modifier_id": "mod_0205",
+    "axis": "Category:  Armors  are  categorized  as  archaic  (ancient",
+    "source_chunk": "450ebdc88c5f",
+    "raw": "Category:  Armors  are  categorized  as  archaic  (ancient"
+  },
+  {
+    "modifier_id": "mod_0206",
+    "axis": "choose to rebuild it or build a new headquarters with different",
+    "source_chunk": "815f0368760c",
+    "raw": "character\u2019s headquarters is destroyed, the character can choose to rebuild it or build a new headquarters with different"
+  },
+  {
+    "modifier_id": "mod_0207",
+    "axis": "either the headquarters or its",
+    "source_chunk": "3d9e2f22da91",
+    "raw": "fects are assumed to affect either the headquarters or its"
+  },
+  {
+    "modifier_id": "mod_0208",
+    "axis": "either slowed or sped up compared to the nor-",
+    "source_chunk": "0112a4f0d677",
+    "raw": "structure is either slowed or sped up compared to the nor-"
+  },
+  {
+    "modifier_id": "mod_0209",
+    "axis": "either remove or add traits to your",
+    "source_chunk": "b062cd077bda",
+    "raw": "check your math and either remove or add traits to your"
+  },
+  {
+    "modifier_id": "mod_0210",
+    "axis": "form: Affliction with dazed, stunned, and incapacitated effects.",
+    "source_chunk": "b2a743a169ef",
+    "raw": "Chloroform: Affliction with dazed, stunned, and incapacitated effects."
+  },
+  {
+    "modifier_id": "mod_0211",
+    "axis": "one of the following",
+    "source_chunk": "1284b52ce053",
+    "raw": "A critical hit can have one of the following three effects,"
+  },
+  {
+    "modifier_id": "mod_0212",
+    "axis": "depending on the type",
+    "source_chunk": "f778f8e248ac",
+    "raw": "or more conditions on the target, depending on the type"
+  },
+  {
+    "modifier_id": "mod_0213",
+    "axis": "choose a particular city or area as the heroes\u2019",
+    "source_chunk": "29ce8f5536f6",
+    "raw": "may want to choose a particular city or area as the heroes\u2019"
+  },
+  {
+    "modifier_id": "mod_0214",
+    "axis": "either independently, or as a group, to",
+    "source_chunk": "638bb40029ad",
+    "raw": "and have decided, either independently, or as a group, to"
+  },
+  {
+    "modifier_id": "mod_0215",
+    "axis": "depending on your series.",
+    "source_chunk": "183f99ae9931",
+    "raw": "to help or harm the character in some way depending on your series. They\u2019re also meant to represent a wide range of"
+  },
+  {
+    "modifier_id": "mod_0216",
+    "axis": "depending on the location",
+    "source_chunk": "183f99ae9931",
+    "raw": "corrupt politicians on the take, depending on the location"
+  },
+  {
+    "modifier_id": "mod_0217",
+    "axis": "Depending on how the heroes are organized,",
+    "source_chunk": "a37a265b7880",
+    "raw": "Depending on how the heroes are organized, they can get"
+  },
+  {
+    "modifier_id": "mod_0218",
+    "axis": "depending on what\u2019s already",
+    "source_chunk": "a37a265b7880",
+    "raw": "Other openings are possible depending on what\u2019s already"
+  },
+  {
+    "modifier_id": "mod_0219",
+    "axis": "Depending on how the heroes are organized,",
+    "source_chunk": "a37a265b7880",
+    "raw": "Depending on how the heroes are organized, they can get"
+  },
+  {
+    "modifier_id": "mod_0220",
+    "axis": "depending  on  what\u2019s  al-",
+    "source_chunk": "a37a265b7880",
+    "raw": "Other  openings  are  possible,  depending  on  what\u2019s  al-"
+  },
+  {
+    "modifier_id": "mod_0221",
+    "axis": "either  make  a  hostile  move  or  get  within  Su-",
+    "source_chunk": "a37a265b7880",
+    "raw": "characters  either  make  a  hostile  move  or  get  within  Su-"
+  },
+  {
+    "modifier_id": "mod_0222",
+    "axis": "type:  A  pre-generated  character  representing  a",
+    "source_chunk": "a37a265b7880",
+    "raw": "archetype:  A  pre-generated  character  representing  a"
+  },
+  {
+    "modifier_id": "mod_0223",
+    "axis": "depending  on  the  attack  being  used)  and",
+    "source_chunk": "a37a265b7880",
+    "raw": "attack  check,  depending  on  the  attack  being  used)  and"
+  },
+  {
+    "modifier_id": "mod_0224",
+    "axis": "either die or stabilize.",
+    "source_chunk": "6bca820b717f",
+    "raw": "they either die or stabilize. Another character can stabilize a"
+  },
+  {
+    "modifier_id": "mod_0225",
+    "axis": "depending on a hero\u2019s background.",
+    "source_chunk": "96ff0d03f69c",
+    "raw": "possibly much older, depending on a hero\u2019s background."
+  },
+  {
+    "modifier_id": "mod_0226",
+    "axis": "either Dodge or Parry.",
+    "source_chunk": "0c24afa3b38b",
+    "raw": "increase to either Dodge or Parry."
+  },
+  {
+    "modifier_id": "mod_0227",
+    "axis": "Choose one of Business, Engineering, or Science) 5 (+10),",
+    "source_chunk": "f46b5e78692d",
+    "raw": "Expertise: (Choose one of Business, Engineering, or Science) 5 (+10),"
+  },
+  {
+    "modifier_id": "mod_0228",
+    "axis": "one of the following",
+    "source_chunk": "ccc6f4765e19",
+    "raw": "Choose one of the following \u2022 20 points."
+  },
+  {
+    "modifier_id": "mod_0229",
+    "axis": "one of the following",
+    "source_chunk": "57614ab93982",
+    "raw": "To customize, choose one of the following options with"
+  },
+  {
+    "modifier_id": "mod_0230",
+    "axis": "one of the following",
+    "source_chunk": "eb1e3e3f7cf9",
+    "raw": "Plus choose one of the following \u2022 10 points."
+  },
+  {
+    "modifier_id": "mod_0231",
+    "axis": "one of the following",
+    "source_chunk": "eb1e3e3f7cf9",
+    "raw": "To customize, choose one of the following options"
+  },
+  {
+    "modifier_id": "mod_0232",
+    "axis": "one of the following",
+    "source_chunk": "0cb6edd9fba0",
+    "raw": "Weapon: Choose one of the following \u2022 15 points."
+  },
+  {
+    "modifier_id": "mod_0233",
+    "axis": "depending on Advantages and Weapon chosen.",
+    "source_chunk": "0cb6edd9fba0",
+    "raw": "* Varies depending on Advantages and Weapon chosen."
+  },
+  {
+    "modifier_id": "mod_0234",
+    "axis": "choose a different advantage, or if you like the effect the",
+    "source_chunk": "5a1600f9e634",
+    "raw": "choose a different advantage, or if you like the effect the"
+  },
+  {
+    "modifier_id": "mod_0235",
+    "axis": "choose to delete a rank or two",
+    "source_chunk": "5a1600f9e634",
+    "raw": "fect, but remember, if you choose to delete a rank or two"
+  },
+  {
+    "modifier_id": "mod_0236",
+    "axis": "Choose One: Expertise: Magic 8 or Technology 8",
+    "source_chunk": "0a4056a8229d",
+    "raw": "Perception 4, Choose One: Expertise: Magic 8 or Technology 8"
+  },
+  {
+    "modifier_id": "mod_0237",
+    "axis": "Form: Flight 3 (16 MPH);",
+    "source_chunk": "0a4056a8229d",
+    "raw": "Gaseous Form: Flight 3 (16 MPH);"
+  },
+  {
+    "modifier_id": "mod_0238",
+    "axis": "Form: Concealment 10 (All",
+    "source_chunk": "0a4056a8229d",
+    "raw": "Liquid Form: Concealment 10 (All"
+  },
+  {
+    "modifier_id": "mod_0239",
+    "axis": "Form: Elongation 2 (30",
+    "source_chunk": "0a4056a8229d",
+    "raw": "Particulate Form: Elongation 2 (30"
+  },
+  {
+    "modifier_id": "mod_0240",
+    "axis": "Choose One: Power Attack or Accurate Attack",
+    "source_chunk": "0a4056a8229d",
+    "raw": "Improved Grab, Choose One: Power Attack or Accurate Attack"
+  },
+  {
+    "modifier_id": "mod_0241",
+    "axis": "Choose One: Power Attack or Accurate Attack",
+    "source_chunk": "4a46550759f1",
+    "raw": "Choose One: Power Attack or Accurate Attack"
+  },
+  {
+    "modifier_id": "mod_0242",
+    "axis": "Choose One: Deception or Intimidation)",
+    "source_chunk": "4a46550759f1",
+    "raw": "Daze (Choose One: Deception or Intimidation)"
+  },
+  {
+    "modifier_id": "mod_0243",
+    "axis": "Choose One: Startle or Taunt",
+    "source_chunk": "4a46550759f1",
+    "raw": "Choose One: Startle or Taunt"
+  },
+  {
+    "modifier_id": "mod_0244",
+    "axis": "Choose One: Acrobatics 4, or Athletics 4, or Close Combat:",
+    "source_chunk": "686190e1a7e3",
+    "raw": "Choose One: Acrobatics 4, or Athletics 4, or Close Combat:"
+  },
+  {
+    "modifier_id": "mod_0245",
+    "axis": "Choose One: Deception 6 or Intimidation 6",
+    "source_chunk": "686190e1a7e3",
+    "raw": "Choose One: Deception 6 or Intimidation 6"
+  },
+  {
+    "modifier_id": "mod_0246",
+    "axis": "Form: Visual Concealment 4, Partial;",
+    "source_chunk": "686190e1a7e3",
+    "raw": "Gaseous Form: Visual Concealment 4, Partial;"
+  },
+  {
+    "modifier_id": "mod_0247",
+    "axis": "Form: Elongation 4;",
+    "source_chunk": "686190e1a7e3",
+    "raw": "Clay Form: Elongation 4; Insubstantial 1; Morph 4"
+  },
+  {
+    "modifier_id": "mod_0248",
+    "axis": "Form: Burrowing 6 (4 MPH);",
+    "source_chunk": "686190e1a7e3",
+    "raw": "Earth Form: Burrowing 6 (4 MPH); Movement 2"
+  },
+  {
+    "modifier_id": "mod_0249",
+    "axis": "Form: Elongation 7;",
+    "source_chunk": "3dd66fb0aa98",
+    "raw": "Particulate Form: Elongation 7; Insubstantial 2;"
+  },
+  {
+    "modifier_id": "mod_0250",
+    "axis": "Form: Visual Concealment 4, Limited: in",
+    "source_chunk": "3dd66fb0aa98",
+    "raw": "Plant Form: Visual Concealment 4, Limited: in"
+  },
+  {
+    "modifier_id": "mod_0251",
+    "axis": "Form: Reaction Damage 7 (to being hit),",
+    "source_chunk": "3dd66fb0aa98",
+    "raw": "Rock Form: Reaction Damage 7 (to being hit),"
+  },
+  {
+    "modifier_id": "mod_0252",
+    "axis": "Form: Immunity 5 (Fire Damage);",
+    "source_chunk": "3dd66fb0aa98",
+    "raw": "Flame Form: Immunity 5 (Fire Damage); Insubstantial 3,"
+  },
+  {
+    "modifier_id": "mod_0253",
+    "axis": "Form: Visual Concealment 4, Limited: in",
+    "source_chunk": "3dd66fb0aa98",
+    "raw": "Liquid Form: Visual Concealment 4, Limited: in"
+  },
+  {
+    "modifier_id": "mod_0254",
+    "axis": "Form: Enhanced Strength 8;",
+    "source_chunk": "fe4bca5e5a73",
+    "raw": "Ice Form: Enhanced Strength 8; Immunity 7 (cold"
+  },
+  {
+    "modifier_id": "mod_0255",
+    "axis": "Form: Roll for the powers of an Air Elemental",
+    "source_chunk": "fe4bca5e5a73",
+    "raw": "Vapor Form: Roll for the powers of an Air Elemental"
+  }
+]

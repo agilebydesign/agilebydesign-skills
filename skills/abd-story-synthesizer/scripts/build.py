@@ -249,14 +249,16 @@ if __name__ == "__main__":
             sys.exit(1)
         ctx = engine.context_paths[0]
         import subprocess
+        chunk_index = ctx.parent / "story-synthesizer" / "context" / "chunk_index.json"
+        evidence_dir = ctx.parent / "story-synthesizer" / "evidence"
         scripts = [
             ("01_analyze_chunks.py", ["--context-path", str(ctx)]),
-            ("02_extract_terms.py", ["--chunks", str(ctx.parent / "normalized" / "chunk_index.json")]),
-            ("03_extract_actions.py", ["--chunks", str(ctx.parent / "normalized" / "chunk_index.json")]),
-            ("04_extract_decisions.py", ["--chunks", str(ctx.parent / "normalized" / "chunk_index.json")]),
-            ("05_extract_variations.py", ["--chunks", str(ctx.parent / "normalized" / "chunk_index.json")]),
-            ("06_extract_states.py", ["--chunks", str(ctx.parent / "normalized" / "chunk_index.json")]),
-            ("07_consolidate_evidence.py", ["--extracted-path", str(ctx.parent / "extracted")]),
+            ("02_extract_terms.py", ["--chunks", str(chunk_index)]),
+            ("03_extract_actions.py", ["--chunks", str(chunk_index)]),
+            ("04_extract_decisions.py", ["--chunks", str(chunk_index)]),
+            ("05_extract_variations.py", ["--chunks", str(chunk_index)]),
+            ("06_extract_states.py", ["--chunks", str(chunk_index)]),
+            ("07_consolidate_evidence.py", ["--extracted-path", str(evidence_dir)]),
         ]
         for script_name, script_args in scripts:
             script_path = _scripts_dir / script_name

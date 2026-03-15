@@ -1,9 +1,9 @@
 <!-- section: story_synthesizer.validation.checklist -->
 # Validation Checklist
 
-Verify against output format in `pieces/interaction.md` § Output Format and `pieces/domain.md` § Output Format. Run `build.py validate` — see `pieces/process.md` Phase 4.
+Verify against output format in `pieces/interaction.md` § Output Format and `pieces/domain.md` § Output Format. Run `get_instructions validate_slice` or `get_instructions validate_run` — see `pieces/process.md` Phase 8.
 
-**Scanner mode:** With NLTK (grammar) or mistune (AST) installed, scanner mode is **full**. Without them, the scanner runs in **nerfed** mode (regex-only checks). The validate command prints `Scanner mode: full` or `Scanner mode: nerfed` at startup. Violations are reported as (rule_id, message, location, snippet); exit code is always 0.
+**Validation uses rules, not scanners.** Rules are loaded via `get_instructions validate_slice` (or `validate_run`). The AI applies rules to the interaction tree and domain model. Rules with `scanner: null` are applied by the AI.
 
 **AI behavior:** In a **build phase** (run_slice, validate_run, validate_slice): report violations and fix them before marking complete. On **explicit validate** (user says "validate" outside a build phase): report violations only — do not fix. Do not edit files unless in a build phase.
 

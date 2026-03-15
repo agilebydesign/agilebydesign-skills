@@ -31,8 +31,19 @@ class DomainModule:
     line_no: int = 0
 
 
-CONCEPT_HEADING = re.compile(r"^\*\*(\w[\w\s]*)\*\*\s*$")
-CONCEPT_HEADING_MD = re.compile(r"^#{2,4}\s+(?!Module:)(\w[\w\s]*?)(?:\s*:\s*(\w[\w\s]*))?\s*$")
+# **Name** alone, or with optional suffix: (base), [foundational], : Base
+CONCEPT_HEADING = re.compile(
+    r"^\*\*(\w[\w\s]*)\*\*"
+    r"(?:\s*:\s*(\w[\w\s]*))?"  # optional : Base
+    r"(?:\s+(?:\([^)]*\)|\[[^\]]*\]))?"  # optional (x) or [x]
+    r"\s*$"
+)
+CONCEPT_HEADING_MD = re.compile(
+    r"^#{2,4}\s+(?!Module:)(?!Relationships\s)(\w[\w\s]*?)"
+    r"(?:\s*:\s*(\w[\w\s]*))?"  # optional : Base
+    r"(?:\s+(?:\([^)]*\)|\[[^\]]*\]))?"  # optional (x) or [x]
+    r"\s*$"
+)
 CONCEPT_WITH_BASE = re.compile(r"^(\w[\w\s]*)\s*:\s*(\w[\w\s]*)$")
 MODULE_HEADING = re.compile(r"^#{2,4}\s+Module:\s*(.+)", re.IGNORECASE)
 PROPERTY_LINE = re.compile(r"^[-*]\s+(String|Number|Boolean|List|Dictionary|UniqueID|Instant|List<\w+>|Dictionary<\w+,\s*\w+>)\s+(\w+)", re.IGNORECASE)
