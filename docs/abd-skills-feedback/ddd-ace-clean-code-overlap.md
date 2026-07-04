@@ -1,633 +1,191 @@
-# DDD ⇄ Architecture ⇄ Clean Code — Overlap & Gaps Assessment
+# DDD / Architecture / Clean Code — What's Actually Broken and What to Do
 
-**Scope of this note.** A working assessment of where the three engineering-facing skill families overlap uncomfortably, where they hand off cleanly, and where the concepts we actually care about (OOAD, modularization, seams, deep modules, framework mechanisms, domain focus) live — or don't yet live — in the current library.
+An evidence-first read of the three engineering-facing skill families — rules, templates, references, concepts — with the specific files and lines that prove each finding. Then one recommendation with a concrete execution plan.
 
-> **Reading note.** Written in bullet form rather than wide tables so it word-wraps on mobile (GitHub mobile scrolls tables sideways without wrapping). Section §2's concept map is the part that most benefits from this layout.
+Everything below is checkable with `grep` and `diff` against the current repo.
 
-> **Two-part note.** §1–§8 assess **concept overlap** — where the same ideas live in more than one skill. §9–§16 assess **structural overlap** — the skill vs practice vs stage vs common boundaries, and where reuse leaks through them. Read §1–§8 first if you only want the concept-layer story.
+**Scope of the read**
 
-**Skills in scope:**
-
-- **Domain-Driven Design** — `practices/domain-driven-design/`
-  - Main pipeline: `abd-domain-glossary`, `abd-domain-language`, `abd-domain-model`, `abd-domain-specification`, `abd-domain-code`.
-  - Supporting: `abd-bounded-context-map`, `abd-ddd-design-building-blocks`, `abd-domain-walk`.
-  - Shared OO substrate: [`oo-concepts.md`](../../practices/domain-driven-design/reference/oo-concepts.md).
-- **Architecture-Centric Engineering** — `practices/architecture-centric-engineering/`
-  - Pipeline: `abd-architecture-outline`, `abd-architecture-blueprint`, `abd-architecture-specification`, `abd-architecture-template`, `abd-architecture-code`.
-  - Shared model: [`architecture-context-model.md`](../../practices/architecture-centric-engineering/reference/architecture-context-model.md).
-  - Mechanism definition: [`architecture-mechanism.md`](../../practices/architecture-centric-engineering/reference/architecture-mechanism.md).
-- **Clean Code** — `stages/engineering/abd-clean-code/`
-  - Single stage-level skill with 17 rules.
-  - Concepts: [`concepts.md`](../../stages/engineering/abd-clean-code/reference/concepts.md).
+- Every `rules/*.md` in `abd-clean-code`, all five ACE skills, and all five DDD skills.
+- Every `templates/*` in the same skills.
+- The concept references: `stages/engineering/abd-clean-code/reference/concepts.md`, `practices/domain-driven-design/reference/oo-concepts.md`, `practices/domain-driven-design/skills/abd-domain-model/reference/concepts.md`, `practices/architecture-centric-engineering/reference/architecture-context-model.md`, `practices/architecture-centric-engineering/reference/architecture-mechanism.md`, `practices/architecture-centric-engineering/skills/abd-architecture-specification/reference/concepts.md`.
 
 ---
 
-## 1. What each family actually is
+## Six concrete findings
 
-**DDD — the domain-perspective pipeline.** Five fidelities (glossary → language → model → specification → code) describing *what the business is*, using OOAD as the notation. `oo-concepts.md` is where "what is a class / when do I use a subtype / how do responsibilities decompose" is authored for the whole library. Business focus is a stated bias, not a hard boundary — the practice keeps saying "domain concepts", but the reference is generic OOAD.
+### F1 — Nine rule filenames are duplicated between `abd-domain-model` and `abd-domain-specification`, and every one of them has drifted
 
-**ACE — the structure-perspective pipeline.** Five fidelities (outline → blueprint → specification → template → code) describing *how the software is organised* into systems, modules, mechanisms, seams. Central abstractions:
+Filenames present in **both** `practices/domain-driven-design/skills/abd-domain-model/rules/` and `practices/domain-driven-design/skills/abd-domain-specification/rules/`:
 
-- The **architecture mechanism** — a cross-cutting concern with a fixed code shape.
-- The per-folder **`architecture-context.md`** — a manual carrying seam, participants, rules, canonical patterns.
+- `all-collaborators-accounted-for.md`
+- `dependency-magnet-split-concerns.md`
+- `explicit-chain-of-responsibility.md`
+- `extract-complex-logic-to-named-operation.md`
+- `invariants-from-business-logic.md`
+- `name-from-invariant.md`
+- `receiver-not-responsible-for-receiving.md`
+- `state-marker-correct.md`
+- `subtype-uses-child-parent.md`
 
-**Clean Code — a single-stage rules bundle.** Seventeen rules covering *what good production code looks like line by line* — single-responsibility, small functions, guard clauses, explicit DI, domain-language names, encapsulation, no swallowed exceptions. The concepts page is explicitly OOAD-in-code.
+Running `diff -q` on each pair shows **all nine files differ**. Not one is a shared file linked from both skills; each skill maintains its own copy.
 
-Your summary — *"same rules and truths circling on a big pile of stuff"* — is accurate. The three families are three vantage points on **one underlying OOAD substrate**, with different degrees of business bias and different fidelity structures.
+Concrete example — `dependency-magnet-split-concerns.md`:
 
----
+- **In `abd-domain-model`**: the rule threshold is *"no more than 5–7 distinct collaborator types across its methods"* and the anti-example is a class called **`BoardManager`** with eight collaborators.
+- **In `abd-domain-specification`**: the rule threshold is gone — the criterion is *"properties, operations, and typed relationships span multiple unrelated business concerns"* and the anti-example is a class exposing *"tax calculation, email dispatch, inventory validation, and PDF generation"*.
 
-## 2. The underlying concept map
+Same rule name, same intent (split god classes), different criterion, different example. Two separate copies drifting.
 
-For each concept, who currently owns it and how.
+**Consequence.** A scanner or reviewer using domain-model's file will accept a 5-collaborator class; the same class run through domain-specification's file will be judged by an entirely different criterion ("business concerns", no count). The nine drifted files quietly encode different definitions of the same nine rules.
 
-### Class — definition, when to introduce one
+### F2 — The single-responsibility rule is authored four times across the three families
 
-- **DDD** — authored in [`oo-concepts.md § What is a class`](../../practices/domain-driven-design/reference/oo-concepts.md#what-is-a-class).
-- **ACE** — implied via the "Class Specification" section in per-folder context files.
-- **Clean Code** — implied via "single-responsibility classes", "class under 200-300 lines".
-- **Owner:** DDD's OO substrate; others assume it.
+Same rule, four homes, no cross-link:
 
-### Responsibilities — property vs operation vs both
+- `practices/domain-driven-design/skills/abd-domain-model/rules/dependency-magnet-split-concerns.md` — counts collaborators (≤ 5–7); example: `BoardManager`.
+- `practices/domain-driven-design/skills/abd-domain-specification/rules/dependency-magnet-split-concerns.md` — checks "unrelated business concerns"; example: tax + email + inventory + PDF.
+- `practices/architecture-centric-engineering/skills/abd-architecture-specification/rules/package-surface-is-cohesive.md` — checks "operations share one subject"; example: a `Utils` package with `formatDate`, `validateEmail`, `parseJWT`, `retryWithBackoff`, `escapeHtml`.
+- `stages/engineering/abd-clean-code/rules/keep-classes-single-responsibility.md` — checks "one reason to change"; example: an `Invoice` class that calculates, persists, notifies, and formats PDF.
 
-- **DDD** — authored in `oo-concepts.md § Decomposing responsibilities`.
-- **ACE** — silent.
-- **Clean Code** — talks about "one thing" but never distinguishes state from behaviour.
-- **Owner:** DDD only.
+Four rule files. Four different check criteria. Four different examples. Zero cross-references between them.
 
-### Relationships — ownership, collection, independence, direction
+**Consequence.** A code file has to satisfy all four independently. Nothing tells the reader they are the same principle at three scales. Nothing tells the author which of the four to update when the shared idea evolves.
 
-- **DDD** — authored in `oo-concepts.md § Relationships`.
-- **ACE** — package dependencies covered as "consumers" and "dependencies on other packages".
-- **Clean Code** — silent.
-- **Owner:** DDD owns the modelling, ACE owns direction between modules. Nothing bridges them.
+### F3 — DDD says "no stereotypes"; ACE's mechanism template requires them
 
-### Inheritance, subtypes, Liskov, delta rule
+Direct contradiction, in the same repo, both files owned by the library:
 
-- **DDD** — authored in `oo-concepts.md § Inheritance and subtypes`.
-- **ACE** — mentioned as one of three "activation paths" for mechanisms (inherited base).
-- **Clean Code** — silent.
-- **Owner:** DDD.
+- `practices/domain-driven-design/skills/abd-domain-model/reference/concepts.md` § *What this format omits*, line 84:
 
-### Subtype vs type-property vs instance — the "surface the choice" workflow
+  > **No `<< stereotypes >>`** — no Entity, ValueObject, Service markers.
 
-- **DDD only.** Not obviously exportable to ACE (a module is not a subtype).
+- `practices/architecture-centric-engineering/skills/abd-architecture-specification/templates/mechanism-context.md`, § *Class Specification*, line 108:
 
-### DDD stereotypes (Entity / Value / Aggregate / Repository / Service / Factory / Event)
+  ```
+  ## {{Class1Name}}  << {{Stereotype}} >>
+  ```
 
-- **DDD** — supporting skill [`abd-ddd-design-building-blocks`](../../practices/domain-driven-design/skills/supporting/abd-ddd-design-building-blocks/SKILL.md).
-- Not integrated into the main model pipeline.
+DDD's own concept file forbids the exact notation ACE's own template demands. A `Class Specification` block in an ACE mechanism-context file will fail DDD's rule, and vice versa. Neither file acknowledges the other exists.
 
-### Bounded context — model boundary, ubiquitous language scope
+**Consequence.** A class documented in an ACE mechanism-tier context file cannot be lifted into DDD's domain model without stripping stereotypes; a class authored in DDD's domain model cannot be pasted into an ACE class-spec block without adding stereotypes. Every crossover requires manual reformatting.
 
-- **DDD** — supporting skill [`abd-bounded-context-map`](../../practices/domain-driven-design/skills/supporting/abd-bounded-context-map/SKILL.md).
-- **ACE** — related but distinct concept: **module** (with a scope).
-- **The sharpest overlap in wording ("boundary", "context") without a shared vocabulary.** See §4.2.
+### F4 — Three different class-notation formats for the same modelling task
 
-### Modularization / module definition
+Same task (spec-fidelity typed class), three notations:
 
-- **DDD** — implicit; bounded context is *organisational*, the code side is left to ACE.
-- **ACE** — authored: module catalogue in blueprint; package-tier context file.
-- **Clean Code** — implicit ("one module per sub-epic area").
-- **Owner:** ACE.
+- **DDD `abd-domain-model`** — `practices/domain-driven-design/skills/abd-domain-model/reference/concepts.md` — `### **ClassName**` heading, `ClassName(Type, Type)` constructor line, `------` (six dashes) property separator, `propertyName: Type` properties, `----` (four dashes) method separator, `methodName(Type): ReturnType` methods, `-` prefix for private.
+- **DDD `abd-domain-specification`** — `templates/domain-specification-scaffold.md` and the `.py` / `.ts` / `.java` templates — adds `@stereotype`, `@initialisation`, `@invariant`, `@interaction` markers **on top of** the model format.
+- **ACE `abd-architecture-specification`** — `templates/mechanism-context.md` § Class Specification — `## ClassName << Stereotype >>`, `Initialisation: {when and how}`, `------`, `+` public / `-` private visibility, `Interaction:` blocks inside operations.
 
-### Seams / public API vs internals
+Compare visibility markers alone: DDD says "`-` for private only, no prefix for public"; ACE says "`+` public, `-` private". Two different visibility conventions for the same concept.
 
-- **DDD** — silent.
-- **ACE** — authored in [`package-seam-is-minimal-and-named`](../../practices/architecture-centric-engineering/skills/abd-architecture-specification/rules/package-seam-is-minimal-and-named.md) (Ousterhout cited).
-- **Clean Code** — implicit ("expose behavior, not raw data"; `_private` helpers).
-- **Owner:** ACE at module level; clean-code covers the class-level analogue; DDD silent.
+**Consequence.** A domain concept modelled once for the business (DDD spec) has to be re-modelled in a different notation for its architectural placement (ACE mechanism context). Two independently authored representations of the same class, kept in sync manually.
 
-### Deep modules (Ousterhout — small surface, big function)
+### F5 — `clean-code.py` and `domain-model.py` templates overlap in scope, with no compositional contract
 
-- **ACE only.** Not obviously mapped to DDD's aggregate/entity concept, though it should be.
+Both templates ship at `templates/*.py` and produce Python domain modules:
 
-### Encapsulation / hiding state
+- `stages/engineering/abd-clean-code/templates/clean-code.py` — 250 lines. Contains **concrete** `Product`, `LineItem`, `Cart`, `Order`, `User` classes with `__init__`, `@property`, methods, `_private` helpers, `EmptyCartError` / `OrderAlreadyConfirmedError` domain exceptions, `TAX_RATE` / `MAX_LOYALTY_DISCOUNT` / `LOYALTY_THRESHOLD` constants. Fully worked commerce example.
+- `practices/domain-driven-design/skills/abd-domain-model/templates/domain-model.py` — 81 lines. Contains **abstract** `KaName(ABC)` with `@abstractmethod` operations, typed properties, one subtype `EnterpriseKaName`. Placeholder file for one Key Abstraction.
 
-- **DDD** — implicit in the OO reference.
-- **ACE** — implicit in `package-context-file-stays-out-of-domain-details`.
-- **Clean Code** — authored in [`enforce-encapsulation`](../../stages/engineering/abd-clean-code/rules/enforce-encapsulation.md).
-- **Owner:** clean-code at class level; ACE at module level; DDD assumes it.
+The DDD skill (`abd-domain-code`) says it delegates production code to `abd-clean-code`. But the two templates authored under those skills are **not composed** — clean-code.py invents its own commerce entities (Cart, Order) rather than showing how to fill an abstract KaName from domain-model.py with concrete methods. A user reading both templates has no contract for how one becomes the other.
 
-### Isolation / decoupling / dependency direction
+**Consequence.** Clean-code's template restates domain-modelling decisions (what classes exist, what they own, what exceptions they raise) that DDD's `abd-domain-model` is the source of truth for. The hand-off promised in prose is not embodied in the template.
 
-- **DDD** — silent.
-- **ACE** — authored: "one direction of dependency per pair"; blueprint dependency lists.
-- **Clean Code** — implicit: "explicit dependencies", constructor DI.
-- **Owner:** ACE for modules; clean-code for classes; no bridge.
+### F6 — DDD's own anti-example violates clean-code's own rule
 
-### Explicit constructor DI
+- `stages/engineering/abd-clean-code/rules/use-domain-language.md`, line 40:
 
-- **DDD** — implicit; model diagrams show collaborators.
-- **ACE** — implicit; canonical patterns cover wiring.
-- **Clean Code** — authored in [`use-explicit-dependencies`](../../stages/engineering/abd-clean-code/rules/use-explicit-dependencies.md).
-- **Owner:** clean-code at class level.
+  > Use generic class names: Manager, Handler, Helper, Processor, Util.
 
-### Domain language in code
+  Anti-example: `class Manager:` and `class Handler`.
 
-- **DDD** — authored: glossary → language → model chain, names inherited.
-- **ACE** — vocabulary chain enforced across artefacts, but not to *domain* terms.
-- **Clean Code** — authored in [`use-domain-language`](../../stages/engineering/abd-clean-code/rules/use-domain-language.md).
-- **Owner:** DDD; clean-code repeats DDD's rule at code level.
+- `practices/domain-driven-design/skills/abd-domain-model/rules/dependency-magnet-split-concerns.md`, lines 38–55:
 
-### Framework / cross-cutting mechanism — one shape, many instances
+  > `### **BoardManager** ...` — the anti-example class name is literally **`BoardManager`**.
 
-- **ACE only** — [`architecture-mechanism.md`](../../practices/architecture-centric-engineering/reference/architecture-mechanism.md); `abd-architecture-template` produces a runnable scaffold.
-- Nothing in DDD acknowledges that a business domain can itself supply a framework (e.g. a base Payment).
+DDD's authors reached for the exact class name pattern that clean-code's rule forbids, in a rule about splitting classes. Both files are correct on their own terms. Together they demonstrate that the two skills are not aware of each other's rule content.
 
-### Function-level rules — size, params, guards, exceptions, comments
-
-- **Clean-code only** — 17 rules under `rules/`. Clean-code owns line-level discipline.
+**Consequence.** More striking as evidence than as a bug — but the two rule files are shipped in the same skill package tree and never see each other, which is why the drift happens.
 
 ---
 
-## 3. The core observation
+## The single root cause
 
-Everything except the top-level *pipeline* is one substrate: **OOAD, applied recursively to units of different sizes.**
+Every finding above is the same problem in a different guise: **there is no library-level authoring of OOAD**. Class-scale design rules (SRP, cohesion, encapsulation, DI, no-generic-names, no-god-class), class-scale notation (properties, methods, visibility, stereotypes, invariants), and class-scale templates are authored **per skill**, not per library. Each skill drifts because there is no shared source.
 
-- A **domain concept** is a unit that earns identity because of state, behaviour, or interactions (DDD OO reference).
-- A **module** is a unit that earns identity because of cohesive scope, deep functionality behind a named seam (ACE).
-- A **class** is a unit that earns identity because it has one reason to change and exposes behaviour, not data (clean code).
-- A **mechanism** is a *shape* — a unit that other units instantiate — with a fixed extension contract (ACE).
+- DDD authored an OO reference (`oo-concepts.md`) but only wired it into its own skills.
+- ACE authored its own class-spec notation in a template and forgot the OO reference existed.
+- Clean-code authored its own class-level rules with its own examples and its own vocabulary.
+- Within DDD, `abd-domain-model` and `abd-domain-specification` authored parallel copies of the same nine rules and let them drift.
 
-The rules pointing at these units are almost identical:
-
-- *Cohesion, one reason to change* — DDD ("what is a class"), ACE ("package-surface-is-cohesive"), clean-code ("keep-classes-single-responsibility").
-- *Minimal named surface, deep inside* — ACE ("package-seam-is-minimal-and-named" citing Ousterhout), clean-code ("enforce-encapsulation", "expose behavior not data"), DDD (implicit in aggregate boundaries).
-- *Dependency direction is a first-class decision* — ACE ("one direction per pair"), DDD ("navigating end"), clean-code ("explicit dependencies").
-- *Names come from the domain* — DDD (glossary → language → model), clean-code ("use-domain-language"), ACE ("vocabulary-matches-source-of-truth" — but the "source" is the outline/blueprint, not the domain glossary).
-
-**The families are not saying different things. They are saying the same things at different scales and about different subjects.** That is the "uncomfortable overlap".
+Everything in F1–F6 dissolves the moment class-scale content has one authoring site the four skills all read from.
 
 ---
 
-## 4. The specific overlaps — resolved, ambiguous, or in conflict
+## Recommendation — one move, three commits
 
-### 4.1 Clean Code ⇄ Domain Code — resolved (explicit hand-off)
+Extract the class-scale substrate to a shared home. Delete or link the duplicates. Fix the notation contradiction in the same pass. That's it.
 
-`abd-domain-code` explicitly delegates production-code shape to `abd-clean-code`:
+### Commit 1 — Create the shared substrate
 
-> **Step 3. Write production code — follow abd-clean-code** ... Read and follow `abd-clean-code/SKILL.md` in full.
-> — [`abd-domain-code/reference/generate.md`](../../practices/domain-driven-design/skills/abd-domain-code/reference/generate.md)
+Create `common/reference/class-design.md`. Populate it with the material that is currently authored four times:
 
-`abd-architecture-code` does the same:
+- **Naming** — no `Manager` / `Handler` / `Helper` / `Processor` / `Util`. Names come from the domain. (Lifted from clean-code `use-domain-language.md`.)
+- **Cohesion / SRP** — one reason to change; operations share one subject; collaborators bounded. Merge the four F2 files into one rule with three-scale examples (class / package / mechanism).
+- **Encapsulation** — private state; expose behaviour. (Lifted from clean-code `enforce-encapsulation.md`.)
+- **Explicit DI** — constructor injection, no hidden globals. (Lifted from clean-code `use-explicit-dependencies.md`.)
+- **Class notation** — one canonical block format for typed classes. Decide the visibility convention (`+`/`-` or `-` only) and the stereotype convention (permitted or forbidden) once. Every downstream template inherits.
 
-> **GREEN — production** ... `abd-clean-code` ... **MUST** read and follow that skill's `SKILL.md` and `rules/` when writing production code.
-> — [`abd-architecture-code/reference/generate.md`](../../practices/architecture-centric-engineering/skills/abd-architecture-code/reference/generate.md)
+Create `common/reference/class-block-format.md` as the single canonical notation reference. Reconcile the DDD/ACE contradiction here — pick one visibility convention, pick one stereotype rule.
 
-**Verdict:** clean-code is the shared engineering-stage terminal skill. Both pipelines converge on it. This part of the design is coherent.
+### Commit 2 — Rewire the four skills to cite it
 
-### 4.2 DDD "bounded context" ⇄ ACE "module / package" — ambiguous, no bridge
+- `stages/engineering/abd-clean-code/rules/keep-classes-single-responsibility.md` — replace body with a one-paragraph class-scale specialisation, cite `common/reference/class-design.md`.
+- `stages/engineering/abd-clean-code/rules/use-domain-language.md` — same treatment.
+- `stages/engineering/abd-clean-code/rules/enforce-encapsulation.md` — same.
+- `stages/engineering/abd-clean-code/rules/use-explicit-dependencies.md` — same.
+- `practices/architecture-centric-engineering/skills/abd-architecture-specification/rules/package-surface-is-cohesive.md` — replace body with a one-paragraph package-scale specialisation of the shared cohesion rule; cite.
+- `practices/architecture-centric-engineering/skills/abd-architecture-specification/templates/mechanism-context.md` § Class Specification — replace the inline notation with a link to `common/reference/class-block-format.md`.
+- `practices/domain-driven-design/skills/abd-domain-model/rules/dependency-magnet-split-concerns.md` and `practices/domain-driven-design/skills/abd-domain-specification/rules/dependency-magnet-split-concerns.md` — collapse to one file (in the shared home) with two thin domain-scale specialisations; the model skill and spec skill both cite it.
+- `practices/domain-driven-design/skills/abd-domain-model/reference/concepts.md` — update § *What this format omits* to cite `common/reference/class-block-format.md` for the visibility and stereotype conventions instead of restating them.
 
-- **Bounded context** ([bounded-context-map concepts](../../practices/domain-driven-design/skills/supporting/abd-bounded-context-map/reference/concepts.md)) — *"an explicitly set boundary in which a model applies and is managed to be uniform"*. Has an organisational facet AND an implementation facet ("code base, database schema, or deployable unit").
-- **Module / package** ([architecture-context-model § 2](../../practices/architecture-centric-engineering/reference/architecture-context-model.md#2-three-tiers-of-context-file)) — a folder tier with "deep functional surface area" and a public seam.
+### Commit 3 — Collapse the intra-DDD duplicated rules
 
-These overlap heavily in the "implementation facet". A bounded context that maps 1:1 to a deployable unit *is* an ACE module (or a group of them). But **there is no explicit bridge**:
+For each of the nine F1 filenames present in both `abd-domain-model/rules/` and `abd-domain-specification/rules/`:
 
-- No rule in ACE says "a package's ubiquitous language is authored by a bounded context".
-- No rule in DDD says "a bounded context resolves to N modules in the blueprint".
+1. Pick one canonical text (the stronger / more current of the two — or the merged synthesis).
+2. Delete the copy from `abd-domain-specification/rules/`.
+3. In `abd-domain-specification/SKILL.md` § Read, link to the domain-model copy explicitly, or promote the rule to `practices/domain-driven-design/reference/` if it applies to both fidelities.
 
-The vocabularies drift silently.
-
-**This is the sharpest structural overlap in the library.** DDD *does* talk about implementation boundaries, but it does so in `abd-bounded-context-map` — a *supporting* skill, not part of the main pipeline — and the resulting artefact never enters ACE's outline/blueprint as an input.
-
-### 4.3 "Domain language" ⇄ "vocabulary matches source of truth" — parallel, unconnected chains
-
-Two vocabulary chains run in parallel:
-
-- **DDD chain** — glossary → language → model → specification → domain code. Source of truth for *business* terms.
-- **ACE chain** — [architecture-context-model § 3](../../practices/architecture-centric-engineering/reference/architecture-context-model.md#3-the-vocabulary-chain): outline → blueprint → specification → template → architecture code. Source of truth for *system, mechanism, module, and layer* names.
-
-Clean-code's `use-domain-language` sits at the end of the DDD chain. Clean-code has no equivalent hook that says "architecture mechanism names propagate to code symbols too" — even though ACE's vocabulary chain claims exactly that:
-
-> `abd-architecture-code` — inherits all of the above verbatim; instantiates the template package's patterns for stories.
-> — architecture-context-model § 3
-
-**Verdict:** two independently coherent chains, no crossover rule. In practice a code file must satisfy *both* — the class name is a domain entity (DDD) *and* the surrounding module/mechanism scaffolding uses ACE's vocabulary. The current skills never state that jointly.
-
-### 4.4 "Single responsibility" — stated three times with slightly different meanings
-
-- **DDD** — "one class per named domain idea that earns identity" — cohesion around a *domain concept*.
-- **ACE** — "package-surface-is-cohesive" — cohesion around a *subject / external system / capability*.
-- **Clean Code** — "keep-classes-single-responsibility" — one reason to *change* (SRP).
-
-Not contradictions, but three definitions of the same principle at three scales. A reader hitting all three has to work out that they are consistent. No cross-reference makes that explicit.
-
-### 4.5 Encapsulation ⇄ deep modules ⇄ aggregates — same idea, three names
-
-Your instinct — *"deep modules, public api vs internals, encapsulation"* — is one concept. It shows up as:
-
-- Ousterhout's *deep module* in ACE (small seam, big functionality) — `package-seam-is-minimal-and-named`.
-- Aggregate *root and internals* in DDD stereotypes (`abd-ddd-design-building-blocks`) — the aggregate root is the seam; inner entities and value objects are internals.
-- Class-level *encapsulation* in clean-code — `enforce-encapsulation`, private members hidden, behaviour exposed.
-
-Nothing in the library says these three are the same idea at three scales.
+The nine files affected are listed in F1. Two touches per file (delete + add link) = eighteen mechanical edits.
 
 ---
 
-## 5. The specific gaps
+## What this recommendation does NOT do
 
-### 5.1 ACE has no OOAD reference of its own; it borrows implicitly from DDD
+- It does not touch the perspective × fidelity taxonomy. The library's structural model is fine.
+- It does not merge DDD and ACE. They stay as separate perspective-owning practices.
+- It does not touch clean-code's placement under `stages/engineering/`. Clean-code stays a stage skill.
+- It does not resolve the `abd-bounded-context-map` support-vs-pipeline question or the "domain framework" gap. Those are real issues but they are not the source of the concrete duplication problem — they are separate calls.
 
-Your phrasing: *"Architecture Eng is really about module definition, and creating some modules that are framework-pattern enabling other modules; it needs better OOAD from the DDD skills."*
-
-Evidence:
-
-- `abd-architecture-specification`'s per-folder templates include a **"Class Specification"** section — but the rules that govern *what a good class looks like* are not in ACE. They are in DDD's `oo-concepts.md` and in clean-code's rule set. ACE is silent on how to author that section.
-- `abd-architecture-code`'s Step 2 delegates to `abd-clean-code` for class-level shape, but never to DDD's OO reference for class-level *modelling*.
-
-The consequence: an ACE package-tier context file can name participants and rules without ever asking "which of these participants earns identity, and why?" — the DDD question. Result is often participant lists that read as *file inventories* rather than *class models*.
-
-**Gap:** ACE spec should either (a) import DDD's `oo-concepts.md` as a read-gate for its Class Specification section, or (b) restate the class / responsibility / relationship discipline in its own reference.
-
-### 5.2 DDD has no module concept in the main pipeline
-
-Your phrasing: *"DDD skills language forward are about OOAD, and domain focus is very complementary with the idea of documenting the external facing pieces of a module; and has explicit module language."*
-
-The "explicit module language" you're remembering lives in **two support skills** — `abd-bounded-context-map` and (structurally) the aggregate stereotype in `abd-ddd-design-building-blocks`. Neither is in the shaping → discovery → exploration → specification → engineering main pipeline. In practice a domain model can be authored and coded without either.
-
-**Gap:** if DDD is meant to include module thinking, the bounded-context map (or an equivalent module-boundary artefact) should be a first-class step in the pipeline, not a supporting skill.
-
-### 5.3 No cross-family concept of "the domain provides a framework"
-
-Your phrasing: *"all payments can leverage a base payment framework."*
-
-Today:
-
-- ACE's mechanism concept is defined as **cross-cutting concerns**: security, error handling, logging, validation, configuration, caching, communication, persistence. Its canonical categories are all technical.
-- DDD's OO reference has *base class + subtype* — with a payment example — but this is class-level modelling, not a project artefact that other domain modules extend.
-- Nothing in the library names the pattern you care about: **a domain-level framework** — one bounded context or module that provides a base shape that other domain modules extend, with the same "code shape constraint" discipline ACE uses for technical mechanisms.
-
-**Gap:** either ACE's mechanism concept broadens to cover domain-level frameworks (Payment base as a mechanism whose instances are ACH / Wire / Card modules) or DDD gains a "domain framework" artefact that consumes both practices. Today it falls between.
-
-### 5.4 No unified place to state "the OOAD unit-at-any-scale" rules
-
-The rules you listed — good class / function / module design, encapsulation, isolation, decoupling, deep modules, seams, public API vs internals — are currently authored in three places at three scales:
-
-- DDD `oo-concepts.md` — class scale, domain-concept flavour.
-- ACE `package-seam-is-minimal-and-named` + `architecture-context-model.md` — module scale, structural flavour.
-- Clean-code `rules/` — class + function scale, code flavour.
-
-A reader who wants "the abd-skills theory of a good unit" has to synthesise across three families. That is exactly the "same rules and truths circling on a big pile of stuff" symptom.
-
-**Gap:** a shared "unit design" reference (or explicit cross-links between the three current homes) would let each family stop restating and start pointing.
-
-### 5.5 Testing responsibility is split, not framed
-
-- ACE names testing tiers and stub boundaries at the module level (blueprint + `testing-architecture.md`).
-- DDD names domain-only test scope in `abd-domain-code` ("in-memory fakes; no infrastructure").
-- Clean-code says nothing about testing.
-
-Not your stated question, but adjacent — the same fracture pattern applies: two families make partial statements, no shared framing.
+The move fixes the six findings above, all of which come from the same missing shared substrate. It does not attempt a wider reshape.
 
 ---
 
-## 6. What the current library says the shape *is* (evidence for a redraw)
+## What the finished state looks like
 
-Sources that already hint at a unified shape, if you want to argue for consolidation:
+- **One rule file per class-scale rule**, in `common/reference/` or as a shared file cited by every consuming skill.
+- **One class-block notation**, in `common/reference/class-block-format.md`, used by DDD model, DDD spec, and ACE mechanism-context alike.
+- **Nine deleted DDD rule copies**; the spec skill inherits from the model skill via link, not copy.
+- **The DDD-vs-ACE stereotype contradiction resolved** — one convention wins.
+- Clean-code's rule files shrink to short specialisations that cite the shared substrate. Its concepts page and templates stay as the how-to-write-code teaching layer, which is genuinely clean-code's own scope.
 
-- **DDD's OO reference is generic OOAD, not business-specific**, despite the practice's name. `oo-concepts.md` never uses the word "business" outside the payment example. It can be lifted to a library-wide reference with no rewrite.
-- **ACE explicitly cites Ousterhout's deep modules** in a rule — `package-seam-is-minimal-and-named` — which is the same discipline clean-code applies to classes.
-- **Both terminal skills (`abd-domain-code`, `abd-architecture-code`) hand off to `abd-clean-code`.** The library has already conceded that clean-code is the shared engineering-stage skill.
-- **`architecture_and_design.json` lists DDD as one option under "architecture and layering"** — somewhere the library already treats DDD as *a way to do architecture*, which is a stronger claim than either practice makes in its main text.
-
----
-
-## 7. Options for reshaping (choices, not recommendations)
-
-If the aim is to remove the uncomfortable overlap without collapsing distinct value, the choices seem to be:
-
-**Option A — Extract a shared "unit design" reference.**
-Move the OOAD-at-any-scale rules (class earns identity, cohesion, deep unit, minimal seam, encapsulation, direction of dependency) to a library-level reference at `practices/reference/unit-design.md`. Each family cites it and adds the *scale-specific* discipline on top:
-
-- DDD adds "the unit is a domain concept; names come from the ubiquitous language".
-- ACE adds "the unit is a module or a mechanism; seams participate in cross-cutting concerns".
-- Clean-code adds "the unit is a class or a function; here is the line-level discipline".
-
-Cost: a new shared reference; three families updated to cite instead of restate. Payoff: one authoring site for the recurring rules; the three families become genuinely orthogonal (subject, structure, code) instead of overlapping restatements.
-
-**Option B — Rename and re-scope, leave content in place.**
-Accept the three families as three subjects (domain, structure, code) and add explicit cross-reference sections. Every place clean-code says "domain language" it links to DDD; every place ACE says "Class Specification" it links to DDD's OO reference; every place DDD's `abd-domain-model` writes classes it links to clean-code's class-level rules.
-
-Cost: cheaper — no new artefact, just cross-links. Payoff: overlap becomes visible and traceable rather than silent. Does not solve the "same rule authored three times" problem.
-
-**Option C — Promote bounded context into DDD's main pipeline and formalise the domain-module bridge to ACE.**
-Address §4.2 and §5.2 specifically. Bounded-context map becomes a required step between `abd-domain-language` and `abd-domain-model`, and its output becomes a required input to `abd-architecture-outline` (each module in the blueprint traces to one or more bounded contexts).
-
-Cost: pipeline change, cross-practice dependency. Payoff: closes the sharpest structural gap; makes "domains as frameworks" (§5.3) expressible — a bounded context can produce a base module that others extend.
-
-**Option D — Broaden the mechanism concept to include domain-level frameworks.**
-Address §5.3 by editing `architecture-mechanism.md`: mechanisms today are cross-cutting *technical* concerns; broaden to cross-cutting *domain* concerns too. A Payment base with ACH / Wire / Card extensions is a mechanism; every payment module adopts the same code shape.
-
-Cost: small edit to one reference; ripple through blueprint and template skills. Payoff: gives your "base payment framework" example a legitimate home.
-
-The options are additive, not exclusive. A + C + D together produce the tidiest library; B alone is the cheapest improvement.
+Estimated size of the change: one new folder (`common/reference/class-design.md` + `class-block-format.md`), ~25 file edits, ~9 file deletes.
 
 ---
 
-## 8. Summary — what to take from this note
+## What was cut
 
-- The three families are three lenses on **one OOAD substrate applied at three scales** (concept, module, class / function).
-- The **hand-off from both `*-code` skills to `abd-clean-code` is explicit and works.** That part is fine.
-- The **hand-off between DDD and ACE is not made anywhere.** Both practices talk about boundaries; only ACE talks about modules; only DDD talks about concepts; nothing joins them. Two support skills (`abd-bounded-context-map`, `abd-ddd-design-building-blocks`) live outside the main pipeline where the bridge would go.
-- The **OO reference in DDD is generic OOAD** and could serve the whole library. ACE currently borrows it implicitly; clean-code re-states pieces of it at code level.
-- **"Deep modules / seams / encapsulation" is one concept** authored three times at three scales, with no cross-link.
-- **"Domain framework" (base + extenders) has no home.** Mechanism is technical; DDD stops at the class-level inheritance discussion. This is a real gap for your mental model.
-- Two vocabulary chains run in parallel with no crossover rule; a good code file must satisfy both.
-
-The document is deliberately assessment-only — no reshaping has been done. The four options in §7 sketch what a reshape could look like if you decide to act on the assessment.
-
----
-
-# Part II — Structural overlap: skill / practice / stage / common
-
-Concept overlap (§1–§8) is only half the story. Underneath the concept homes there is a structural taxonomy — perspective, fidelity, tier, role — that decides *where each concept can live*. The uncomfortable overlaps in Part I are often really structural mismatches: content authored in one layer but consumed by skills in a different layer, with no formal reuse mechanism between them.
-
-Part II reads the library as an architecture in its own right — perspective × fidelity axes, four structural layers (common / stage / practice / skill), three tiers (practice / foundational / support), and the front-matter fields that place every skill in the taxonomy — and then names the specific boundary ambiguities that make the concept overlaps hard to fix.
-
----
-
-## 9. The four structural layers the library actually uses
-
-Not two (skill vs practice), but **four**. Each with its own folder, its own contract, and a different role in reuse.
-
-### Common — `common/`
-
-Cross-library machinery. Every skill in every practice reads from here. This is the *procedural* layer — how to run a skill, how to validate, where to write output.
-
-Contents:
-
-- `common/reference/skill-workflow.md` — bootstrap + read-gates + generate + validate contract. Every practice `SKILL.md` mandates reading this before generation.
-- `common/reference/rule-checklist.md` — universal per-rule verdict format.
-- `common/reference/context-taxonomy.md` — the perspective × fidelity model (see §10).
-- `common/reference/skill-package-layout.md` — `SKILL.md`, `rules/`, `reference/`, `templates/`, `scanners/` contract.
-- `common/reference/skill-index.md` — auto-generated skill catalogue.
-- `common/reference/folder-conventions.md` — canonical output paths for every skill.
-- `common/reference/decision-record.md`, `agentic-repair-loop.md`, `manual-repair-loop.md`, `record-all-architecture-violations.md`, `grill-me-with-practice-skill.md` — shared procedures.
-- `common/reference/stages/{context,shaping,discovery,exploration,specification,engineering}.md` — the fidelity definitions.
-- `common/scripts/`, `common/templates/`, `common/instructions/`, `common/prompts/`, `common/context-scaffold/`.
-
-Consumer contract: every skill's SKILL.md links `common/reference/skill-workflow.md`; every practice's perspective file links `common/reference/context-taxonomy.md`. Reuse is via link, not copy.
-
-### Stage — `stages/<fidelity>/[skills/]<skill>/`
-
-Skills that belong to a fidelity level but aren't owned by a single perspective. `context-perspective: stage` in front matter. Directly under `stages/` (no practice bundle around them).
-
-Current inventory:
-
-- `stages/shaping/skills/` — `abd-cost-of-delay`, `abd-impact-mapping`, `abd-opportunity-generation`, `abd-simple-validated-learning`. All practice-tier, all shaping-fidelity, all cross-perspective.
-- `stages/discovery/` — `abd-code-research`, `abd-service-level-objectives`.
-- `stages/engineering/` — `abd-clean-code`, `abd-secure-code`.
-
-Consumer contract: any practice can call a stage skill at the matching fidelity. The two `*-code` skills in `abd-domain-code` and `abd-architecture-code` explicitly hand off to `abd-clean-code` here.
-
-### Practice — `practices/<family>/`
-
-A perspective-owning bundle. One perspective, a pipeline of skills across fidelities, shared reference material, optional support skills, sometimes example specs.
-
-Anatomy (using DDD and ACE as examples):
-
-- `reference/` — the practice's shared conceptual substrate. DDD has `oo-concepts.md`, `domain-perspective.md`, `validate-checklist.md`, `source-traceability.md`, `diagram-workflow.md`. ACE has `architecture-context-model.md`, `architecture-mechanism.md`, `architecture-perspective.md`, `validate-checklist.md`, `diagram-workflow.md`, `architecture_and_design.json`, `data.md`.
-- `references/` (DDD) — practice-wide artefact schemas (`domain-model-json.md`, template JSON, example JSON).
-- `skills/` — the pipeline: one skill per fidelity level in the perspective.
-- `skills/supporting/` — support skills (see §14).
-- `specs/` (ACE) — worked example specifications (`hero-vtt`, `mern-domain-first-specification`, `domain-driven-vs-code-plugin`).
-- `README.md` — one-paragraph package overview.
-
-Consumer contract: a practice's `<perspective>-perspective.md` file lists its skills by fidelity level; the perspective is the practice's spine.
-
-### Skill — `skills/<name>/`
-
-The leaf unit. Contract from `common/reference/skill-package-layout.md`:
-
-- `SKILL.md` — thin router (purpose, bootstrap, read-gates, generate, validate).
-- `rules/*.md` — source of truth for rule prose.
-- `reference/*.md` — concept teaching, examples, heuristics.
-- `templates/*` — layout contracts.
-- `scanners/*-scanner.py` — optional, linked from rule frontmatter via `scanner:`.
-
-Consumer contract: `SKILL.md` mandates reading `common/reference/skill-workflow.md`, then the skill's own rules / reference / templates. May also mandate reading practice-level reference and other skills' `SKILL.md` (e.g. `abd-domain-code` mandates `abd-clean-code`).
-
-**The four layers, one line each:**
-
-- **Common** — procedure and taxonomy, cross-library.
-- **Stage** — cross-perspective quality gates, one fidelity level each.
-- **Practice** — perspective-owning bundle: reference + pipeline + support.
-- **Skill** — the leaf artefact producer.
-
----
-
-## 10. The two-axis taxonomy — perspective × fidelity
-
-Every practice skill declares its position in a matrix via YAML front matter (`context-taxonomy.md`).
-
-**Perspectives** (five): `domain`, `stories`, `ux`, `architecture`, `stage`.
-
-**Fidelities** (six): `context`, `shaping`, `discovery`, `exploration`, `specification`, `engineering`.
-
-The default perspective order is `domain → stories → ux → architecture`; specification is the never-skip fidelity.
-
-### Where the three families sit in the matrix
-
-- **DDD (domain perspective)**
-  - Shaping — `abd-domain-glossary` (glossary)
-  - Discovery — `abd-domain-language` (language)
-  - Exploration — `abd-domain-model` (conceptual-model)
-  - Specification — `abd-domain-specification` (typed-model); `abd-domain-walk` (walkthrough)
-  - Engineering — `abd-domain-code` (domain-tdd)
-- **ACE (architecture perspective)**
-  - Shaping — `abd-architecture-outline` (system-context)
-  - Discovery — `abd-architecture-blueprint` (blueprint / scaffold)
-  - Exploration — `abd-architecture-specification` (document)
-  - Specification — `abd-architecture-template` (project / mechanism)
-  - Engineering — `abd-architecture-code` (production-code)
-- **Clean Code (stage perspective)**
-  - Engineering — `abd-clean-code` (quality-gate). One cell only.
-
-### What this reveals
-
-- **DDD and ACE occupy parallel columns of the matrix.** Each fidelity has one domain skill and one architecture skill. They are structurally symmetric — which is why the concept overlap feels uncomfortable: the two columns describe *the same fidelities* through *different lenses*, but nothing bridges the columns row by row.
-- **Clean-code occupies a single cell** — engineering × stage. It is by design a *cross-column* skill; both `abd-domain-code` and `abd-architecture-code` route through it.
-- **No cross-column skill exists at any other fidelity.** There is no `abd-<...>-glossary` at stage; no cross-perspective specification skill; no cross-perspective exploration skill. Cross-column reuse is *only* granted at engineering.
-- **Domain × any fidelity has no analogue to `architecture-mechanism`** — that is, DDD has no artefact that captures "the pattern all payments must follow" at the domain level. This is the same finding as §5.3, now visible as an empty matrix cell rather than just a missing concept.
-
----
-
-## 11. Skill boundary — what the library treats as one skill vs many
-
-Reverse-engineered from front-matter usage, the library follows roughly these rules for what earns its own skill:
-
-- **One skill per `(perspective, fidelity, mode)` cell.** A cell may have multiple modes (e.g. `abd-architecture-blueprint` has `blueprint` and `scaffold` modes), and those modes live inside one skill package rather than being split. Similarly `abd-architecture-specification` has `document` and `template` modes across two fidelities.
-- **A skill in a perspective's pipeline shares that perspective's reference bundle.** DDD's five main skills all point at `oo-concepts.md`; ACE's five all point at `architecture-context-model.md`.
-- **Cross-perspective content becomes a stage skill.** Clean-code, secure-code, code-research, SLOs — all live under `stages/` because they serve any perspective.
-- **Machinery becomes a foundational tier skill.** `story-graph-ops`, `domain-ops`, `drawio-*-sync`, `track_task`, `abd-skill-catalog`, `abd-kanban-repo` — all carry `catalog_garden_tier: foundational`. They are libraries, not artefact producers.
-- **Callable-anywhere-but-off-the-pipeline becomes a support skill.** `context-role: support` in front matter + `supporting/` folder location. Examples: `abd-bounded-context-map`, `abd-ddd-design-building-blocks`, `abd-domain-walk` (also main pipeline at specification), `drawio-*-sync`, `story-graph-ops`, `domain-ops`, `abd-thin-slicing`.
-
-### What this reveals about the DDD ⇄ ACE gap
-
-The rules above **cannot produce a DDD-to-ACE bridge skill**:
-
-- A bridge would need to span two perspectives, so it cannot be a practice skill (single perspective) — it would have to be a stage skill.
-- But every stage skill so far is *engineering* fidelity. There is no precedent for a stage skill at exploration or specification fidelity, which is where the bridge would sit.
-- The nearest existing analogue — `abd-bounded-context-map` — is placed as a *DDD support skill* instead of a cross-perspective stage skill. That is a boundary choice: the library decided the bridge belongs to DDD, not to a shared stage.
-
-Either the choice is right and DDD must own it end-to-end (in which case the support skill needs to be promoted into the DDD pipeline — §5.2), or the choice is wrong and the bridge should be a new stage-perspective skill at exploration or specification fidelity.
-
----
-
-## 12. Practice boundary — what makes a practice
-
-A practice today is a folder under `practices/` with **five typical ingredients**:
-
-- **One perspective** (`context-perspective` value shared by its skills). DDD → `domain`. ACE → `architecture`.
-- **A perspective reference** — `reference/<perspective>-perspective.md` listing skills by fidelity.
-- **A shared concept substrate** — DDD's `oo-concepts.md`, ACE's `architecture-context-model.md` + `architecture-mechanism.md`.
-- **A pipeline of skills** covering multiple fidelity levels.
-- **Support skills and (optionally) example specs.**
-
-### Which practices actually match this shape
-
-- **Domain-Driven Design** — clean match. One perspective, full pipeline, shared substrate, support skills.
-- **Architecture-Centric Engineering** — clean match. Same structure as DDD.
-- **User Experience Design** — clean match (perspective = `ux`).
-- **Story-Driven Delivery** — mostly clean (perspective = `stories`).
-
-### Which practices break the shape
-
-- **Behavior-Driven Development** — `catalog_garden_family: behavior-driven-development` on `abd-bdd-*` skills, but BDD is not a perspective in `context-taxonomy.md`. Its skills straddle stories (behaviour specs) and architecture (test wiring). The practice folder exists; the perspective doesn't.
-- **Context-Driven Delivery** — cross-cutting orchestration; not perspective-owned.
-- **Kanban** — flow management, cross-cutting; not perspective-owned.
-- **User Experience Design** — folder appears twice: `practices/user-experience-design/skills/*` **and** `practices/kanban/user-experience-design/skills/*`. Two of the UX skills (`abd-ux-mockup`, `abd-interface-design`, `abd-information-architecture`) live in both trees. Migration state or duplication.
-
-### The boundary ambiguity that matters for Part I
-
-- **Clean-code and secure-code both self-declare `catalog_garden_family: architecture-centric-engineering`** in front matter — even though they physically live under `stages/engineering/` and carry `context-perspective: stage`. The catalog rollup groups them under ACE; the perspective taxonomy groups them under `stage`. **Two authoritative answers to "which practice owns clean-code?" — ACE (catalog) and no-one (perspective is stage).**
-
-This mismatch is where the "clean-code as shared terminal skill" story from §4.1 becomes structurally awkward: it is treated as a stage skill by hand-off contracts (`abd-domain-code` → `abd-clean-code`; `abd-architecture-code` → `abd-clean-code`) but as an ACE skill by the catalog. If DDD also depends on it — and it does — the ACE family label is misleading.
-
----
-
-## 13. Common reuse — what is genuinely shared vs restated
-
-Distinguish three flavours of reuse:
-
-- **Genuinely shared** — content lives in `common/` (or a practice's `reference/`) and every consumer *links* to it, without restating.
-- **Practice-shared** — content lives in one practice and multiple skills within that practice link to it.
-- **Restated** — the same conceptual content is authored independently in multiple places, with no cross-links.
-
-### Genuinely shared (in `common/`)
-
-- `skill-workflow.md` — every practice `SKILL.md` mandates it in `## Bootstrap` and `## Read`.
-- `rule-checklist.md` — every practice `SKILL.md`'s `## Validate` links here.
-- `folder-conventions.md` — resolved by every skill for output path.
-- `context-taxonomy.md` — perspective × fidelity vocabulary. Referenced by perspective files.
-- `skill-package-layout.md`, `skill-index.md`, `decision-record.md`, `grill-me-with-practice-skill.md` — all imported, not restated.
-- `record-all-architecture-violations.md` — imported by ACE's perspective file.
-
-Verdict: `common/` is **cleanly reused for procedural machinery**. This part of the library is coherent.
-
-### Practice-shared (in `practices/<family>/reference/`)
-
-- **DDD** — `oo-concepts.md` (imported by domain-language, domain-model, domain-specification), `domain-perspective.md`, `diagram-workflow.md`, `validate-checklist.md`, `source-traceability.md`.
-- **ACE** — `architecture-context-model.md` (imported by all five ACE skills), `architecture-mechanism.md`, `architecture-perspective.md`, `diagram-workflow.md`, `validate-checklist.md`.
-
-Verdict: practice-shared reference is **cleanly reused within a practice**. Nothing wrong with either family internally.
-
-### Restated (concept authored more than once, no cross-link)
-
-- **OOAD substrate** — DDD's `oo-concepts.md` is the only authored reference; ACE and clean-code assume it silently.
-- **Seam / deep module** — ACE's `package-seam-is-minimal-and-named` + clean-code's `enforce-encapsulation`. Two authored places, no cross-link.
-- **Single responsibility** — DDD's "what is a class", ACE's `package-surface-is-cohesive`, clean-code's `keep-classes-single-responsibility`. Three authored places, no cross-link.
-- **Constructor DI** — clean-code's `use-explicit-dependencies`. ACE's canonical patterns show it in code but do not name it as a rule. DDD implies it via collaborator diagrams. One authored place; two implicit consumers.
-- **Domain language in code** — DDD's glossary→language→model chain + clean-code's `use-domain-language`. Two authored places; the clean-code rule is a copy of the DDD chain's terminal expectation, without linking upstream.
-- **Vocabulary chain** — DDD chain (glossary→…→domain-code) + ACE chain (outline→…→arch-code). Two authored places, no crossover rule.
-
-### The pattern
-
-Reuse works well when the content is **procedure** (workflow, gates, folder paths, taxonomy). Reuse fails when the content is **concept** (OOAD units, seams, cohesion, dependency direction). The `common/` layer today has no conceptual substrate — there is no `common/reference/oo-concepts.md` or `common/reference/unit-design.md`. Every practice reinvents its concept layer, which is why the three families' concept homes overlap so uncomfortably.
-
-**This is the deepest structural finding.** Part I's concept-overlap findings all trace back to the same missing thing: a shared conceptual reference in `common/`, with the same linking discipline that the procedural references already enjoy.
-
----
-
-## 14. Support / foundational / practice — the boundary lines actually used
-
-Front-matter reveals three orthogonal tier markers plus a role marker:
-
-- **`catalog_garden_tier: practice`** — the artefact-producing pipeline skills. Most skills.
-- **`catalog_garden_tier: foundational`** — machinery. `story-graph-ops`, `domain-ops`, `drawio-*-sync`, `track_task`, `abd-skill-catalog`, `abd-kanban-repo`. Data ops, diagram sync, tracking, catalog generation.
-- **`context-role: support`** — callable but not on the pipeline. `abd-bounded-context-map`, `abd-ddd-design-building-blocks`, `abd-domain-walk`, `abd-thin-slicing`, `drawio-*-sync`, `story-graph-ops`, `domain-ops`, `miro-story-sync`.
-- **(implicit fourth) stage skill** — `context-perspective: stage` + lives under `stages/<fidelity>/`.
-
-### The boundary lines currently in force
-
-- **Practice skill** owns a `(perspective, fidelity)` cell and belongs to a family.
-- **Support skill** is callable from any pipeline step but not part of the default flow. Concept-central skills can end up here (see below).
-- **Foundational skill** is machinery — no artefact fidelity in the human sense.
-- **Stage skill** is cross-perspective; fidelity is fixed, perspective is `stage`.
-
-### The boundary line that misfires
-
-The support / practice line is where concept-central material has been misfiled:
-
-- **`abd-bounded-context-map`** — the structural bridge between DDD and ACE (§5.2). Currently `context-role: support`, meaning "not on the default flow". Anyone running the domain pipeline can finish it without ever touching bounded contexts.
-- **`abd-ddd-design-building-blocks`** — the DDD stereotypes (Entity, Value Object, Aggregate, Repository, Service, Factory, Event) that are how DDD talks about *seams within the domain*. Same story: `context-role: support`, off the default flow.
-- **`abd-domain-walk`** — has both a support tag and a specification-fidelity entry in `domain-perspective.md`. Straddles.
-
-**Consequence:** the "same rules and truths circling on a big pile of stuff" symptom you named is partly the *support-vs-pipeline classification decision*. Bounded contexts and building blocks are structurally central; they have been placed off the default flow; so their content has to be restated (poorly) elsewhere to be heard.
-
----
-
-## 15. Concrete boundary ambiguities visible in the library today
-
-Ambiguities not to be fixed here — just named, so a future edit knows what to look at:
-
-- **A1 — `abd-clean-code` catalog family vs perspective.** Front matter says `catalog_garden_family: architecture-centric-engineering`; perspective says `stage`. Two answers to "which practice owns this?".
-- **A2 — `abd-secure-code`** — same pattern as clean-code.
-- **A3 — `abd-bounded-context-map` support-vs-pipeline.** Concept-central; off the pipeline. See §14.
-- **A4 — `abd-ddd-design-building-blocks` support-vs-pipeline.** Same as A3.
-- **A5 — Duplicated UX skill folders.** `practices/user-experience-design/skills/` and `practices/kanban/user-experience-design/skills/` both contain `abd-ux-mockup`, `abd-interface-design`, `abd-information-architecture`. Migration state or duplication.
-- **A6 — BDD family without a perspective.** `catalog_garden_family: behavior-driven-development` exists in front matter but is not a perspective in `context-taxonomy.md`; BDD skills sit ambiguously between stories and architecture.
-- **A7 — `story-graph-ops` and `domain-ops`** — both listed as `catalog_garden_tier: foundational` AND `context-role: support`, so tier and role both apply. Not necessarily wrong, but shows the tier and role axes are not orthogonal in practice.
-- **A8 — No `common/reference/` conceptual substrate.** `common/` holds only procedural references. Every practice reinvents its concept layer. See §13.
-- **A9 — No cross-perspective skills above engineering fidelity.** Stage-perspective skills exist only at shaping, discovery, engineering — no exploration or specification stage skills. A DDD-to-ACE bridge would have nowhere to live under current conventions.
-
----
-
-## 16. Structural reshape options (extending §7)
-
-Following the same "options, not recommendations" convention. The Part I options (A / B / C / D) address *concept* placement; these address *structural* placement.
-
-- **Option E — Create `common/reference/oo-concepts.md` (or a broader `unit-design.md`).** Extract DDD's OO reference and promote it to the common procedural layer. The current DDD file becomes a thin pass-through that adds domain-specific bias. ACE cites the common file for its Class Specification section. Clean-code cites the common file for its class/function rules. Closes §5.1, §5.4, §13-restated.
-- **Option F — Create `common/reference/mechanism.md` covering both technical and domain frameworks.** Lift ACE's `architecture-mechanism.md` into `common/`, generalise "cross-cutting concern" to include cross-cutting *domain* concerns. Add DDD-flavoured examples (Payment base + subtypes). Closes §5.3.
-- **Option G — Reconcile `catalog_garden_family` with `context-perspective` for stage skills.** Two paths: (i) fold clean-code and secure-code back into ACE's skills folder — accept they are ACE skills that happen to be reused by DDD; or (ii) keep them under `stages/engineering/` and drop the `catalog_garden_family: architecture-centric-engineering` header (replace with something like `catalog_garden_family: engineering-quality-gates`). Closes A1, A2.
-- **Option H — Promote structural support skills into their practice's pipeline.** Bounded-context-map moves from DDD support to DDD exploration (between language and model). DDD building blocks moves to DDD specification. Both are wired into `domain-perspective.md`'s fidelity table. Closes A3, A4, §5.2.
-- **Option I — Formalise a cross-perspective stage tier at exploration / specification fidelity.** Add a `stages/exploration/` or `stages/specification/` folder and place a new bridge skill there (e.g. `abd-domain-to-module-map`). Requires accepting stage-perspective skills above engineering, which today the library does not. Closes A9 and gives §5.2 a legitimate home if H is not chosen.
-- **Option J — Deduplicate the UX skill trees.** Pick one home for `abd-ux-*`; delete the other. Closes A5.
-- **Option K — Add BDD to the perspective taxonomy or fold it into stories / architecture.** Either extend `context-taxonomy.md` with a `behaviour` perspective (with knock-on effects across other practices), or reclassify each BDD skill's perspective to `stories` or `architecture` and remove `catalog_garden_family: behavior-driven-development`. Closes A6.
-
-The Part I options and Part II options are additive:
-
-- Concept-level fix without structural change: A or B from Part I.
-- Structural fix without new concept content: G, J, K from Part II.
-- Deep fix (recommended reading direction): E + F + H, which together make `common/` the conceptual substrate, promote the structural bridge into DDD's pipeline, and unify the mechanism concept — and Part I's A + C + D drop out for free.
-
----
-
-## 17. Extended summary — the structural story
-
-Repeating Part I's summary points and adding the structural findings:
-
-- The three families are three lenses on **one OOAD substrate applied at three scales**.
-- The `*-code` → `abd-clean-code` hand-off is explicit and works.
-- The DDD ⇄ ACE hand-off is not made anywhere.
-- The library has an **explicit taxonomy** — perspective × fidelity, with tier (practice / foundational) and role (support) as orthogonal markers. Every skill declares its cell in front matter.
-- The library has **four structural layers** — common, stage, practice, skill — with clear procedural contracts.
-- **`common/` is well-formed for procedure but empty of concept.** Workflow, gates, folder paths, taxonomy — all shared. OOAD, seams, unit design, cohesion — restated per practice.
-- The DDD ⇄ ACE bridge cannot live where it structurally needs to: no stage-perspective skills exist above engineering fidelity, and the current bridge candidates (`abd-bounded-context-map`, `abd-ddd-design-building-blocks`) are filed as *support*, meaning "off the pipeline".
-- Clean-code's ownership is contradicted by its own front matter — `catalog_garden_family: architecture-centric-engineering` while `context-perspective: stage`.
-- Reuse works at the procedural layer; reuse fails at the conceptual layer. **Every concept overlap in Part I is downstream of the missing conceptual substrate in `common/`.**
-
-The library's structure is more coherent than the concept overlap suggests. The overlap comes from a single missing layer — a shared conceptual reference in `common/` — plus a handful of misplaced classification decisions (bounded-context-map as support, clean-code as ACE family). Fix those and most of Part I's overlaps resolve themselves.
-
-The document remains assessment-only. §7 (concept options) and §16 (structural options) together sketch the full reshape space.
+Earlier revisions of this doc contained (a) a concept-map tour of every concept in the three families and (b) a taxonomy tour of the perspective × fidelity model, the four structural layers, and eleven reshape options. Both restated things you had already sketched in the original prompt. They are removed. Git history has them if referenced.
