@@ -1,0 +1,10 @@
+# Core: enumerate videos + download subtitles/audio.
+yt-dlp>=2024.05.27
+
+# Secondary transcript source (YouTube's public transcript endpoint).
+youtube-transcript-api>=0.6.2
+
+# Fallback: local speech-to-text when no captions exist.
+# Whisper is open source (MIT). Requires ffmpeg on PATH.
+# Comment this line out if you don't want the Whisper fallback.
+openai-whisper>=20231117
