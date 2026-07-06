@@ -185,7 +185,8 @@
 
     return [
 
-      { id: 'forge', label: 'forge', href: p + 'index.html' }
+      { id: 'forge', label: 'forge', href: p + 'index.html' },
+      { id: 'outputs', label: 'output map', href: p + 'outputs.html' }
 
     ];
 

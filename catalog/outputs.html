@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="utf-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<script>
+(function(){try{if('scrollRestoration' in history)history.scrollRestoration='manual';var r=new URLSearchParams(location.search).get('kanbanScroll');if(!r)return;var y=parseFloat(r);if(isNaN(y))return;window.__foundryPendingScrollY=y;document.documentElement.classList.add('foundry-scroll-pending');}catch(e){}})();
+</script>
+
+<title>Foundry — output map</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="commons/site.css?v=foundry-33">
+
+<style>
+
+:root {
+  --radius:       6px;
+  --link-soft:        #FFB380;
+  --link-soft-hover:  #FFCCA3;
+  --link-muted:       var(--accent-soft);
+  --orange:       var(--accent);
+  --orange-hover: var(--accent-deep);
+}
+
+strong { font-weight: 600; }
+
+.catalog-body {
+  padding-bottom: 96px;
+}
+
+.catalog-body .wrap {
+  max-width: 1100px;
+}
+
+.catalog-body code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  background: rgba(255,255,255,0.06);
+  padding: 2px 5px;
+  border-radius: 3px;
+  color: var(--accent-soft);
+}
+
+html[data-abd-theme="executive"] .catalog-body code {
+  background: rgba(0,0,0,0.06);
+  color: var(--accent-deep);
+}
+
+/* ── Page-level layout ── */
+
+.om-intro {
+  max-width: 600px;
+  margin: 0 0 28px;
+  font-size: 0.92rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.om-intro a { color: var(--accent); }
+
+/* ── How output paths resolve ── */
+
+.om-resolution__intro {
+  font-size: 0.88rem;
+  color: var(--muted);
+  margin: 0 0 14px;
+  line-height: 1.55;
+}
+
+.om-step-list {
+  margin-left: 4px;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.om-step {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  font-size: 0.88rem;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.om-step__num {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: 0.75em;
+  font-weight: 700;
+  color: var(--accent);
+  width: 1.6em;
+  padding-top: 0.1em;
+}
+
+.om-step__label { font-weight: 600; }
+
+.om-resolution__footer {
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.55;
+  margin: 16px 0 0;
+  border-top: 1px solid var(--border-muted);
+  padding-top: 12px;
+  margin-left: 4px;
+}
+
+/* ── Legend ── */
+
+.om-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 0 0 22px;
+  align-items: center;
+}
+
+.om-legend-label {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-right: 2px;
+}
+
+/* ── Shared skill chip ── */
+
+.om-chip {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px 2px 9px;
+  border-radius: 4px;
+  border: 1px solid var(--border-muted);
+  border-left-width: 3px;
+  background: var(--raised);
+  color: var(--text);
+  white-space: nowrap;
+  line-height: 1.4;
+  text-decoration: none;
+  transition: box-shadow 120ms, border-color 120ms;
+}
+
+a.om-chip:hover {
+  box-shadow: 0 0 0 1px rgba(229,83,26,0.22);
+  color: var(--text);
+  text-decoration: none;
+}
+
+.om-chip--ddd { border-left-color: #6C5CE7; }
+.om-chip--sdd { border-left-color: #6BCB77; }
+.om-chip--uxd { border-left-color: #E84393; }
+.om-chip--arc { border-left-color: #4FC3F7; }
+.om-chip--cdd { border-left-color: var(--accent); }
+.om-chip--other { border-left-color: var(--muted); }
+
+/* ── Tree sections ── */
+
+.om-tree {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.om-section {
+  border: 1px solid var(--border-muted);
+  border-radius: var(--radius);
+  background: rgba(0,0,0,0.14);
+  overflow: hidden;
+}
+
+.om-section > summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 9px 14px;
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  user-select: none;
+  background: rgba(255,255,255,0.025);
+}
+
+.om-section > summary::-webkit-details-marker { display: none; }
+.om-section > summary::marker { content: ""; }
+
+.om-section > summary::before {
+  content: "+";
+  flex-shrink: 0;
+  font-weight: 800;
+  color: var(--accent);
+  width: 1.1em;
+  text-align: center;
+}
+
+.om-section[open] > summary::before { content: "\2212"; }
+.om-section[open] > summary { border-bottom: 1px solid var(--border-muted); }
+
+.om-section__body { padding: 4px 0 6px; }
+
+/* ── Tree rows ── */
+
+.om-rows {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.om-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 3px 14px 3px 18px;
+  min-height: 28px;
+}
+
+.om-row:hover { background: rgba(255,255,255,0.025); }
+
+.om-row--i1 { padding-left: 32px; }
+.om-row--i2 { padding-left: 48px; }
+
+.om-row-sep {
+  border: none;
+  border-top: 1px solid var(--border-muted);
+  margin: 2px 14px;
+  opacity: 0.5;
+}
+
+/* path text */
+.om-path {
+  font-family: var(--font-mono);
+  font-size: 0.8em;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.om-path--dir  { color: var(--muted); font-weight: 600; }
+.om-path--file { color: var(--text); }
+.om-path--pat  { color: var(--muted); font-style: italic; } /* <pattern> */
+
+/* chips wrapper */
+.om-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
+/* trailing note */
+.om-note {
+  font-family: var(--font-mono);
+  font-size: 0.72em;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* in-body prose note (e.g. BDD exception) */
+.om-section-note {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin: 2px 14px 8px 32px;
+  line-height: 1.5;
+}
+
+.om-section-note a { color: var(--accent); }
+
+/* ── File-type preamble ── */
+
+.om-filetypes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+  margin: 0 0 26px;
+}
+
+.om-filetype {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 12px 14px;
+  border: 1px solid var(--border-muted);
+  border-left: 3px solid var(--border-muted);
+  border-radius: var(--radius);
+  background: rgba(0,0,0,0.12);
+}
+
+.om-filetype--md   { border-left-color: #4a9e6b; }
+.om-filetype--drawio { border-left-color: #d97b00; }
+.om-filetype--json { border-left-color: #5b9bd5; }
+.om-filetype--yaml { border-left-color: #9c6fba; }
+.om-filetype--png  { border-left-color: var(--muted); }
+
+.om-filetype__ext {
+  font-family: var(--font-mono);
+  font-size: 0.78em;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.om-filetype--md   .om-filetype__ext { color: #4a9e6b; }
+.om-filetype--drawio .om-filetype__ext { color: #d97b00; }
+.om-filetype--json .om-filetype__ext { color: #5b9bd5; }
+.om-filetype--yaml .om-filetype__ext { color: #9c6fba; }
+
+.om-filetype__label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0;
+}
+
+.om-filetype__desc {
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.45;
+  margin: 0;
+}
+
+</style>
+
+<script src="commons/catalog-nav.js?v=foundry-10"></script>
+
+</head>
+
+<body data-nav-prefix="" data-nav-current="outputs" data-nav-site-base="https://abd.works/">
+
+<main id="main-content">
+
+<div class="page-hero">
+  <div class="wrap">
+    <h1 class="page-headline">Output <span class="accent">Map</span></h1>
+    <p class="body-lead">Where every skill writes its deliverables — canonical paths relative to your project root. Click any skill chip to open that skill's reference page.</p>
+  </div>
+</div>
+
+<div class="catalog-body">
+<div class="wrap">
+
+<!-- ── File types ── -->
+
+<h2>Output file types</h2>
+<p style="margin:-8px 0 16px;font-size:0.9rem;color:var(--muted);">Each skill produces one or more of these file formats. Understanding the role of each type tells you which files to read, which to open in a tool, and which are generated automatically.</p>
+
+<div class="om-filetypes">
+
+  <div class="om-filetype om-filetype--md">
+    <span class="om-filetype__ext">.md</span>
+    <p class="om-filetype__label">Markdown deliverable</p>
+    <p class="om-filetype__desc">Human-readable stakeholder artifact — the primary output of almost every skill. Source of truth for specs, maps, glossaries, and design decisions.</p>
+  </div>
+
+  <div class="om-filetype om-filetype--drawio">
+    <span class="om-filetype__ext">.drawio</span>
+    <p class="om-filetype__label">Draw.io diagram</p>
+    <p class="om-filetype__desc">Visual representation generated or synced from the paired <code>.md</code> or <code>.json</code> source. Always named with the same stem as its source file (e.g. <code>domain-model.drawio</code> pairs with <code>domain-model.md</code>). Never the source of truth — regenerated on demand.</p>
+  </div>
+
+  <div class="om-filetype om-filetype--json">
+    <span class="om-filetype__ext">.json</span>
+    <p class="om-filetype__label">Machine-readable data</p>
+    <p class="om-filetype__desc">Structured data consumed by tools and sync scripts — not for direct reading. Examples: <code>story-graph.json</code> (story structure), <code>domain-model.json</code> (domain entity graph), <code>state.json</code> (UX mockup shared state).</p>
+  </div>
+
+  <div class="om-filetype om-filetype--yaml">
+    <span class="om-filetype__ext">.yaml / .aria.yaml</span>
+    <p class="om-filetype__label">ARIA descriptor</p>
+    <p class="om-filetype__desc">Accessibility-focused screen descriptor produced by <code>abd-ux-mockup</code> and <code>abd-context-app-extractor</code>. One file per screen or extracted page — describes controls, roles, and interaction structure in a form agents can read and test against.</p>
+  </div>
+
+  <div class="om-filetype om-filetype--png">
+    <span class="om-filetype__ext">.png</span>
+    <p class="om-filetype__label">Screenshot</p>
+    <p class="om-filetype__desc">Visual evidence captured alongside ARIA descriptors by <code>abd-context-app-extractor</code>. Stored next to the <code>.aria.yaml</code> for the same page slug. Not generated — captured from a live or sandboxed application.</p>
+  </div>
+
+</div>
+
+<!-- ── How output paths resolve ── -->
+
+<h2>How output paths resolve</h2>
+
+<p class="om-resolution__intro">When a skill decides <em>where</em> to write, it walks this priority list and stops at the first match:</p>
+<ol class="om-step-list">
+  <li class="om-step">
+    <span class="om-step__num">1.</span>
+    <span><span class="om-step__label">What you said.</span> If you name a file or folder explicitly, the skill uses exactly that — no questions asked.</span>
+  </li>
+  <li class="om-step">
+    <span class="om-step__num">2.</span>
+    <span><span class="om-step__label"><code>cdd-context-index.md</code> at the workspace root.</span> Any deliverable moved off its canonical path must be recorded here so skills can find it without asking. One row per non-standard artifact.</span>
+  </li>
+  <li class="om-step">
+    <span class="om-step__num">3.</span>
+    <span><span class="om-step__label">Where the work already lives.</span> If a previous phase output sits in a recognisable folder the skill writes next to it, keeping the chain coherent.</span>
+  </li>
+  <li class="om-step">
+    <span class="om-step__num">4.</span>
+    <span><span class="om-step__label">Canonical path — this map.</span> The paths shown below. Used when none of the above applies.</span>
+  </li>
+  <li class="om-step">
+    <span class="om-step__num">5.</span>
+    <span><span class="om-step__label">Workspace root.</span> Last resort only, when no convention applies at all.</span>
+  </li>
+</ol>
+<p class="om-resolution__footer">
+  <strong>File name</strong> — once the folder is resolved, the skill checks its own <code>reference/output.md</code> first (only present when the skill breaks the default — multiple outputs, non-<code>.md</code> deliverable, project test folder). Otherwise it uses the name shown in this map.<br><br>
+  <strong>Source of truth</strong> — <code>common/reference/folder-conventions.md</code> in the repo. <code>common/reference/skill-workflow.md</code> § Output file resolution defines the algorithm above.
+</p>
+
+<!-- ── Legend ── -->
+
+<div class="om-legend">
+  <span class="om-legend-label">Practice family:</span>
+  <span class="om-chip om-chip--ddd">domain-driven design</span>
+  <span class="om-chip om-chip--sdd">story-driven delivery</span>
+  <span class="om-chip om-chip--uxd">user experience</span>
+  <span class="om-chip om-chip--arc">architecture</span>
+  <span class="om-chip om-chip--cdd">context / delivery</span>
+  <span class="om-chip om-chip--other">supporting tool</span>
+</div>
+
+<!-- ── Tree ── -->
+
+<h2>Canonical output paths</h2>
+<p style="margin:-8px 0 16px;font-size:0.9rem;color:var(--muted);">All paths are relative to your project root (e.g. <code>my-project/</code>). Folders in <span style="font-family:var(--font-mono);font-size:0.88em;color:var(--muted);font-weight:600;">grey</span> are not themselves outputs — they group related deliverables. Click any skill chip to open that skill&#x27;s reference page.</p>
+
+<div class="om-tree">
+
+<!-- domain/ -->
+<details class="om-section" open>
+  <summary>docs/domain/</summary>
+  <div class="om-section__body">
+    <ul class="om-rows">
+
+      <li class="om-row"><span class="om-path om-path--dir">language/</span></li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--file">domain-language.md</span>
+        <div class="om-chips"><a href="skill/abd-domain-language.html" class="om-chip om-chip--ddd">abd-domain-language</a></div>
+      </li>
+
+      <hr class="om-row-sep">
+
+      <li class="om-row"><span class="om-path om-path--dir">model/</span></li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--file">domain-model.md</span>
+        <div class="om-chips"><a href="skill/abd-domain-model.html" class="om-chip om-chip--ddd">abd-domain-model</a></div>
+        <span class="om-note">human projection</span>
+      </li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--file">domain-model.drawio</span>
+        <div class="om-chips"><a href="skill/drawio-domain-sync.html" class="om-chip om-chip--ddd">drawio-domain-sync</a></div>
+        <span class="om-note">same stem as .md</span>
+      </li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--file">domain-model.json</span>
+        <div class="om-chips"><span class="om-chip om-chip--other">domain-ops</span></div>
+        <span class="om-note">machine-readable</span>
+      </li>
+
+      <hr class="om-row-sep">
+
+      <li class="om-row"><span class="om-path om-path--dir">specification/</span></li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--file">domain-specification.md</span>
+        <div class="om-chips"><a href="skill/abd-domain-specification.html" class="om-chip om-chip--ddd">abd-domain-specification</a></div>
+      </li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--file">domain-specification.drawio</span>
+        <div class="om-chips"><a href="skill/drawio-domain-sync.html" class="om-chip om-chip--ddd">drawio-domain-sync</a></div>
+        <span class="om-note">same stem as .md</span>
+      </li>
+
+      <hr class="om-row-sep">
+
+      <li class="om-row"><span class="om-path om-path--dir">glossary/</span></li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--file">domain-glossary.md</span>
+        <div class="om-chips"><a href="skill/abd-domain-glossary.html" class="om-chip om-chip--ddd">abd-domain-glossary</a></div>
+      </li>
+
+      <hr class="om-row-sep">
+
+      <li class="om-row"><span class="om-path om-path--dir">supporting/</span></li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--file">bounded-context-map.md</span>
+        <div class="om-chips"><a href="skill/abd-bounded-context-map.html" class="om-chip om-chip--ddd">abd-bounded-context-map</a></div>
+      </li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--file">ddd-building-blocks.md</span>
+        <div class="om-chips"><a href="skill/abd-ddd-design-building-blocks.html" class="om-chip om-chip--ddd">abd-ddd-design-building-blocks</a></div>
+      </li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--file">walkthrough.md</span>
+        <div class="om-chips"><a href="skill/abd-domain-walk.html" class="om-chip om-chip--ddd">abd-domain-walk</a></div>
+      </li>
+
+    </ul>
+  </div>
+</details>
+
+<!-- stories/ -->
+<details class="om-section" open>
+  <summary>docs/stories/</summary>
+  <div class="om-section__body">
+    <ul class="om-rows">
+
+      <li class="om-row"><span class="om-path om-path--dir">story-map/</span></li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--file">story-map.md</span>
+        <div class="om-chips"><a href="skill/abd-story-mapping.html" class="om-chip om-chip--sdd">abd-story-mapping</a></div>
+      </li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--file">story-graph.json</span>
+        <div class="om-chips"><a href="skill/story-graph-ops.html" class="om-chip om-chip--sdd">story-graph-ops</a></div>
+        <span class="om-note">machine-readable; source for drawio-story-sync</span>
+      </li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--file">story-map.drawio</span>
+        <div class="om-chips"><a href="skill/drawio-story-sync.html" class="om-chip om-chip--sdd">drawio-story-sync</a></div>
+        <span class="om-note">--mode outline</span>
+      </li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--file">thin-slicing.md</span>
+        <div class="om-chips"><a href="skill/abd-thin-slicing.html" class="om-chip om-chip--sdd">abd-thin-slicing</a></div>
+      </li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--file">thin-slicing.drawio</span>
+        <div class="om-chips"><a href="skill/drawio-story-sync.html" class="om-chip om-chip--sdd">drawio-story-sync</a></div>
+        <span class="om-note">--mode thin-slicing</span>
+      </li>
+
+      <hr class="om-row-sep">
+
+      <li class="om-row"><span class="om-path om-path--dir">acceptance-criteria/</span></li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--file">acceptance-criteria.md</span>
+        <div class="om-chips"><a href="skill/abd-story-acceptance-criteria.html" class="om-chip om-chip--sdd">abd-story-acceptance-criteria</a></div>
+      </li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--file">acceptance-criteria.drawio</span>
+        <div class="om-chips"><a href="skill/drawio-story-sync.html" class="om-chip om-chip--sdd">drawio-story-sync</a></div>
+        <span class="om-note">--mode acceptance-criteria</span>
+      </li>
+
+      <hr class="om-row-sep">
+
+      <li class="om-row"><span class="om-path om-path--dir">specification/</span></li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--file">specification-by-example.md</span>
+        <div class="om-chips"><a href="skill/abd-story-specification.html" class="om-chip om-chip--sdd">abd-story-specification</a></div>
+        <span class="om-note">one file, all stories</span>
+      </li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--file">full-specification-by-example.md</span>
+        <div class="om-chips"><a href="skill/abd-story-specification.html" class="om-chip om-chip--sdd">abd-story-specification</a></div>
+        <span class="om-note">expanded, all epics variant</span>
+      </li>
+
+    </ul>
+  </div>
+</details>
+
+<!-- ux/ -->
+<details class="om-section" open>
+  <summary>docs/ux/</summary>
+  <div class="om-section__body">
+    <ul class="om-rows">
+
+      <li class="om-row"><span class="om-path om-path--dir">information-architecture/</span></li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--file">information-architecture.md</span>
+        <div class="om-chips"><a href="skill/abd-ux-information-architecture.html" class="om-chip om-chip--uxd">abd-ux-information-architecture</a></div>
+      </li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--file">information-architecture.drawio</span>
+        <div class="om-chips"><a href="skill/abd-ux-information-architecture.html" class="om-chip om-chip--uxd">abd-ux-information-architecture</a></div>
+        <span class="om-note">via drawio-ux.mjs</span>
+      </li>
+
+      <hr class="om-row-sep">
+
+      <li class="om-row"><span class="om-path om-path--dir">mockup/</span></li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--file">state.json</span>
+        <div class="om-chips"><a href="skill/abd-ux-mockup.html" class="om-chip om-chip--uxd">abd-ux-mockup</a></div>
+        <span class="om-note">shared state source of truth</span>
+      </li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--file">mockups.md</span>
+        <div class="om-chips"><a href="skill/abd-ux-mockup.html" class="om-chip om-chip--uxd">abd-ux-mockup</a></div>
+        <span class="om-note">master index / all-screens spec</span>
+      </li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--file">mockup.drawio</span>
+        <div class="om-chips"><a href="skill/abd-ux-mockup.html" class="om-chip om-chip--uxd">abd-ux-mockup</a></div>
+        <span class="om-note">generated wireframe</span>
+      </li>
+      <li class="om-row om-row--i1"><span class="om-path om-path--dir">screens/</span></li>
+      <li class="om-row om-row--i2">
+        <span class="om-path om-path--pat">&lt;screen-slug&gt;.aria.yaml</span>
+        <div class="om-chips"><a href="skill/abd-ux-mockup.html" class="om-chip om-chip--uxd">abd-ux-mockup</a></div>
+        <span class="om-note">one per screen</span>
+      </li>
+      <li class="om-row om-row--i2">
+        <span class="om-path om-path--pat">&lt;screen-slug&gt;-state.json</span>
+        <div class="om-chips"><a href="skill/abd-ux-mockup.html" class="om-chip om-chip--uxd">abd-ux-mockup</a></div>
+      </li>
+      <li class="om-row om-row--i2">
+        <span class="om-path om-path--pat">&lt;screen-slug&gt;.drawio</span>
+        <div class="om-chips"><a href="skill/abd-ux-mockup.html" class="om-chip om-chip--uxd">abd-ux-mockup</a></div>
+      </li>
+      <li class="om-row om-row--i2">
+        <span class="om-path om-path--pat">&lt;screen-slug&gt;.md</span>
+        <div class="om-chips"><a href="skill/abd-ux-mockup.html" class="om-chip om-chip--uxd">abd-ux-mockup</a></div>
+      </li>
+
+      <hr class="om-row-sep">
+
+      <li class="om-row"><span class="om-path om-path--dir">specification/</span></li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--file">ux-specification.md</span>
+        <div class="om-chips"><a href="skill/abd-ux-specification.html" class="om-chip om-chip--uxd">abd-ux-specification</a></div>
+      </li>
+
+    </ul>
+  </div>
+</details>
+
+<!-- architecture/ -->
+<details class="om-section" open>
+  <summary>docs/architecture/</summary>
+  <div class="om-section__body">
+    <ul class="om-rows">
+
+      <li class="om-row"><span class="om-path om-path--dir">diagrams/</span></li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--file">system-context.drawio</span>
+        <div class="om-chips"><a href="skill/abd-architecture-outline.html" class="om-chip om-chip--arc">abd-architecture-outline</a></div>
+        <span class="om-note">via arch-drawio.ps1 init/export</span>
+      </li>
+
+      <hr class="om-row-sep">
+
+      <li class="om-row"><span class="om-path om-path--dir">blueprint/</span></li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--file">architecture-blueprint.md</span>
+        <div class="om-chips"><a href="skill/abd-architecture-blueprint.html" class="om-chip om-chip--arc">abd-architecture-blueprint</a></div>
+      </li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--file">platform-architecture-elements.md</span>
+        <div class="om-chips"><a href="skill/abd-architecture-blueprint.html" class="om-chip om-chip--arc">abd-architecture-blueprint</a></div>
+      </li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--file">platform-architecture.drawio</span>
+        <div class="om-chips"><a href="skill/abd-architecture-blueprint.html" class="om-chip om-chip--arc">abd-architecture-blueprint</a></div>
+        <span class="om-note">via arch-drawio.ps1</span>
+      </li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--file">module-overview.drawio</span>
+        <div class="om-chips"><a href="skill/abd-architecture-blueprint.html" class="om-chip om-chip--arc">abd-architecture-blueprint</a></div>
+      </li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--file">architecture-flow.drawio</span>
+        <div class="om-chips"><a href="skill/abd-architecture-blueprint.html" class="om-chip om-chip--arc">abd-architecture-blueprint</a></div>
+      </li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--file">testing-flow.drawio</span>
+        <div class="om-chips"><a href="skill/abd-architecture-blueprint.html" class="om-chip om-chip--arc">abd-architecture-blueprint</a></div>
+      </li>
+
+      <hr class="om-row-sep">
+
+      <li class="om-row"><span class="om-path om-path--dir">specification/</span></li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--pat">&lt;specification-name&gt;/</span>
+        <span class="om-note">one subfolder per specification</span>
+      </li>
+      <li class="om-row om-row--i2">
+        <span class="om-path om-path--file">architecture-specification.md</span>
+        <div class="om-chips"><a href="skill/abd-architecture-specification.html" class="om-chip om-chip--arc">abd-architecture-specification</a></div>
+      </li>
+      <li class="om-row om-row--i2">
+        <span class="om-path om-path--pat">architecture-specification-participants.drawio</span>
+        <div class="om-chips"><a href="skill/abd-architecture-specification.html" class="om-chip om-chip--arc">abd-architecture-specification</a></div>
+        <span class="om-note">via build_participants_diagram.py</span>
+      </li>
+
+      <hr class="om-row-sep">
+
+      <li class="om-row"><span class="om-path om-path--dir">decisions/</span></li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--pat">ADR-NNN-description.md</span>
+        <span class="om-note">one file per architectural decision record</span>
+      </li>
+
+    </ul>
+  </div>
+</details>
+
+<!-- bdd/ -->
+<details class="om-section" open>
+  <summary>docs/bdd/</summary>
+  <div class="om-section__body">
+    <ul class="om-rows">
+      <li class="om-row">
+        <span class="om-path om-path--pat">&lt;feature&gt;-behavior.md</span>
+        <div class="om-chips"><a href="skill/abd-bdd-behavior.html" class="om-chip om-chip--sdd">abd-bdd-behavior</a></div>
+        <span class="om-note">one file per feature</span>
+      </li>
+    </ul>
+    <p class="om-section-note">
+      <a href="skill/abd-bdd-specification.html">abd-bdd-specification</a> and <a href="skill/abd-bdd-development.html">abd-bdd-development</a> test files go in the <strong>project test folder</strong>, not here — see each skill's <code>reference/output.md</code> for the exact path.
+    </p>
+  </div>
+</details>
+
+<!-- context/ -->
+<details class="om-section" open>
+  <summary>docs/context/</summary>
+  <div class="om-section__body">
+    <ul class="om-rows">
+
+      <li class="om-row">
+        <span class="om-path om-path--dir">markdown/</span>
+        <div class="om-chips"><a href="skill/abd-context-to-markdown.html" class="om-chip om-chip--cdd">abd-context-to-markdown</a></div>
+        <span class="om-note">converted source Markdown</span>
+      </li>
+      <li class="om-row">
+        <span class="om-path om-path--dir">memory/</span>
+        <div class="om-chips"><a href="skill/abd-context-chunk.html" class="om-chip om-chip--cdd">abd-context-chunk</a></div>
+        <span class="om-note">chunked files + context_chunking_spec.yaml</span>
+      </li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--dir">rag/</span>
+        <div class="om-chips"><a href="skill/abd-context-db-embed.html" class="om-chip om-chip--cdd">abd-context-db-embed</a></div>
+        <span class="om-note">FAISS vector index</span>
+      </li>
+      <li class="om-row">
+        <span class="om-path om-path--dir">app-extraction/extracted-pages/</span>
+        <div class="om-chips"><a href="skill/abd-context-app-extractor.html" class="om-chip om-chip--cdd">abd-context-app-extractor</a></div>
+        <span class="om-note">ARIA YAML + screenshots per page</span>
+      </li>
+      <li class="om-row">
+        <span class="om-path om-path--dir">app-sandbox/stubs/</span>
+        <div class="om-chips"><a href="skill/abd-context-app-sandbox.html" class="om-chip om-chip--cdd">abd-context-app-sandbox</a></div>
+        <span class="om-note">generated stubs + stub registry</span>
+      </li>
+
+    </ul>
+  </div>
+</details>
+
+<!-- external/ -->
+<details class="om-section">
+  <summary>docs/external/</summary>
+  <div class="om-section__body">
+    <ul class="om-rows">
+
+      <li class="om-row">
+        <span class="om-path om-path--dir">code-research/</span>
+        <div class="om-chips"><a href="skill/abd-code-research.html" class="om-chip om-chip--arc">abd-code-research</a></div>
+      </li>
+      <li class="om-row">
+        <span class="om-path om-path--dir">app-extraction/pages/</span>
+        <span class="om-note">input pages for abd-context-app-extractor</span>
+      </li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--pat">&lt;page-slug&gt;/aria.yaml</span>
+        <div class="om-chips"><a href="skill/abd-context-app-extractor.html" class="om-chip om-chip--cdd">abd-context-app-extractor</a></div>
+      </li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--pat">&lt;page-slug&gt;/screenshot.png</span>
+        <div class="om-chips"><a href="skill/abd-context-app-extractor.html" class="om-chip om-chip--cdd">abd-context-app-extractor</a></div>
+      </li>
+      <li class="om-row">
+        <span class="om-path om-path--dir">app-sandbox/stubs/</span>
+        <div class="om-chips"><a href="skill/abd-context-app-sandbox.html" class="om-chip om-chip--cdd">abd-context-app-sandbox</a></div>
+        <span class="om-note">stub registry + credentials</span>
+      </li>
+
+    </ul>
+  </div>
+</details>
+
+<!-- cdd-sessions/ -->
+<details class="om-section" open>
+  <summary>docs/cdd-sessions/</summary>
+  <div class="om-section__body">
+    <ul class="om-rows">
+
+      <li class="om-row">
+        <span class="om-path om-path--pat">&lt;YYYY-MM-DD&gt;-&lt;topic&gt;/</span>
+        <span class="om-note">one folder per session</span>
+      </li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--file">cdd-session-journal.md</span>
+        <div class="om-chips"><a href="skill/abd-context-driven-delivery.html" class="om-chip om-chip--cdd">abd-context-driven-delivery</a></div>
+        <span class="om-note">append-only narrative</span>
+      </li>
+      <li class="om-row om-row--i1">
+        <span class="om-path om-path--file">cdd-session-checklist.md</span>
+        <div class="om-chips"><a href="skill/abd-context-driven-delivery.html" class="om-chip om-chip--cdd">abd-context-driven-delivery</a></div>
+        <span class="om-note">grid progress</span>
+      </li>
+
+    </ul>
+  </div>
+</details>
+
+</div><!-- .om-tree -->
+
+</div><!-- .wrap -->
+</div><!-- .catalog-body -->
+
+</main>
+
+</body>
+
+</html>
