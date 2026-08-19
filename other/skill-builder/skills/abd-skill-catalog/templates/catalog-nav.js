@@ -253,7 +253,7 @@
 
     var linksHTML = linkHTML(links, currentPage);
 
-    var homeHref = siteBase() + 'index.html';
+    var homeHref = 'https://forge.abdworks.net'; //siteBase() + 'index.html';
 
 
 
@@ -292,8 +292,8 @@
       '</div>';
 
 
-
-    document.body.insertBefore(nav, document.body.firstChild);
+    // no navigation for v1 skills catalog
+    // document.body.insertBefore(nav, document.body.firstChild);
 
 
 
